@@ -1,0 +1,15 @@
+[project]
+name = "appropriations-bills"
+version = "0.1.0"
+description = "Fetch the 10 most recent appropriations bills from Congress.gov"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "respx>=0.22",
+]
