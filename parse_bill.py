@@ -142,8 +142,8 @@ def build_category(
         intermediate: Intermediate appropriation header text, or None.
     """
     parts = [division_label, title_label]
-    if major:
-        parts.append(major)
+    if major or intermediate:
+        parts.append(major or "")
     if intermediate:
         parts.append(intermediate)
     return tuple(parts)

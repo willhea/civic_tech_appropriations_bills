@@ -152,7 +152,8 @@ class TestBuildCategory:
             "Administrative provisions",
         )
 
-    def test_with_intermediate(self):
+    def test_with_intermediate_no_major(self):
+        """Intermediate without major gets an empty-string placeholder for major."""
         result = build_category(
             "Division A: Military Construction",
             "Title I: DEPARTMENT OF DEFENSE",
@@ -162,6 +163,7 @@ class TestBuildCategory:
         assert result == (
             "Division A: Military Construction",
             "Title I: DEPARTMENT OF DEFENSE",
+            "",
             "Military construction, army",
         )
 
