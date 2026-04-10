@@ -291,7 +291,7 @@ def parse_title(title_element: ET.Element, division_label: str, primary_only: bo
 
         elif tag == "section":
             enum_el = child.find("enum")
-            section_num = f"Sec. {enum_el.text.strip()}" if enum_el is not None and enum_el.text else ""
+            section_num = f"Sec. {enum_el.text.strip().rstrip('.')}" if enum_el is not None and enum_el.text else ""
             if _is_appropriation_section(child):
                 category = build_category(division_label, title_label, current_major, current_intermediate)
                 items.extend(extract_line_items_from_element(child, category, section_number=section_num, primary_only=primary_only))

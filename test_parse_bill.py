@@ -297,7 +297,7 @@ class TestParseTitle:
         sec_items = [i for i in items if i.section_number]
         assert len(sec_items) == 1
         assert sec_items[0].amount == 8214000
-        assert sec_items[0].section_number == "Sec. 124."
+        assert sec_items[0].section_number == "Sec. 124"
 
     def test_section_without_appropriation_skipped(self):
         """Restriction sections without appropriation language are skipped."""
