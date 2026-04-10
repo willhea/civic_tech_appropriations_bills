@@ -49,9 +49,9 @@ def classify_amount(text: str, match_start: int, match_end: int) -> str:
         One of: "appropriation", "rescission", "advance_appropriation",
         "proviso_limit", "addition_to_prior".
     """
-    # Look at context window around the match
-    before = text[max(0, match_start - 80):match_start].lower()
-    after = text[match_end:match_end + 80].lower()
+    # Look at context window around the match, normalize whitespace for XML text
+    before = " ".join(text[max(0, match_start - 120):match_start].split()).lower()
+    after = " ".join(text[match_end:match_end + 120].split()).lower()
 
     if "rescind" in after or "rescind" in before:
         return "rescission"
