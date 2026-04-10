@@ -599,6 +599,17 @@ class TestExtractPrimaryAmounts:
         result = extract_primary_amounts(text_el)
         assert result == []
 
+    def test_all_amounts_in_proviso(self):
+        """When all dollar amounts are inside provisos, returns empty list."""
+        xml_str = """<text>For necessary expenses of the Department:
+        <proviso><italic>Provided,</italic> That not to exceed $14,646,000
+        shall be available for study</proviso>:
+        <proviso><italic>Provided further,</italic> That $40,000,000 shall
+        be for planning</proviso></text>"""
+        text_el = ET.fromstring(xml_str)
+        result = extract_primary_amounts(text_el)
+        assert result == []
+
 
 class TestPrimaryOnlyCli:
     def test_primary_only_fewer_rows(self):
