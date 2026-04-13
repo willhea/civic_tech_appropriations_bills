@@ -16,7 +16,7 @@ wheels = [
 ]
 
 [[package]]
-name = "appropriations-bills"
+name = "bill-diff"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
