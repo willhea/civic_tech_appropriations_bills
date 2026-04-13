@@ -1,7 +1,7 @@
 [project]
-name = "appropriations-bills"
+name = "bill-diff"
 version = "0.1.0"
-description = "Fetch the 10 most recent appropriations bills from Congress.gov"
+description = "Download U.S. bill text from Congress.gov and compare versions structurally"
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28",

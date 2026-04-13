@@ -1,4 +1,4 @@
-"""Download appropriations bill text versions from Congress.gov.
+"""Download bill text versions from Congress.gov.
 
 Uses the Congress.gov API v3 to fetch bill text in XML format
 for downstream comparison between versions.

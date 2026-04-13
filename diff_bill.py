@@ -1,0 +1,498 @@
+"""Compare two bill versions and produce a structured diff."""
+
+import argparse
+import difflib
+import json
+import re
+import sys
+from collections import Counter, defaultdict
+from dataclasses import dataclass
+from pathlib import Path
+
+from bill_tree import BillNode, BillTree, normalize_bill
+
+
+# --- Financial amount extraction ---
+
+_DOLLAR_RE = re.compile(r"\$[\d,]+")
+
+
+def extract_amounts(text: str) -> tuple[int, ...]:
+    """Find all dollar amounts in text.
+
+    Returns tuple of integer values in document order. Filters $0 amounts.
+    """
+    results = []
+    for match in _DOLLAR_RE.finditer(text):
+        value = int(match.group().replace("$", "").replace(",", ""))
+        if value == 0:
+            continue
+        results.append(value)
+    return tuple(results)
+
+
+@dataclass(frozen=True)
+class FinancialChange:
+    """Financial analysis of a single NodeDiff."""
+
+    old_amounts: tuple[int, ...]
+    new_amounts: tuple[int, ...]
+    amounts_changed: bool
+
+
+def compute_financial_change(
+    old_text: str | None, new_text: str | None,
+) -> FinancialChange | None:
+    """Compare dollar amounts between old and new text.
+
+    Returns None if no amounts on either side (non-financial section).
+    """
+    old_amounts = extract_amounts(old_text) if old_text else ()
+    new_amounts = extract_amounts(new_text) if new_text else ()
+
+    if not old_amounts and not new_amounts:
+        return None
+
+    return FinancialChange(
+        old_amounts=old_amounts,
+        new_amounts=new_amounts,
+        amounts_changed=Counter(old_amounts) != Counter(new_amounts),
+    )
+
+
+def financial_change_to_dict(fc: FinancialChange) -> dict:
+    """Serialize a FinancialChange for JSON output."""
+    return {
+        "old_amounts": list(fc.old_amounts),
+        "new_amounts": list(fc.new_amounts),
+        "amounts_changed": fc.amounts_changed,
+    }
+
+
+def match_nodes(
+    old: BillTree, new: BillTree,
+) -> list[tuple[BillNode | None, BillNode | None]]:
+    """Match nodes across two bill versions by match_path.
+
+    Returns list of (old_node, new_node) tuples where one side may be None:
+    - (old, new): matched pair
+    - (old, None): removed (only in old)
+    - (None, new): added (only in new)
+
+    Duplicate match_paths are paired by position order.
+    """
+    # Group nodes by match_path
+    old_groups: dict[tuple[str, ...], list[BillNode]] = defaultdict(list)
+    new_groups: dict[tuple[str, ...], list[BillNode]] = defaultdict(list)
+
+    for node in old.nodes:
+        old_groups[node.match_path].append(node)
+    for node in new.nodes:
+        new_groups[node.match_path].append(node)
+
+    all_paths = dict.fromkeys(
+        list(old_groups.keys()) + list(new_groups.keys())
+    )
+
+    pairs: list[tuple[BillNode | None, BillNode | None]] = []
+
+    for path in all_paths:
+        old_nodes = old_groups.get(path, [])
+        new_nodes = new_groups.get(path, [])
+
+        # Pair by position
+        for i in range(max(len(old_nodes), len(new_nodes))):
+            old_node = old_nodes[i] if i < len(old_nodes) else None
+            new_node = new_nodes[i] if i < len(new_nodes) else None
+            pairs.append((old_node, new_node))
+
+    return pairs
+
+
+def diff_text(old_text: str, new_text: str) -> list[str]:
+    """Produce unified diff lines between two text blocks.
+
+    Returns empty list if texts are identical.
+    """
+    if old_text == new_text:
+        return []
+
+    old_lines = old_text.splitlines(keepends=True)
+    new_lines = new_text.splitlines(keepends=True)
+
+    diff_lines = list(difflib.unified_diff(
+        old_lines, new_lines, fromfile="old", tofile="new", lineterm="",
+    ))
+    # Strip trailing whitespace from each line
+    return [line.rstrip() for line in diff_lines]
+
+
+@dataclass(frozen=True)
+class NodeDiff:
+    """Diff result for a single node."""
+
+    display_path_old: tuple[str, ...] | None
+    display_path_new: tuple[str, ...] | None
+    match_path: tuple[str, ...]
+    change_type: str  # "added" | "removed" | "modified" | "unchanged"
+    old_text: str | None
+    new_text: str | None
+    text_diff: list[str] | None
+    section_number: str
+    element_id_old: str
+    element_id_new: str
+
+
+@dataclass(frozen=True)
+class BillDiff:
+    """Complete diff between two bill versions."""
+
+    old_version: str
+    new_version: str
+    congress: int
+    bill_type: str
+    bill_number: int
+    summary: dict
+    changes: list[NodeDiff]
+
+
+_SIMILARITY_THRESHOLD = 0.4
+
+
+def _normalize_text(text: str) -> str:
+    """Normalize whitespace for comparison: collapse runs, strip."""
+    return " ".join(text.split())
+
+
+def _text_similarity(a: str, b: str) -> float:
+    """Compute word-level similarity ratio between two texts (0.0 to 1.0)."""
+    return difflib.SequenceMatcher(None, a.split(), b.split()).ratio()
+
+
+_MOVE_THRESHOLD = 0.7
+
+
+def reconcile_moves(
+    changes: list[NodeDiff], threshold: float = _MOVE_THRESHOLD,
+) -> list[NodeDiff]:
+    """Re-link removed+added pairs that are actually moved sections.
+
+    Computes pairwise text similarity between removed and added entries.
+    Pairs above threshold are greedily matched (highest similarity first)
+    and converted to change_type="moved".
+    """
+    removed = [(i, c) for i, c in enumerate(changes) if c.change_type == "removed"]
+    added = [(i, c) for i, c in enumerate(changes) if c.change_type == "added"]
+
+    if not removed or not added:
+        return changes
+
+    # Compute all pairwise similarities
+    candidates: list[tuple[float, int, int]] = []
+    for ri, (_, rc) in enumerate(removed):
+        old_norm = _normalize_text(rc.old_text or "")
+        for ai, (_, ac) in enumerate(added):
+            new_norm = _normalize_text(ac.new_text or "")
+            sim = _text_similarity(old_norm, new_norm)
+            if sim >= threshold:
+                candidates.append((sim, ri, ai))
+
+    if not candidates:
+        return changes
+
+    # Greedy: highest similarity first
+    candidates.sort(reverse=True)
+    claimed_removed: set[int] = set()
+    claimed_added: set[int] = set()
+    moved_indices: set[int] = set()  # original indices to remove
+    moved_entries: list[NodeDiff] = []
+
+    for sim, ri, ai in candidates:
+        if ri in claimed_removed or ai in claimed_added:
+            continue
+        claimed_removed.add(ri)
+        claimed_added.add(ai)
+
+        orig_ri, rc = removed[ri]
+        orig_ai, ac = added[ai]
+        moved_indices.add(orig_ri)
+        moved_indices.add(orig_ai)
+
+        # Compute text_diff if texts differ
+        old_norm = _normalize_text(rc.old_text or "")
+        new_norm = _normalize_text(ac.new_text or "")
+        text_changes = diff_text(old_norm, new_norm) if old_norm != new_norm else None
+
+        moved_entries.append(NodeDiff(
+            display_path_old=rc.display_path_old,
+            display_path_new=ac.display_path_new,
+            match_path=rc.match_path,
+            change_type="moved",
+            old_text=rc.old_text,
+            new_text=ac.new_text,
+            text_diff=text_changes,
+            section_number=ac.section_number or rc.section_number,
+            element_id_old=rc.element_id_old,
+            element_id_new=ac.element_id_new,
+        ))
+
+    # Rebuild: keep non-moved entries in original order, append moved at end
+    result = [c for i, c in enumerate(changes) if i not in moved_indices]
+    result.extend(moved_entries)
+    return result
+
+
+def _count_changes(changes: list[NodeDiff]) -> dict:
+    """Compute summary counts from the final changes list."""
+    counts = Counter(c.change_type for c in changes)
+    return {
+        t: counts.get(t, 0)
+        for t in ("added", "removed", "modified", "unchanged", "moved")
+    }
+
+
+def diff_bills(old: BillTree, new: BillTree) -> BillDiff:
+    """Compare two bill versions and produce a structured diff."""
+    pairs = match_nodes(old, new)
+    changes: list[NodeDiff] = []
+
+    for old_node, new_node in pairs:
+        if old_node is None and new_node is not None:
+            changes.append(NodeDiff(
+                display_path_old=None,
+                display_path_new=new_node.display_path,
+                match_path=new_node.match_path,
+                change_type="added",
+                old_text=None,
+                new_text=new_node.body_text,
+                text_diff=None,
+                section_number=new_node.section_number,
+                element_id_old="",
+                element_id_new=new_node.element_id,
+            ))
+
+        elif old_node is not None and new_node is None:
+            changes.append(NodeDiff(
+                display_path_old=old_node.display_path,
+                display_path_new=None,
+                match_path=old_node.match_path,
+                change_type="removed",
+                old_text=old_node.body_text,
+                new_text=None,
+                text_diff=None,
+                section_number=old_node.section_number,
+                element_id_old=old_node.element_id,
+                element_id_new="",
+            ))
+
+        elif old_node is not None and new_node is not None:
+            old_normalized = _normalize_text(old_node.body_text)
+            new_normalized = _normalize_text(new_node.body_text)
+            text_changes = diff_text(old_normalized, new_normalized)
+            if not text_changes:
+                changes.append(NodeDiff(
+                    display_path_old=old_node.display_path,
+                    display_path_new=new_node.display_path,
+                    match_path=old_node.match_path,
+                    change_type="unchanged",
+                    old_text=old_node.body_text,
+                    new_text=new_node.body_text,
+                    text_diff=None,
+                    section_number=new_node.section_number or old_node.section_number,
+                    element_id_old=old_node.element_id,
+                    element_id_new=new_node.element_id,
+                ))
+            elif _text_similarity(old_normalized, new_normalized) < _SIMILARITY_THRESHOLD:
+                # Texts too different: false match (e.g., reused section number).
+                changes.append(NodeDiff(
+                    display_path_old=old_node.display_path,
+                    display_path_new=None,
+                    match_path=old_node.match_path,
+                    change_type="removed",
+                    old_text=old_node.body_text,
+                    new_text=None,
+                    text_diff=None,
+                    section_number=old_node.section_number,
+                    element_id_old=old_node.element_id,
+                    element_id_new="",
+                ))
+                changes.append(NodeDiff(
+                    display_path_old=None,
+                    display_path_new=new_node.display_path,
+                    match_path=new_node.match_path,
+                    change_type="added",
+                    old_text=None,
+                    new_text=new_node.body_text,
+                    text_diff=None,
+                    section_number=new_node.section_number,
+                    element_id_old="",
+                    element_id_new=new_node.element_id,
+                ))
+            else:
+                changes.append(NodeDiff(
+                    display_path_old=old_node.display_path,
+                    display_path_new=new_node.display_path,
+                    match_path=old_node.match_path,
+                    change_type="modified",
+                    old_text=old_node.body_text,
+                    new_text=new_node.body_text,
+                    text_diff=text_changes,
+                    section_number=new_node.section_number or old_node.section_number,
+                    element_id_old=old_node.element_id,
+                    element_id_new=new_node.element_id,
+                ))
+
+    changes = reconcile_moves(changes)
+
+    return BillDiff(
+        old_version=old.version,
+        new_version=new.version,
+        congress=old.congress,
+        bill_type=old.bill_type,
+        bill_number=old.bill_number,
+        summary=_count_changes(changes),
+        changes=changes,
+    )
+
+
+def bill_diff_to_dict(diff: BillDiff, *, financial: bool = False) -> dict:
+    """Serialize a BillDiff to a JSON-compatible dict."""
+    changes_list = []
+    financial_change_count = 0
+
+    for c in diff.changes:
+        entry = {
+            "display_path_old": list(c.display_path_old) if c.display_path_old else None,
+            "display_path_new": list(c.display_path_new) if c.display_path_new else None,
+            "match_path": list(c.match_path),
+            "change_type": c.change_type,
+            "old_text": c.old_text,
+            "new_text": c.new_text,
+            "text_diff": c.text_diff,
+            "section_number": c.section_number,
+            "element_id_old": c.element_id_old,
+            "element_id_new": c.element_id_new,
+        }
+        if financial:
+            fc = compute_financial_change(c.old_text, c.new_text)
+            if fc is not None:
+                entry["financial"] = financial_change_to_dict(fc)
+                if fc.amounts_changed:
+                    financial_change_count += 1
+        changes_list.append(entry)
+
+    result = {
+        "old_version": diff.old_version,
+        "new_version": diff.new_version,
+        "congress": diff.congress,
+        "bill_type": diff.bill_type,
+        "bill_number": diff.bill_number,
+        "summary": diff.summary,
+        "changes": changes_list,
+    }
+    if financial:
+        result["financial_summary"] = {
+            "sections_with_financial_changes": financial_change_count,
+        }
+    return result
+
+
+# --- CLI ---
+
+
+def cmd_compare(args: argparse.Namespace) -> None:
+    old_tree = normalize_bill(Path(args.old_xml))
+    new_tree = normalize_bill(Path(args.new_xml))
+    result = diff_bills(old_tree, new_tree)
+
+    # Filter out unchanged by default
+    if not args.include_unchanged:
+        result = BillDiff(
+            old_version=result.old_version,
+            new_version=result.new_version,
+            congress=result.congress,
+            bill_type=result.bill_type,
+            bill_number=result.bill_number,
+            summary=result.summary,
+            changes=[c for c in result.changes if c.change_type != "unchanged"],
+        )
+
+    # Apply filter
+    if args.filter:
+        filter_lower = args.filter.lower()
+        result = BillDiff(
+            old_version=result.old_version,
+            new_version=result.new_version,
+            congress=result.congress,
+            bill_type=result.bill_type,
+            bill_number=result.bill_number,
+            summary=result.summary,
+            changes=[
+                c for c in result.changes
+                if filter_lower in " ".join(c.match_path)
+            ],
+        )
+
+    # Apply financial filter
+    if args.financial:
+        result = BillDiff(
+            old_version=result.old_version,
+            new_version=result.new_version,
+            congress=result.congress,
+            bill_type=result.bill_type,
+            bill_number=result.bill_number,
+            summary=result.summary,
+            changes=[
+                c for c in result.changes
+                if (fc := compute_financial_change(c.old_text, c.new_text)) is not None
+                and fc.amounts_changed
+            ],
+        )
+
+    output = json.dumps(bill_diff_to_dict(result, financial=args.financial), indent=2)
+
+    if args.output:
+        with open(args.output, "w") as f:
+            f.write(output)
+    else:
+        print(output)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Compare two bill XML versions and produce a structured diff.",
+    )
+    subparsers = parser.add_subparsers(dest="command")
+
+    compare = subparsers.add_parser("compare", help="Compare two bill versions")
+    compare.add_argument("old_xml", help="Path to older bill XML")
+    compare.add_argument("new_xml", help="Path to newer bill XML")
+    compare.add_argument("-o", "--output", help="Output JSON file (default: stdout)")
+    compare.add_argument(
+        "--include-unchanged", action="store_true",
+        help="Include unchanged nodes in output",
+    )
+    compare.add_argument(
+        "--filter", help="Only include nodes whose match_path contains this substring",
+    )
+    compare.add_argument(
+        "--financial", action="store_true",
+        help="Only show sections with financial changes; add amount details to output",
+    )
+
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    if args.command == "compare":
+        cmd_compare(args)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
