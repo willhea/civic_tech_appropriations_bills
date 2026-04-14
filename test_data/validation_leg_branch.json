@@ -1,0 +1,5228 @@
+{
+  "source": "House_and_Senate_Appropriations_FY_1994_to_present.xlsx",
+  "note": "Legislative Branch appropriations validated against enrolled bill XML across FY2014-FY2020",
+  "accounts": [
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2533000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 759000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "President Pro Tempore emeritus",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore emeritus"
+      ],
+      "expected_amount": 326000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5506000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3525000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15793000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3476000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 862000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3552000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 510000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 26818000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 85867000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1940000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 64854170
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1197000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Expense Allowances Of The Secretary Of The Senate, Ser- Geant At Arms And Doorkeeper Of The Senate, And Secretaries For The Majority And Minority Of The Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "expense allowances of the secretary of the senate, sergeant at arms and doorkeeper of the senate, and secretaries for the majority and minority of the senate"
+      ],
+      "expected_amount": 28440
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "u.s. senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 14536000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 128753000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 18871410
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 449000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "Intern compensation",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 6000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2484248
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 744466
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "President Pro Tempore emeritus",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore emeritus"
+      ],
+      "expected_amount": 319000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5399576
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3455424
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15496000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3408000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 843402
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3481810
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 474886
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 26315000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 84157000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1900000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 59912000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1176000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Expense Allowances Of The Secretary Of The Senate, Ser- Geant At Arms And Doorkeeper Of The Senate, And Secretaries For The Majority And Minority Of The Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "expense allowances of the secretary of the senate, sergeant at arms and doorkeeper of the senate, and secretaries for the majority and minority of the senate"
+      ],
+      "expected_amount": 28440
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "u.s. senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 10036000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 126595000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 18871410
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 429000000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "Intern compensation",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 5000000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2417248
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 723466
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "President Pro Tempore emeritus",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore emeritus"
+      ],
+      "expected_amount": 309000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5255576
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3359424
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15142000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3316000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 817402
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3385810
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 436886
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 25132000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 78565000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1810000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 54198000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1147000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "u.s. senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 10536000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 130076000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 18870349
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 424000000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2417248
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 723466
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5255576
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3359424
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15142000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3316000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 817402
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3385810
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 436886
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 24772000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 70900000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1810000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 49952000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Legislative Counsel of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate"
+      ],
+      "expected_amount": 5808500
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1120000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "u.s. senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 10250000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 126535000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 20870349
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 390000000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2417248
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 723466
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5255576
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3359424
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15142000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3316000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 817402
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3385810
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 436886
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 24772000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 69000000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1762000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 48797499
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Legislative Counsel of the Senate",
+      "match_path": [
+        "senate"
+      ],
+      "expected_amount": 5408500
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1120000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "expenses of the united states senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 8750000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 130000000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 21390270
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 390000000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2417248
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 723466
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5255576
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3359424
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Committee on Appropriations",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "committee on appropriations"
+      ],
+      "expected_amount": 15142000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3316000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 817402
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3385810
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 416886
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 24772000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the sergeant at arms and doorkeeper"
+      ],
+      "expected_amount": 69000000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1762000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Agency contributions for Employee Benefits, as authorized by Law, and related expenses",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "agency contributions and related expenses"
+      ],
+      "expected_amount": 47355869
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Legislative Counsel of the Senate",
+      "match_path": [
+        "senate"
+      ],
+      "expected_amount": 5408500
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1120000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Inquiries and Investigations ordered by Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "inquiries and investigations"
+      ],
+      "expected_amount": 133265000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "expenses of the united states senate caucus on international narcotics control"
+      ],
+      "expected_amount": 508000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 6250000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 128300499
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 21178002
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "Senators' Official Personnel and Office Expense Account",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "senators' official personnel and office expense account"
+      ],
+      "expected_amount": 390000000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 300000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Vice President",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the vice president"
+      ],
+      "expected_amount": 2393248
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the President Pro Tempore",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the president pro tempore"
+      ],
+      "expected_amount": 715466
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Leaders",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority leaders"
+      ],
+      "expected_amount": 5201576
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Offices of the Majority and Minority Whips",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the majority and minority whips"
+      ],
+      "expected_amount": 3321424
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "conference committees"
+      ],
+      "expected_amount": 3278000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Offices of the Secretaries of the Conference of the Majority and the Conference of the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries of the conference of the majority and the conference of the minority"
+      ],
+      "expected_amount": 805402
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Salaries of the Majority Policy Committee and the Minority Policy Committee",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "policy committees"
+      ],
+      "expected_amount": 3347810
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Chaplain",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the chaplain"
+      ],
+      "expected_amount": 410886
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "office of the secretary"
+      ],
+      "expected_amount": 24524000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Offices for the Secretary for the Majority and the Secretary for the Minority",
+      "match_path": [
+        "senate",
+        "salaries, officers and employees",
+        "offices of the secretaries for the majority and minority"
+      ],
+      "expected_amount": 1740000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Legislative Counsel of the Senate",
+      "match_path": [
+        "senate"
+      ],
+      "expected_amount": 5192000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of Senate Legal Counsel",
+      "match_path": [
+        "senate",
+        "office of senate legal counsel"
+      ],
+      "expected_amount": 1109000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Senate Caucus on International Narcotics Control",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "expenses of the united states senate caucus on international narcotics control"
+      ],
+      "expected_amount": 493822
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Secretary of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "secretary of the senate"
+      ],
+      "expected_amount": 6250000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "Office of the Sergeant at Arms and Doorkeeper of the Senate",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "sergeant at arms and doorkeeper of the senate"
+      ],
+      "expected_amount": 128210000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "miscellaneous items",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "miscellaneous items"
+      ],
+      "expected_amount": 19400000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "senate",
+      "excel_name": "mail costs",
+      "match_path": [
+        "senate",
+        "contingent expenses of the senate",
+        "official mail costs"
+      ],
+      "expected_amount": 281000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Office of Diversity and Inclusion",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "administrative provision",
+        "sec. 115"
+      ],
+      "expected_amount": 1000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Misc. items including motor vehicles, interparliamentary receptions, and gratuities to heirs of deceased employees (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "administrative provision",
+        "sec. 115"
+      ],
+      "expected_amount": 1000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "JOINT ECONOMIC COMMITTEE",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint economic committee"
+      ],
+      "expected_amount": 4203000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "JOINT CONGRESSIONAL COMMITTEE ON INAUGURAL CEREMONIES OF\n2021 ",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint congressional committee on inaugural ceremonies of 2021"
+      ],
+      "expected_amount": 1500000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "JOINT COMMITTEE ON TAXATION",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint committee on taxation"
+      ],
+      "expected_amount": 11563000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL ACCESSIBILITY SERVICES",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1509000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "CAPITOL POLICE (salaries)",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "salaries"
+      ],
+      "expected_amount": 379062000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Capitol Police General Expenses",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "general expenses"
+      ],
+      "expected_amount": 85279000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 31296000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "legislative branch",
+        "government publishing office"
+      ],
+      "expected_amount": 6704000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "legislative branch",
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 630000000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "legislative branch",
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5900000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "legislative branch",
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Intern Allowance in Member Offices",
+      "match_path": [
+        "legislative branch",
+        "senate",
+        "administrative provisions",
+        "sec. 120"
+      ],
+      "expected_amount": 8800000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Chaplain",
+      "match_path": [
+        "general provisions",
+        "sec. 205"
+      ],
+      "expected_amount": 2000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "JOINT ECONOMIC COMMITTEE",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint economic committee"
+      ],
+      "expected_amount": 4203000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "JOINT COMMITTEE ON TAXATION",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint committee on taxation"
+      ],
+      "expected_amount": 11169000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL ACCESSIBILITY SERVICES",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1486000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "CAPITOL POLICE (salaries)",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "salaries"
+      ],
+      "expected_amount": 374804000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Police General Expenses",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "general expenses"
+      ],
+      "expected_amount": 81504000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL WORKPLACE RIGHTS (formerly OFFICE OF COMPLIANCE)",
+      "match_path": [
+        "legislative branch",
+        "office of compliance",
+        "salaries and expenses"
+      ],
+      "expected_amount": 6332670
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL BUDGET OFFICE",
+      "match_path": [
+        "legislative branch",
+        "congressional budget office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 50737000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "ARCHITECT OF THE CAPITOL (general administration)",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capital construction and operations"
+      ],
+      "expected_amount": 103962000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Building",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol building"
+      ],
+      "expected_amount": 43992000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Grounds",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol grounds"
+      ],
+      "expected_amount": 16761000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Senate office Buildings",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "senate office buildings"
+      ],
+      "expected_amount": 93562000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "House Office Buildings",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "house office buildings"
+      ],
+      "expected_amount": 187098000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Power Plant",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol power plant"
+      ],
+      "expected_amount": 114050000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Library Buildings and Grounds",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "library buildings and grounds"
+      ],
+      "expected_amount": 68525000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Police Buildings, Grounds, and Security",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol police buildings, grounds and security"
+      ],
+      "expected_amount": 57714000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Botanic Garden",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "botanic garden"
+      ],
+      "expected_amount": 14759000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Capitol Visitor Center",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol visitor center"
+      ],
+      "expected_amount": 23322000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "LIBRARY OF CONGRESS",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "salaries and expenses"
+      ],
+      "expected_amount": 480052000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "COPYRIGHT OFFICE",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "copyright office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 93407000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL RESEARCH SERVICE",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "congressional research service",
+        "salaries and expenses"
+      ],
+      "expected_amount": 125688000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "Books for the Blind and Physically Handicapped",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "books for the blind and physically handicapped",
+        "salaries and expenses"
+      ],
+      "expected_amount": 52783000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79000000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 32000000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "legislative branch",
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 589749653
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "legislative branch",
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5600000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "legislative branch",
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "House of Reps Salaries and Expenses",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1200000766
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "House Leadership Offices",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 22278891
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Speaker",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 6645417
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Leader",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 2180048
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Minority Floor Leader",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 7114471
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Whip",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1886632
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Minority Whip",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1459639
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Republican Conference",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1505426
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Democratic Caucus",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1487258
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Member Representation Allowance",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "including members\u2019 clerk hire, official expenses of members, and official mail"
+      ],
+      "expected_amount": 562632498
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Standing, Special, Select Committees (Employees)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "standing committees, special and select"
+      ],
+      "expected_amount": 127053373
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Appropriations",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "committee on appropriations"
+      ],
+      "expected_amount": 23226000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "House Officers and Employees",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 204356000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Clerk (incl. Chaplain and Historian)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 27945000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Sergeant At Arms (incl. Garages and Emergency Management)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 20505000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Chief Administrative Officer",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 132865000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Inspector General",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 4968000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of General Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1492000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Parliamentarian",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 2037000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Law Revision Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 3209000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of the Legislative Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 9937000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of Interparliamentary Affairs",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 814000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Other Authorized Employees",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 584000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Allowances and Expenses",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 260454004
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Supplies, Materials, Administrative Costs, Federal Tort Claims (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 3625000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Social Security/employee benefits (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 233040004
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Transition activities for new Members (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 2273000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Wounded Warrior Program (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 2750000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Office of Congressional Ethics (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 1670000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Misc. items including motor vehicles, interparliamentary receptions, and gratuities to heirs of deceased employees (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 720000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "official mail for committees, leadership offices, and administrative offices of the House (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 190000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Business Continuity and Disaster Recovery (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 16186000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "JOINT ECONOMIC COMMITTEE",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint economic committee"
+      ],
+      "expected_amount": 4203000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "JOINT COMMITTEE ON TAXATION",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "joint committee on taxation"
+      ],
+      "expected_amount": 11169000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL ACCESSIBILITY SERVICES",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1444000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "CAPITOL POLICE (salaries)",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "salaries"
+      ],
+      "expected_amount": 351700000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "Capitol Police General Expenses",
+      "match_path": [
+        "legislative branch",
+        "capitol police",
+        "general expenses"
+      ],
+      "expected_amount": 74800000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL WORKPLACE RIGHTS (formerly OFFICE OF COMPLIANCE)",
+      "match_path": [
+        "legislative branch",
+        "office of compliance",
+        "salaries and expenses"
+      ],
+      "expected_amount": 4959000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL BUDGET OFFICE",
+      "match_path": [
+        "legislative branch",
+        "congressional budget office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 49945000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "House Historic Buildings Revitalization Trust Fund",
+      "match_path": [
+        "legislative branch",
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 10000000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79528000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 29000000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "government publishing office business operations revolving fund"
+      ],
+      "expected_amount": 8540000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "legislative branch",
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 578916653
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "legislative branch",
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5600000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "legislative branch",
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "House of Reps Salaries and Expenses",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1189050766
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "House Leadership Offices",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 22278891
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Speaker",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 6645417
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Leader",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 2180048
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Minority Floor Leader",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 7114471
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Whip",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1886632
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Minority Whip",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1459639
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Republican Conference",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1505426
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Democratic Caucus",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1487258
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Member Representation Allowance",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "including members\u2019 clerk hire, official expenses of members, and official mail"
+      ],
+      "expected_amount": 562632498
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Standing, Special, Select Committees (Employees)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "standing committees, special and select"
+      ],
+      "expected_amount": 127053373
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Appropriations",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "committee on appropriations"
+      ],
+      "expected_amount": 23271004
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "House Officers and Employees",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 181487000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Clerk (incl. Chaplain and Historian)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 26268000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Sergeant At Arms (incl. Garages and Emergency Management)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 15505000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Chief Administrative Officer",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 117165000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Inspector General",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 4963000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of General Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1444000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Parliamentarian",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1999000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Law Revision Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 3167000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of the Legislative Counsel",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 8979000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Office of Interparliamentary Affairs",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 814000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Other Authorized Employees",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1183000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Allowances and Expenses",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 272328000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Supplies, Materials, Administrative Costs, Federal Tort Claims (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 3625000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Social Security/employee benefits (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 245334000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Transition activities for new Members (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 2084000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Misc. items including motor vehicles, interparliamentary receptions, and gratuities to heirs of deceased employees (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 720000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "official mail for committees, leadership offices, and administrative offices of the House (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 190000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Business Continuity and Disaster Recovery (part of allowances and expenses)",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 16217000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL WORKPLACE RIGHTS (formerly OFFICE OF COMPLIANCE)",
+      "match_path": [
+        "legislative branch",
+        "office of compliance",
+        "salaries and expenses"
+      ],
+      "expected_amount": 3959000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL BUDGET OFFICE",
+      "match_path": [
+        "legislative branch",
+        "congressional budget office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 46500000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "ARCHITECT OF THE CAPITOL (general administration)",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capital construction and operations"
+      ],
+      "expected_amount": 92957000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Capitol Building",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol building"
+      ],
+      "expected_amount": 32584000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Capitol Grounds",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol grounds"
+      ],
+      "expected_amount": 12826000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Senate office Buildings",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "senate office buildings"
+      ],
+      "expected_amount": 88406000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "House Office Buildings",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "house office buildings"
+      ],
+      "expected_amount": 185731000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Capitol Power Plant",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol power plant"
+      ],
+      "expected_amount": 86646000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Library Buildings and Grounds",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "library buildings and grounds"
+      ],
+      "expected_amount": 47080000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Capitol Police Buildings, Grounds, and Security",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol police buildings, grounds and security"
+      ],
+      "expected_amount": 20033000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Botanic Garden",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "botanic garden"
+      ],
+      "expected_amount": 14067000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Capitol Visitor Center",
+      "match_path": [
+        "legislative branch",
+        "architect of the capitol",
+        "capitol visitor center"
+      ],
+      "expected_amount": 20557000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "LIBRARY OF CONGRESS",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "salaries and expenses"
+      ],
+      "expected_amount": 457017000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "COPYRIGHT OFFICE",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "copyright office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 68825000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL RESEARCH SERVICE",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "congressional research service",
+        "salaries and expenses"
+      ],
+      "expected_amount": 107945234
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "Books for the Blind and Physically Handicapped",
+      "match_path": [
+        "legislative branch",
+        "library of congress",
+        "books for the blind and physically handicapped",
+        "salaries and expenses"
+      ],
+      "expected_amount": 50248000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79736000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 29500000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "legislative branch",
+        "government publishing office",
+        "government publishing office business operations revolving fund"
+      ],
+      "expected_amount": 7832000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "legislative branch",
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 544505919
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "legislative branch",
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5600000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "legislative branch",
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "House of Reps Salaries and Expenses",
+      "match_path": [
+        "house of representatives",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1180736000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "House Leadership Offices",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 22278891
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Speaker",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 6645417
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Leader",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 2180048
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Minority Floor Leader",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 7114471
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Whip",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1886632
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Minority Whip",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1459639
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Republican Conference",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1505426
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Democratic Caucus",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1487258
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Member Representation Allowance",
+      "match_path": [
+        "house of representatives",
+        "including members\u2019 clerk hire, official expenses of members, and official mail"
+      ],
+      "expected_amount": 554317732
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Standing, Special, Select Committees (Employees)",
+      "match_path": [
+        "house of representatives",
+        "standing committees, special and select"
+      ],
+      "expected_amount": 123903173
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Appropriations",
+      "match_path": [
+        "house of representatives",
+        "committee on appropriations"
+      ],
+      "expected_amount": 23271004
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "House Officers and Employees",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 178531768
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Clerk (incl. Chaplain and Historian)",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 24980898
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Sergeant At Arms (incl. Garages and Emergency Management)",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 14827120
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Chief Administrative Officer",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 117165000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Inspector General",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 4741809
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of General Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1413450
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Parliamentarian",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1974606
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Law Revision Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 3119766
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of the Legislative Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 8352975
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of Interparliamentary Affairs",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 814069
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Other Authorized Employees",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1142075
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Allowances and Expenses",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 278433432
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Supplies, Materials, Administrative Costs, Federal Tort Claims (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 3625236
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Social Security/employee benefits (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 251629425
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Transition activities for new Members (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 2084000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Office of Congressional Ethics (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 1467030
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Misc. items including motor vehicles, interparliamentary receptions, and gratuities to heirs of deceased employees (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 720247
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "official mail for committees, leadership offices, and administrative offices of the House (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 190486
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Business Continuity and Disaster Recovery (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 16217008
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL WORKPLACE RIGHTS (formerly OFFICE OF COMPLIANCE)",
+      "match_path": [
+        "office of compliance",
+        "salaries and expenses"
+      ],
+      "expected_amount": 3959000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL BUDGET OFFICE",
+      "match_path": [
+        "congressional budget office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 46500000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "ARCHITECT OF THE CAPITOL (general administration)",
+      "match_path": [
+        "architect of the capitol"
+      ],
+      "expected_amount": 91589000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Capitol Building",
+      "match_path": [
+        "architect of the capitol",
+        "capitol building"
+      ],
+      "expected_amount": 46737000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Capitol Grounds",
+      "match_path": [
+        "architect of the capitol",
+        "capitol grounds"
+      ],
+      "expected_amount": 11880000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Senate office Buildings",
+      "match_path": [
+        "architect of the capitol",
+        "senate office buildings"
+      ],
+      "expected_amount": 84221000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "House Office Buildings",
+      "match_path": [
+        "architect of the capitol",
+        "house office buildings"
+      ],
+      "expected_amount": 174962000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Capitol Power Plant",
+      "match_path": [
+        "architect of the capitol",
+        "capitol power plant"
+      ],
+      "expected_amount": 94722499
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Library Buildings and Grounds",
+      "match_path": [
+        "architect of the capitol",
+        "library buildings and grounds"
+      ],
+      "expected_amount": 40689000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Capitol Police Buildings, Grounds, and Security",
+      "match_path": [
+        "architect of the capitol",
+        "capitol police buildings, grounds, and security"
+      ],
+      "expected_amount": 25434000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Botanic Garden",
+      "match_path": [
+        "architect of the capitol",
+        "botanic garden"
+      ],
+      "expected_amount": 12113000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Capitol Visitor Center",
+      "match_path": [
+        "architect of the capitol",
+        "capitol visitor center"
+      ],
+      "expected_amount": 20557000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "LIBRARY OF CONGRESS",
+      "match_path": [
+        "library of congress",
+        "salaries and expenses"
+      ],
+      "expected_amount": 425971000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "COPYRIGHT OFFICE",
+      "match_path": [
+        "library of congress",
+        "copyright office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 58875000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL RESEARCH SERVICE",
+      "match_path": [
+        "library of congress",
+        "congressional research service",
+        "salaries and expenses"
+      ],
+      "expected_amount": 106945000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "Books for the Blind and Physically Handicapped",
+      "match_path": [
+        "library of congress",
+        "books for the blind and physically handicapped",
+        "salaries and expenses"
+      ],
+      "expected_amount": 50248000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79736000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 30500000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "government publishing office",
+        "government publishing office business operations revolving fund"
+      ],
+      "expected_amount": 6832000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 531000000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5600000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "Chaplain",
+      "match_path": [
+        "general provisions",
+        "sec. 205"
+      ],
+      "expected_amount": 2000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "government publishing office",
+        "congressional publishing"
+      ],
+      "expected_amount": 79736000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "government publishing office",
+        "public information programs of the superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 31500000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "government publishing office",
+        "government publishing office business operations revolving fund"
+      ],
+      "expected_amount": 8757000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 522000000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "OPEN WORLD LEADERSHIP CENTER TRUST FUND",
+      "match_path": [
+        "open world leadership center trust fund"
+      ],
+      "expected_amount": 5700000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "JOHN C. STENNIS CENTER FOR PUBLIC SERVICE TRAINING AND DEVELOPMENT",
+      "match_path": [
+        "john c. stennis center for public service training and development"
+      ],
+      "expected_amount": 430000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "House of Reps Salaries and Expenses",
+      "match_path": [
+        "house of representatives",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1180736000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "House Leadership Offices",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 22278891
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Speaker",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 6645417
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Leader",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 2180048
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Minority Floor Leader",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 7114471
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Majority Whip",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1886632
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Minority Whip",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1459639
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Republican Conference",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1505426
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Democratic Caucus",
+      "match_path": [
+        "house of representatives",
+        "house leadership offices"
+      ],
+      "expected_amount": 1487258
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Member Representation Allowance",
+      "match_path": [
+        "house of representatives",
+        "including members\u2019 clerk hire, official expenses of members, and official mail"
+      ],
+      "expected_amount": 554317732
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Standing, Special, Select Committees (Employees)",
+      "match_path": [
+        "house of representatives",
+        "standing committees, special and select"
+      ],
+      "expected_amount": 123903173
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Appropriations",
+      "match_path": [
+        "house of representatives",
+        "committee on appropriations"
+      ],
+      "expected_amount": 23271004
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "House Officers and Employees",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 172654864
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Clerk (incl. Chaplain and Historian)",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 24009473
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Sergeant At Arms (incl. Garages and Emergency Management)",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 14776729
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Chief Administrative Officer",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 113100000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Inspector General",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 4741809
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of General Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1340987
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Parliamentarian",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 1952249
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Law Revision Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 3087587
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of the Legislative Counsel",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 8352975
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of Interparliamentary Affairs",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 814069
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Other Authorized Employees",
+      "match_path": [
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 478986
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Allowances and Expenses",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 284310336
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Supplies, Materials, Administrative Costs, Federal Tort Claims (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 3502789
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Social Security/employee benefits (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 258081289
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Wounded Warrior Program (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 2500000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Office of Congressional Ethics (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 1467030
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Misc. items including motor vehicles, interparliamentary receptions, and gratuities to heirs of deceased employees (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 720247
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "official mail for committees, leadership offices, and administrative offices of the House (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 190486
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Business Continuity and Disaster Recovery (part of allowances and expenses)",
+      "match_path": [
+        "house of representatives",
+        "allowances and expenses"
+      ],
+      "expected_amount": 16217008
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "JOINT ECONOMIC COMMITTEE",
+      "match_path": [
+        "joint items",
+        "joint economic committee"
+      ],
+      "expected_amount": 4203000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "JOINT COMMITTEE ON TAXATION",
+      "match_path": [
+        "joint items",
+        "joint committee on taxation"
+      ],
+      "expected_amount": 10004000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL ACCESSIBILITY SERVICES",
+      "match_path": [
+        "joint items",
+        "office of congressional accessibility services",
+        "salaries and expenses"
+      ],
+      "expected_amount": 1387000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "CAPITOL POLICE (salaries)",
+      "match_path": [
+        "capitol police",
+        "salaries"
+      ],
+      "expected_amount": 279000000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Capitol Police General Expenses",
+      "match_path": [
+        "capitol police",
+        "salaries",
+        "general expenses"
+      ],
+      "expected_amount": 59459000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "OFFICE OF CONGRESSIONAL WORKPLACE RIGHTS (formerly OFFICE OF COMPLIANCE)",
+      "match_path": [
+        "office of compliance",
+        "salaries and expenses"
+      ],
+      "expected_amount": 3868000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "CONGRESSIONAL BUDGET OFFICE",
+      "match_path": [
+        "congressional budget office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 45700000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "ARCHITECT OF THE CAPITOL (general administration)",
+      "match_path": [
+        "architect of the capitol",
+        "general administration"
+      ],
+      "expected_amount": 90276946
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Capitol Building",
+      "match_path": [
+        "architect of the capitol",
+        "capitol building"
+      ],
+      "expected_amount": 61376000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Senate office Buildings",
+      "match_path": [
+        "architect of the capitol",
+        "senate office buildings"
+      ],
+      "expected_amount": 72990000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "House Office Buildings",
+      "match_path": [
+        "architect of the capitol",
+        "house office buildings"
+      ],
+      "expected_amount": 71622000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Capitol Power Plant",
+      "match_path": [
+        "architect of the capitol",
+        "capitol power plant"
+      ],
+      "expected_amount": 116678000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Library Buildings and Grounds",
+      "match_path": [
+        "architect of the capitol",
+        "library buildings and grounds"
+      ],
+      "expected_amount": 53391000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Capitol Police Buildings, Grounds, and Security",
+      "match_path": [
+        "architect of the capitol",
+        "capitol police buildings, grounds, and security"
+      ],
+      "expected_amount": 19348000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Botanic Garden",
+      "match_path": [
+        "architect of the capitol",
+        "botanic garden"
+      ],
+      "expected_amount": 11856000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "Capitol Visitor Center",
+      "match_path": [
+        "architect of the capitol",
+        "capitol visitor center"
+      ],
+      "expected_amount": 20632000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE (binding and printing)",
+      "match_path": [
+        "government printing office",
+        "congressional printing and binding"
+      ],
+      "expected_amount": 79736000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "OFFICE OF SUPERINTENDENT OF DOCUMENTS (salaries and expenses)",
+      "match_path": [
+        "government printing office",
+        "office of superintendent of documents",
+        "salaries and expenses"
+      ],
+      "expected_amount": 31500000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT PUBLISHING OFFICE REVOLVING FUND",
+      "match_path": [
+        "government printing office",
+        "government printing office revolving fund"
+      ],
+      "expected_amount": 8064000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "GOVERNMENT ACCOUNTABILITY OFFICE",
+      "match_path": [
+        "government accountability office",
+        "salaries and expenses"
+      ],
+      "expected_amount": 505383000
+    }
+  ]
+}

@@ -591,25 +591,73 @@ class TestNormalizeBillIntegration:
         assert tree.bill_type == "hr"
         assert tree.bill_number == 4366
         assert tree.version == "reported-in-house"
-        assert len(tree.nodes) > 0
+        assert len(tree.nodes) == 164
+
+    def test_reported_in_house_has_expected_paths(self):
+        tree = normalize_bill(REPORTED_BILL_PATH)
         match_paths = [n.match_path for n in tree.nodes]
-        army_path = ("department of defense", "military construction, army")
-        assert army_path in match_paths
+        assert ("department of defense", "military construction, army") in match_paths
+        assert ("department of defense", "military construction, navy and marine corps") in match_paths
+        assert ("department of veterans affairs", "veterans health administration", "medical services") in match_paths
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_bill_produces_nodes(self):
+    def test_enrolled_bill_node_count(self):
         tree = normalize_bill(ENROLLED_BILL_PATH)
         assert tree.congress == 118
-        assert len(tree.nodes) > 50
-        match_paths = [n.match_path for n in tree.nodes]
-        army_path = ("department of defense", "military construction, army")
-        assert army_path in match_paths
+        assert len(tree.nodes) == 1060
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_has_multiple_divisions_in_display(self):
+    def test_enrolled_no_empty_body_text(self):
         tree = normalize_bill(ENROLLED_BILL_PATH)
-        div_labels = set()
-        for node in tree.nodes:
-            if node.display_path and node.display_path[0].startswith("Division"):
-                div_labels.add(node.display_path[0])
-        assert len(div_labels) >= 6
+        empty = [n for n in tree.nodes if not n.body_text]
+        assert empty == [], f"Nodes with empty body_text: {[n.display_path for n in empty[:5]]}"
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_enrolled_has_all_seven_divisions(self):
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        div_labels = sorted(set(
+            n.display_path[0] for n in tree.nodes
+            if n.display_path and n.display_path[0].startswith("Division")
+        ))
+        assert len(div_labels) == 7
+        expected_prefixes = [
+            "Division A:", "Division B:", "Division C:", "Division D:",
+            "Division E:", "Division F:", "Division G:",
+        ]
+        for prefix in expected_prefixes:
+            assert any(d.startswith(prefix) for d in div_labels), f"Missing {prefix}"
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_enrolled_division_node_counts(self):
+        """Each division has an expected number of nodes."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        counts = {}
+        for n in tree.nodes:
+            div = n.display_path[0] if n.display_path else "unknown"
+            counts[div] = counts.get(div, 0) + 1
+        # Verify by division letter prefix
+        by_letter = {}
+        for div, count in counts.items():
+            letter = div.split(":")[0].replace("Division ", "") if "Division" in div else div
+            by_letter[letter] = count
+        assert by_letter["A"] == 162
+        assert by_letter["B"] == 178
+        assert by_letter["C"] == 173
+        assert by_letter["D"] == 107
+        assert by_letter["E"] == 186
+        assert by_letter["F"] == 239
+        assert by_letter["G"] == 15
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_enrolled_content_matches_path(self):
+        """Spot-check that node body_text contains content appropriate to its path."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        nodes_by_path = {n.match_path: n for n in tree.nodes}
+
+        # MilCon Army should mention construction/public works
+        army = nodes_by_path[("department of defense", "military construction, army")]
+        assert "public works" in army.body_text.lower() or "construction" in army.body_text.lower()
+
+        # VA Medical Services should mention inpatient/outpatient care
+        med = nodes_by_path[("department of veterans affairs", "veterans health administration", "medical services")]
+        assert "inpatient" in med.body_text.lower() or "outpatient" in med.body_text.lower()

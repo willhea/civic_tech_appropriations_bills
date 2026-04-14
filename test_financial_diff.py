@@ -266,6 +266,56 @@ class TestCliFinancial:
             assert "financial" not in change
 
 
+class TestAmountSanityChecks:
+    """Sanity checks on extracted amounts from real bill XML."""
+
+    ENROLLED_PATH = "bills/118-hr-4366/6_enrolled-bill.xml"
+
+    @staticmethod
+    def _skip_if_missing(*paths):
+        import os
+        for p in paths:
+            if not os.path.exists(p):
+                import pytest
+                pytest.skip(f"Test XML not found: {p}")
+
+    def test_nodes_with_amounts_count(self):
+        from pathlib import Path
+        from bill_tree import normalize_bill
+
+        self._skip_if_missing(self.ENROLLED_PATH)
+        tree = normalize_bill(Path(self.ENROLLED_PATH))
+
+        count = sum(1 for n in tree.nodes if extract_amounts(n.body_text))
+        assert count == 555
+
+    def test_all_amounts_in_valid_range(self):
+        from pathlib import Path
+        from bill_tree import normalize_bill
+
+        self._skip_if_missing(self.ENROLLED_PATH)
+        tree = normalize_bill(Path(self.ENROLLED_PATH))
+
+        for node in tree.nodes:
+            for amount in extract_amounts(node.body_text):
+                assert 1 <= amount <= 999_999_999_999, (
+                    f"Amount ${amount:,} out of range at {node.match_path}"
+                )
+
+    def test_no_node_exceeds_max_amounts(self):
+        from pathlib import Path
+        from bill_tree import normalize_bill
+
+        self._skip_if_missing(self.ENROLLED_PATH)
+        tree = normalize_bill(Path(self.ENROLLED_PATH))
+
+        for node in tree.nodes:
+            amounts = extract_amounts(node.body_text)
+            assert len(amounts) <= 30, (
+                f"Node {node.match_path} has {len(amounts)} amounts (max 30)"
+            )
+
+
 class TestIntegrationFinancial:
     """Integration tests against real bill XML files."""
 
