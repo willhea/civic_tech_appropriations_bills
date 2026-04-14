@@ -1,6 +1,6 @@
 """Tests for HTML bill diff report formatter."""
 
-from formatters.html import word_diff
+from formatters.html import build_financial_table, word_diff
 
 
 class TestWordDiff:
@@ -70,3 +70,106 @@ class TestWordDiff:
         # With threshold=0.0, even very different texts produce a diff
         result = word_diff("a b c", "x y z", threshold=0.0)
         assert result is not None
+
+
+def _change(*, change_type="modified", path=None, financial=None, index=0):
+    """Build a minimal change dict for testing."""
+    return {
+        "display_path_old": path or ["DEPT", "Section"],
+        "display_path_new": path or ["DEPT", "Section"],
+        "match_path": [p.lower() for p in (path or ["DEPT", "Section"])],
+        "change_type": change_type,
+        "old_text": "old",
+        "new_text": "new",
+        "text_diff": [],
+        "section_number": "",
+        "element_id_old": f"old-{index}",
+        "element_id_new": f"new-{index}",
+        **({"financial": financial} if financial else {}),
+    }
+
+
+class TestBuildFinancialTable:
+    def test_single_amount_row(self):
+        changes = [_change(financial={
+            "old_amounts": [1000000],
+            "new_amounts": [2000000],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        assert "<table" in html
+        assert "$1,000,000" in html
+        assert "$2,000,000" in html
+        assert "+$1,000,000" in html
+
+    def test_multiple_amounts_sub_rows(self):
+        changes = [_change(financial={
+            "old_amounts": [1000000, 500000],
+            "new_amounts": [2000000, 600000],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        assert "$1,000,000" in html
+        assert "$500,000" in html
+        assert "$2,000,000" in html
+        assert "$600,000" in html
+
+    def test_mismatched_amount_counts(self):
+        changes = [_change(financial={
+            "old_amounts": [1000000, 500000],
+            "new_amounts": [2000000, 600000, 300000],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        # Should render without error and include all amounts
+        assert "$300,000" in html
+        assert "$1,000,000" in html
+
+    def test_added_section_no_old_amounts(self):
+        changes = [_change(
+            change_type="added",
+            financial={
+                "old_amounts": [],
+                "new_amounts": [5000000],
+                "amounts_changed": True,
+            },
+        )]
+        html = build_financial_table(changes)
+        assert "$5,000,000" in html
+        assert "\u2014" in html  # em-dash for missing old amount
+
+    def test_removed_section_no_new_amounts(self):
+        changes = [_change(
+            change_type="removed",
+            financial={
+                "old_amounts": [3000000],
+                "new_amounts": [],
+                "amounts_changed": True,
+            },
+        )]
+        html = build_financial_table(changes)
+        assert "$3,000,000" in html
+        assert "\u2014" in html  # em-dash for missing new amount
+
+    def test_no_financial_changes_returns_empty(self):
+        changes = [_change()]  # no financial key
+        html = build_financial_table(changes)
+        assert html == ""
+
+    def test_row_links_to_change_anchor(self):
+        changes = [_change(financial={
+            "old_amounts": [100],
+            "new_amounts": [200],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        assert 'href="#change-0"' in html
+
+    def test_percentage_change(self):
+        changes = [_change(financial={
+            "old_amounts": [1000000],
+            "new_amounts": [1500000],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        assert "50.0%" in html
