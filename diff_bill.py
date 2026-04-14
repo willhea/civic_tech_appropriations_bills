@@ -15,13 +15,16 @@ from bill_tree import BillNode, BillTree, normalize_bill
 # --- Financial amount extraction ---
 
 _DOLLAR_RE = re.compile(r"\$[\d,]+")
+_AMENDMENT_RE = re.compile(r"\((?:increased|reduced|decreased) by \$[\d,]+\)")
 
 
 def extract_amounts(text: str) -> tuple[int, ...]:
     """Find all dollar amounts in text.
 
     Returns tuple of integer values in document order. Filters $0 amounts.
+    Strips floor amendment annotations like (increased by $X) before scanning.
     """
+    text = _AMENDMENT_RE.sub("", text)
     results = []
     for match in _DOLLAR_RE.finditer(text):
         value = int(match.group().replace("$", "").replace(",", ""))
