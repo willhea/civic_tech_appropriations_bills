@@ -363,6 +363,22 @@ class TestFormatHtml:
         assert "reported-in-house" in html
         assert "engrossed-in-house" in html
 
+    def test_header_shows_version_numbers(self):
+        diff = _sample_diff_dict()
+        diff["old_version_number"] = 1
+        diff["new_version_number"] = 2
+        html = format_html(diff)
+        # Should show version numbers alongside names
+        assert "v1" in html.lower() or "version 1" in html.lower()
+        assert "v2" in html.lower() or "version 2" in html.lower()
+
+    def test_header_without_version_numbers(self):
+        """Version numbers are optional, header still works without them."""
+        diff = _sample_diff_dict()
+        # No version_number keys
+        html = format_html(diff)
+        assert "reported-in-house" in html
+
     def test_summary_counts(self):
         html = format_html(_sample_diff_dict())
         assert "added" in html

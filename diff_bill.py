@@ -457,6 +457,13 @@ def cmd_compare(args: argparse.Namespace) -> None:
     include_financial = args.financial or fmt == "html"
     diff_dict = bill_diff_to_dict(result, financial=include_financial)
 
+    # Extract version numbers from filenames (e.g., "1_reported-in-house.xml" -> 1)
+    for key, xml_arg in (("old_version_number", args.old_xml), ("new_version_number", args.new_xml)):
+        stem = Path(xml_arg).stem
+        prefix = stem.split("_", 1)[0]
+        if prefix.isdigit():
+            diff_dict[key] = int(prefix)
+
     if fmt == "html":
         from formatters.html import format_html
         output = format_html(diff_dict)

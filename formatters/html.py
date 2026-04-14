@@ -32,6 +32,13 @@ def word_diff(old_text: str, new_text: str, threshold: float = 0.4) -> str | Non
     return " ".join(parts)
 
 
+def _version_label(name: str, number: int | None) -> str:
+    """Format a version label, optionally prefixed with 'v1:', 'v2:', etc."""
+    if number is not None:
+        return f"v{number}: {name}"
+    return name
+
+
 def _fmt_dollar(amount: int) -> str:
     """Format an integer as a dollar string with commas."""
     return f"${amount:,}"
@@ -391,6 +398,8 @@ def format_html(diff_dict: dict) -> str:
     congress = diff_dict.get("congress", "")
     old_version = escape(diff_dict.get("old_version", ""))
     new_version = escape(diff_dict.get("new_version", ""))
+    old_version_num = diff_dict.get("old_version_number")
+    new_version_num = diff_dict.get("new_version_number")
     summary = diff_dict.get("summary", {})
     changes = diff_dict.get("changes", [])
 
@@ -435,7 +444,7 @@ def format_html(diff_dict: dict) -> str:
 <div class="main">
 <div class="report-header">
 <h1>{bill_type} {bill_number} &mdash; Bill Comparison</h1>
-<div class="versions">{old_version} &rarr; {new_version} &middot; {congress}th Congress</div>
+<div class="versions">{_version_label(old_version, old_version_num)} &rarr; {_version_label(new_version, new_version_num)} &middot; {congress}th Congress</div>
 <div class="summary-bar">{"".join(summary_items)}</div>
 </div>
 {financial_section}
