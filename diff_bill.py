@@ -449,7 +449,16 @@ def cmd_compare(args: argparse.Namespace) -> None:
             ],
         )
 
-    output = json.dumps(bill_diff_to_dict(result, financial=args.financial), indent=2)
+    fmt = getattr(args, "format", "json")
+    # HTML always gets financial enrichment; JSON only when --financial is passed
+    include_financial = args.financial or fmt == "html"
+    diff_dict = bill_diff_to_dict(result, financial=include_financial)
+
+    if fmt == "html":
+        from formatters.html import format_html
+        output = format_html(diff_dict)
+    else:
+        output = json.dumps(diff_dict, indent=2)
 
     if args.output:
         with open(args.output, "w") as f:
@@ -478,6 +487,10 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument(
         "--financial", action="store_true",
         help="Only show sections with financial changes; add amount details to output",
+    )
+    compare.add_argument(
+        "--format", choices=["json", "html"], default="json",
+        help="Output format (default: json)",
     )
 
     return parser

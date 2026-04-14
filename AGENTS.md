@@ -17,3 +17,5 @@ uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 - `diff_bill.py` tests use helper functions `_node()` and `_tree()` to build fixtures
 - Bill DTD XML uses flat-sibling `appropriations-major/intermediate/small` tags (not nested)
 - Dollar amounts are embedded in prose `<text>` elements, extracted via regex
+- `formatters/html.py` tests use `_change()` and `_sample_diff_dict()` helpers to build fixtures
+- HTML formatter functions (`word_diff`, `build_financial_table`, etc.) are individually testable

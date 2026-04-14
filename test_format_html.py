@@ -405,3 +405,59 @@ class TestFormatHtml:
         })
         html = format_html(diff)
         assert "<!DOCTYPE html>" in html
+
+
+class TestCliIntegration:
+    def test_format_flag_accepted(self):
+        from diff_bill import build_parser
+        parser = build_parser()
+        args = parser.parse_args(["compare", "a.xml", "b.xml", "--format", "html"])
+        assert args.format == "html"
+
+    def test_format_default_is_json(self):
+        from diff_bill import build_parser
+        parser = build_parser()
+        args = parser.parse_args(["compare", "a.xml", "b.xml"])
+        assert args.format == "json"
+
+    def test_format_html_output(self, tmp_path):
+        """HTML format produces an HTML file via the CLI."""
+        import subprocess
+        old = "output/118-hr-4366/1_reported-in-house.xml"
+        new = "output/118-hr-4366/2_engrossed-in-house.xml"
+        import os
+        if not os.path.exists(old) or not os.path.exists(new):
+            import pytest
+            pytest.skip("Real bill XMLs not available")
+
+        out = tmp_path / "report.html"
+        result = subprocess.run(
+            ["uv", "run", "python", "diff_bill.py", "compare", old, new,
+             "--format", "html", "-o", str(out)],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 0, result.stderr
+        content = out.read_text()
+        assert content.startswith("<!DOCTYPE html>")
+        assert "Financial Summary" in content
+
+    def test_format_html_includes_financial_without_flag(self, tmp_path):
+        """HTML format auto-enriches with financial data even without --financial."""
+        import subprocess
+        old = "output/118-hr-4366/1_reported-in-house.xml"
+        new = "output/118-hr-4366/2_engrossed-in-house.xml"
+        import os
+        if not os.path.exists(old) or not os.path.exists(new):
+            import pytest
+            pytest.skip("Real bill XMLs not available")
+
+        out = tmp_path / "report.html"
+        # Note: no --financial flag
+        result = subprocess.run(
+            ["uv", "run", "python", "diff_bill.py", "compare", old, new,
+             "--format", "html", "-o", str(out)],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 0, result.stderr
+        content = out.read_text()
+        assert "$" in content  # Financial data present
