@@ -421,6 +421,7 @@ class TestFormatHtml:
         })
         html = format_html(diff)
         assert "<!DOCTYPE html>" in html
+        assert "No changes found" in html
 
 
 class TestCliIntegration:

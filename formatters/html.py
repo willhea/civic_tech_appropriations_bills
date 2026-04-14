@@ -449,7 +449,7 @@ def format_html(diff_dict: dict) -> str:
 </div>
 {financial_section}
 <h2>Changes</h2>
-{cards}
+{cards if cards.strip() else '<p class="no-changes">No changes found between these versions.</p>'}
 </div>
 </div>
 <div class="nav-buttons">
