@@ -4,19 +4,39 @@ Downloads U.S. bill text from Congress.gov and compares versions structurally. S
 
 Works on any bill type (HR, S, HJRES, etc.), not just appropriations.
 
-## Setup
+## Prerequisites
+
+- **Python 3.12+** - Download from https://www.python.org/downloads/ if you don't have it. To check, open a terminal (Terminal on Mac, Command Prompt on Windows) and type `python3 --version`.
+- **uv** (Python package manager) - Open a terminal and run:
+  - Mac/Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+  - Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+## Quickstart
+
+Generate an HTML report comparing two versions of a bill:
 
 ```bash
+# 1. Install dependencies (run this once, from the project folder)
 uv sync
+
+# 2. Download all versions of a bill
+#    Example: HR 4366 from the 118th Congress (2023-2024)
+uv run python fetch_bills.py download 118 hr 4366
+
+# 3. Generate an HTML report comparing two versions
+uv run python diff_bill.py compare \
+  output/118-hr-4366/1_reported-in-house.xml \
+  output/118-hr-4366/2_engrossed-in-house.xml \
+  --format html -o report.html
 ```
 
-Copy your API key into `.env`:
+Open `report.html` in any browser to view the comparison. No additional software needed.
+
+The tool works without an API key using a free demo key (limited to 30 requests per hour). For heavier use, get a free key at https://api.congress.gov/sign-up/ and save it in a file called `.env` in the project folder:
 
 ```
 CONGRESS_API_KEY=your_key_here
 ```
-
-Get a free key at https://api.congress.gov/sign-up/. The script falls back to the demo key (30 req/hr) if no key is set.
 
 ## Downloading Bills
 
@@ -88,11 +108,11 @@ Financial data is automatically included in the HTML report without needing the 
 
 ### Text normalization
 
-The tool normalizes bill text before comparing so that formatting differences between versions don't appear as substantive changes. The following will not show up as modifications:
+The tool focuses on substantive changes and ignores formatting differences between bill versions. The following will not be flagged as changes:
 
-- **Whitespace differences.** Runs of spaces, tabs, and newlines are collapsed to single spaces. Different XML formatting between versions is invisible.
-- **List marker spacing.** House and Senate versions sometimes differ in whether there's a space before parenthetical list markers like `(1)`, `(A)`, `(iv)`. For example, `and (2)adheres` vs `and(2)adheres`. These are formatting conventions with no legal significance and are normalized out.
-- **Amendment annotations.** Engrossed bill versions (the text after a floor vote) contain procedural annotations recording adopted amendments, e.g., `$1,517,455,000 (increased by $103,000,000) (reduced by $103,000,000)`. These `(increased by $X)` and `(reduced by $X)` parentheticals are bookkeeping, not actual appropriation amounts. The base amount already reflects the final figure. The tool strips these before comparing dollar amounts so they don't create phantom financial changes.
+- Spacing and line break differences between versions
+- Differences in spacing around numbered list markers like (1), (A), or (iv), which vary between House and Senate formatting conventions
+- Procedural amendment annotations like "(increased by $103,000,000) (reduced by $103,000,000)" that appear in engrossed versions after floor votes. These are bookkeeping notations, not actual funding changes. The dollar amounts shown in the report reflect the final figures.
 
 ## Output Structure
 
@@ -103,6 +123,25 @@ output/
     2_engrossed-in-house.xml
     6_enrolled-bill.xml
 ```
+
+Files are numbered in chronological order. Each number represents a version of the bill as it moved through Congress.
+
+## Bill versions
+
+A bill goes through several versions as it moves through the legislative process. Common versions for appropriations bills:
+
+| Version | What it means |
+|---------|--------------|
+| introduced-in-house | The bill as originally filed |
+| reported-in-house | The bill as approved by committee, before a full House vote |
+| engrossed-in-house | The bill as passed by the House, including any floor amendments |
+| placed-on-calendar-senate | The House-passed bill placed on the Senate calendar for consideration |
+| referred-in-senate | The House-passed bill referred to a Senate committee |
+| engrossed-amendment-senate | The Senate's version, often substantially different |
+| engrossed-amendment-house | The House's response to the Senate version |
+| enrolled-bill | The final text signed into law |
+
+**Which versions to compare:** Adjacent versions (v1 vs v2, v2 vs v3) show what changed in each step of the process. These are the most useful comparisons. Comparing distant versions (v1 vs v6) shows cumulative changes but can be overwhelming, especially when a bill is folded into an omnibus package with hundreds of new sections from other bills.
 
 ## Architecture
 
