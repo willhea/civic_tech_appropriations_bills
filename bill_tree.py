@@ -54,13 +54,19 @@ def find_bill_body(root: ET.Element) -> ET.Element:
     raise ValueError("Could not find bill body in XML")
 
 
+_LIST_MARKER_RE = re.compile(r" (?=\((?:[0-9]{1,2}|[a-z]{1,4}|[A-Z])\))")
+
+
 def extract_text_content(element: ET.Element) -> str:
     """Recursively extract all text content from an XML element.
 
-    Collapses runs of whitespace into single spaces so that formatting
-    differences between bill versions don't appear as textual changes.
+    Collapses runs of whitespace into single spaces and removes spaces
+    before parenthetical list markers like (1), (A), (iv) so that
+    formatting differences between bill versions don't appear as
+    textual changes.
     """
-    return " ".join("".join(element.itertext()).split())
+    text = " ".join("".join(element.itertext()).split())
+    return _LIST_MARKER_RE.sub("", text)
 
 
 def get_header_text(element: ET.Element) -> str:
