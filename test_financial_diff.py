@@ -41,6 +41,33 @@ class TestExtractAmounts:
         )
         assert extract_amounts(text) == (15072388000, 71000000000, 3034205000)
 
+    def test_amendment_increased_reduced_stripped(self):
+        text = (
+            "For construction, $1,517,455,000 "
+            "(increased by $103,000,000) (reduced by $103,000,000), "
+            "to remain available until September 30, 2028."
+        )
+        assert extract_amounts(text) == (1517455000,)
+
+    def test_multiple_amendment_annotations_stripped(self):
+        text = (
+            "For operating expenses, $3,899,000,000: "
+            "$3,899,000,000 (reduced by $1,000,000) "
+            "(increased by $1,000,000) (reduced by $1,000,000) "
+            "(increased by $1,000,000) (reduced by $1,000,000) "
+            "(increased by $1,000,000) (increased by $10,000,000)"
+            "(reduced by $10,000,000): Provided, That expenses."
+        )
+        assert extract_amounts(text) == (3899000000, 3899000000)
+
+    def test_single_amendment_stripped(self):
+        text = "For expenses, $500,000 (increased by $200,000), to remain."
+        assert extract_amounts(text) == (500000,)
+
+    def test_non_amendment_parenthetical_kept(self):
+        text = "For expenses, $500,000 (not to exceed $100,000) for operations."
+        assert extract_amounts(text) == (500000, 100000)
+
 
 class TestComputeFinancialChange:
     def test_amounts_changed(self):
