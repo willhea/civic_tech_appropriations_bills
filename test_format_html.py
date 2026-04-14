@@ -1,6 +1,11 @@
 """Tests for HTML bill diff report formatter."""
 
-from formatters.html import build_change_card, build_financial_table, word_diff
+from formatters.html import (
+    build_change_card,
+    build_financial_table,
+    build_sidebar,
+    word_diff,
+)
 
 
 class TestWordDiff:
@@ -251,3 +256,46 @@ class TestBuildChangeCard:
         html = build_change_card(change, 0)
         assert "&lt;" in html
         assert "&amp;" in html
+
+
+class TestBuildSidebar:
+    def test_nav_items_present(self):
+        changes = [
+            _change(path=["Title I", "Army"], change_type="modified", index=0),
+            _change(path=["Title I", "Navy"], change_type="added", index=1),
+        ]
+        html = build_sidebar(changes)
+        assert "<nav" in html
+        assert "Army" in html
+        assert "Navy" in html
+
+    def test_links_to_change_anchors(self):
+        changes = [
+            _change(path=["DEPT", "Section A"], index=0),
+            _change(path=["DEPT", "Section B"], index=1),
+        ]
+        html = build_sidebar(changes)
+        assert 'href="#change-0"' in html
+        assert 'href="#change-1"' in html
+
+    def test_change_type_badge(self):
+        changes = [
+            _change(change_type="modified", index=0),
+            _change(change_type="added", index=1),
+            _change(change_type="removed", index=2),
+        ]
+        html = build_sidebar(changes)
+        assert "modified" in html.lower()
+        assert "added" in html.lower()
+        assert "removed" in html.lower()
+
+    def test_display_path_joined(self):
+        changes = [_change(path=["Division A", "Title I", "Army"], index=0)]
+        html = build_sidebar(changes)
+        # Path parts should appear (joined with some separator)
+        assert "Division A" in html
+        assert "Army" in html
+
+    def test_empty_changes(self):
+        html = build_sidebar([])
+        assert "<nav" in html

@@ -222,3 +222,30 @@ def build_change_card(change: dict, index: int) -> str:
 
     parts.append('</div>')
     return "\n".join(parts)
+
+
+def build_sidebar(changes: list[dict]) -> str:
+    """Build a sidebar navigation listing all changes."""
+    items: list[str] = []
+    for i, change in enumerate(changes):
+        change_type = change.get("change_type", "modified")
+        path_parts = change.get("display_path_new") or change.get("display_path_old") or []
+        label = escape(" > ".join(path_parts)) if path_parts else "(unknown)"
+        section = escape(change.get("section_number", "") or "")
+        if section:
+            label = f"{section} — {label}"
+
+        items.append(
+            f'<li class="nav-item" data-type="{change_type}">'
+            f'<a href="#change-{i}">'
+            f'<span class="badge badge-{change_type}">{change_type}</span> '
+            f'{label}'
+            f'</a></li>'
+        )
+
+    return (
+        '<nav class="sidebar">\n'
+        '<input type="text" id="sidebar-filter" placeholder="Filter sections...">\n'
+        f'<ul>{"".join(items)}</ul>\n'
+        '</nav>'
+    )
