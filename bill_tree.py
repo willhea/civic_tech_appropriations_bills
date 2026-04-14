@@ -55,8 +55,12 @@ def find_bill_body(root: ET.Element) -> ET.Element:
 
 
 def extract_text_content(element: ET.Element) -> str:
-    """Recursively extract all text content from an XML element."""
-    return "".join(element.itertext())
+    """Recursively extract all text content from an XML element.
+
+    Collapses runs of whitespace into single spaces so that formatting
+    differences between bill versions don't appear as textual changes.
+    """
+    return " ".join("".join(element.itertext()).split())
 
 
 def get_header_text(element: ET.Element) -> str:

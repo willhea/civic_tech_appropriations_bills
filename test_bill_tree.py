@@ -48,6 +48,20 @@ class TestExtractTextContent:
         el = ET.fromstring("<text/>")
         assert extract_text_content(el) == ""
 
+    def test_whitespace_normalized(self):
+        el = ET.fromstring("<text>Code— (1)provides  assistance</text>")
+        assert extract_text_content(el) == "Code— (1)provides assistance"
+
+    def test_newlines_collapsed(self):
+        el = ET.fromstring("<text>first line\n  second line\n  third</text>")
+        assert extract_text_content(el) == "first line second line third"
+
+    def test_nested_whitespace_normalized(self):
+        el = ET.fromstring(
+            "<text>Suicidology.(b) <enum>(1)</enum>None  of the funds</text>"
+        )
+        assert extract_text_content(el) == "Suicidology.(b) (1)None of the funds"
+
 
 class TestGetHeaderText:
     def test_with_header(self):
