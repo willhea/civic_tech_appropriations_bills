@@ -4,6 +4,7 @@ from formatters.html import (
     build_change_card,
     build_financial_table,
     build_sidebar,
+    format_html,
     word_diff,
 )
 
@@ -299,3 +300,108 @@ class TestBuildSidebar:
     def test_empty_changes(self):
         html = build_sidebar([])
         assert "<nav" in html
+
+
+def _sample_diff_dict(**overrides):
+    """Build a minimal diff dict for testing format_html."""
+    base = {
+        "old_version": "reported-in-house",
+        "new_version": "engrossed-in-house",
+        "congress": 118,
+        "bill_type": "hr",
+        "bill_number": 4366,
+        "summary": {"added": 1, "removed": 0, "modified": 1, "unchanged": 5, "moved": 0},
+        "changes": [
+            {
+                "display_path_old": ["DEPT", "Army"],
+                "display_path_new": ["DEPT", "Army"],
+                "match_path": ["dept", "army"],
+                "change_type": "modified",
+                "old_text": "appropriated $1,000,000 for construction",
+                "new_text": "appropriated $2,000,000 for construction",
+                "text_diff": [],
+                "section_number": "Sec. 101",
+                "element_id_old": "old-1",
+                "element_id_new": "new-1",
+                "financial": {
+                    "old_amounts": [1000000],
+                    "new_amounts": [2000000],
+                    "amounts_changed": True,
+                },
+            },
+            {
+                "display_path_old": None,
+                "display_path_new": ["DEPT", "Navy"],
+                "match_path": ["dept", "navy"],
+                "change_type": "added",
+                "old_text": None,
+                "new_text": "new navy section text",
+                "text_diff": [],
+                "section_number": "",
+                "element_id_old": None,
+                "element_id_new": "new-2",
+            },
+        ],
+    }
+    base.update(overrides)
+    return base
+
+
+class TestFormatHtml:
+    def test_valid_html_structure(self):
+        html = format_html(_sample_diff_dict())
+        assert html.startswith("<!DOCTYPE html>")
+        assert "<html" in html
+        assert "<head>" in html
+        assert "<body>" in html
+        assert "</html>" in html
+
+    def test_header_shows_bill_info(self):
+        html = format_html(_sample_diff_dict())
+        assert "HR 4366" in html or "hr 4366" in html.lower()
+        assert "118" in html
+        assert "reported-in-house" in html
+        assert "engrossed-in-house" in html
+
+    def test_summary_counts(self):
+        html = format_html(_sample_diff_dict())
+        assert "added" in html
+        assert "modified" in html
+
+    def test_contains_financial_table(self):
+        html = format_html(_sample_diff_dict())
+        assert "financial-table" in html
+        assert "$1,000,000" in html
+
+    def test_contains_sidebar(self):
+        html = format_html(_sample_diff_dict())
+        assert "sidebar" in html
+        assert "sidebar-filter" in html
+
+    def test_contains_change_cards(self):
+        html = format_html(_sample_diff_dict())
+        assert 'id="change-0"' in html
+        assert 'id="change-1"' in html
+
+    def test_contains_inline_css(self):
+        html = format_html(_sample_diff_dict())
+        assert "<style>" in html
+
+    def test_contains_inline_js(self):
+        html = format_html(_sample_diff_dict())
+        assert "<script>" in html
+
+    def test_no_financial_data_omits_table(self):
+        diff = _sample_diff_dict()
+        # Remove financial data from all changes
+        for c in diff["changes"]:
+            c.pop("financial", None)
+        html = format_html(diff)
+        assert "Financial Summary" not in html
+
+    def test_empty_changes(self):
+        diff = _sample_diff_dict(changes=[], summary={
+            "added": 0, "removed": 0, "modified": 0, "unchanged": 0, "moved": 0,
+        })
+        html = format_html(diff)
+        assert "<!DOCTYPE html>" in html
