@@ -25,12 +25,12 @@ uv run python fetch_bills.py download 118 hr 4366
 
 # 3. Generate an HTML report comparing two versions
 uv run python diff_bill.py compare \
-  output/118-hr-4366/1_reported-in-house.xml \
-  output/118-hr-4366/2_engrossed-in-house.xml \
-  --format html -o report.html
+  bills/118-hr-4366/1_reported-in-house.xml \
+  bills/118-hr-4366/2_engrossed-in-house.xml \
+  --format html -o reports/hr4366_v1_vs_v2.html
 ```
 
-Open `report.html` in any browser to view the comparison. No additional software needed.
+Open the HTML file in any browser to view the comparison. No additional software needed. Reports are saved to the `reports/` folder.
 
 The tool works without an API key using a free demo key (limited to 30 requests per hour). For heavier use, get a free key at https://api.congress.gov/sign-up/ and save it in a file called `.env` in the project folder:
 
@@ -54,13 +54,13 @@ uv run python fetch_bills.py download 118 hr 4366 --version 2
 uv run python fetch_bills.py download-all 2024 2026
 ```
 
-Files are saved to `output/<congress>-<type>-<number>/`.
+Files are saved to `bills/<congress>-<type>-<number>/`.
 
 ## Comparing Bills
 
 ```bash
 # Compare two versions (JSON output)
-uv run python diff_bill.py compare output/118-hr-4366/1_reported-in-house.xml output/118-hr-4366/6_enrolled-bill.xml
+uv run python diff_bill.py compare bills/118-hr-4366/1_reported-in-house.xml bills/118-hr-4366/6_enrolled-bill.xml
 
 # Only sections with dollar amount changes
 uv run python diff_bill.py compare old.xml new.xml --financial
@@ -75,7 +75,7 @@ uv run python diff_bill.py compare old.xml new.xml --include-unchanged
 uv run python diff_bill.py compare old.xml new.xml -o diff.json
 
 # Generate a standalone HTML report
-uv run python diff_bill.py compare old.xml new.xml --format html -o report.html
+uv run python diff_bill.py compare old.xml new.xml --format html -o reports/report.html
 ```
 
 ### HTML report
@@ -117,7 +117,7 @@ The tool focuses on substantive changes and ignores formatting differences betwe
 ## Output Structure
 
 ```
-output/
+bills/
   118-hr-4366/
     1_reported-in-house.xml
     2_engrossed-in-house.xml
@@ -163,4 +163,4 @@ uv run pytest test_reconcile.py        # Section move detection tests
 uv run pytest test_format_html.py      # HTML report formatter tests
 ```
 
-Integration tests use real XML files from `output/` and skip if not present.
+Integration tests use real XML files from `bills/` and skip if not present.

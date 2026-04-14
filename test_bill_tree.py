@@ -577,8 +577,8 @@ class TestNormalizeBill:
         assert tree.version == "engrossed-in-house"
 
 
-REPORTED_BILL_PATH = Path("output/118-hr-4366/1_reported-in-house.xml")
-ENROLLED_BILL_PATH = Path("output/118-hr-4366/6_enrolled-bill.xml")
+REPORTED_BILL_PATH = Path("bills/118-hr-4366/1_reported-in-house.xml")
+ENROLLED_BILL_PATH = Path("bills/118-hr-4366/6_enrolled-bill.xml")
 
 
 @pytest.mark.skipif(not REPORTED_BILL_PATH.exists(), reason="Real XML not present")

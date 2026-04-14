@@ -440,8 +440,8 @@ class TestCliIntegration:
     def test_format_html_output(self, tmp_path):
         """HTML format produces a valid HTML file via the CLI."""
         import subprocess
-        old = "output/118-hr-4366/1_reported-in-house.xml"
-        new = "output/118-hr-4366/2_engrossed-in-house.xml"
+        old = "bills/118-hr-4366/1_reported-in-house.xml"
+        new = "bills/118-hr-4366/2_engrossed-in-house.xml"
         import os
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest
@@ -460,8 +460,8 @@ class TestCliIntegration:
     def test_format_html_v1_v2_no_phantom_financial(self, tmp_path):
         """v1 vs v2 has no real financial changes after amendment stripping."""
         import subprocess
-        old = "output/118-hr-4366/1_reported-in-house.xml"
-        new = "output/118-hr-4366/2_engrossed-in-house.xml"
+        old = "bills/118-hr-4366/1_reported-in-house.xml"
+        new = "bills/118-hr-4366/2_engrossed-in-house.xml"
         import os
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest
@@ -481,8 +481,8 @@ class TestCliIntegration:
     def test_format_html_v1_v6_has_financial_summary(self, tmp_path):
         """v1 vs v6 (enrolled) has genuine financial changes."""
         import subprocess
-        old = "output/118-hr-4366/1_reported-in-house.xml"
-        new = "output/118-hr-4366/6_enrolled-bill.xml"
+        old = "bills/118-hr-4366/1_reported-in-house.xml"
+        new = "bills/118-hr-4366/6_enrolled-bill.xml"
         import os
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest

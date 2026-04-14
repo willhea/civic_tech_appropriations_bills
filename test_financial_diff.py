@@ -223,8 +223,8 @@ class TestCliFinancial:
         result = subprocess.run(
             [
                 "uv", "run", "python", "diff_bill.py", "compare",
-                "output/118-hr-8774/1_reported-in-house.xml",
-                "output/118-hr-8774/2_engrossed-in-house.xml",
+                "bills/118-hr-8774/1_reported-in-house.xml",
+                "bills/118-hr-8774/2_engrossed-in-house.xml",
                 "--financial",
             ],
             capture_output=True, text=True,
@@ -247,8 +247,8 @@ class TestCliFinancial:
         result = subprocess.run(
             [
                 "uv", "run", "python", "diff_bill.py", "compare",
-                "output/118-hr-8774/1_reported-in-house.xml",
-                "output/118-hr-8774/2_engrossed-in-house.xml",
+                "bills/118-hr-8774/1_reported-in-house.xml",
+                "bills/118-hr-8774/2_engrossed-in-house.xml",
             ],
             capture_output=True, text=True,
         )
@@ -263,8 +263,8 @@ class TestCliFinancial:
 class TestIntegrationFinancial:
     """Integration tests against real bill XML files."""
 
-    HR4366_V1 = "output/118-hr-4366/1_reported-in-house.xml"
-    HR4366_V6 = "output/118-hr-4366/6_enrolled-bill.xml"
+    HR4366_V1 = "bills/118-hr-4366/1_reported-in-house.xml"
+    HR4366_V6 = "bills/118-hr-4366/6_enrolled-bill.xml"
 
     @staticmethod
     def _skip_if_missing(*paths):

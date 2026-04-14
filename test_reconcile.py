@@ -104,8 +104,8 @@ class TestReconcileMoves:
 
 
 class TestReconcileIntegration:
-    HR2882_V4 = "output/118-hr-2882/4_engrossed-amendment-senate.xml"
-    HR2882_V5 = "output/118-hr-2882/5_engrossed-amendment-house.xml"
+    HR2882_V4 = "bills/118-hr-2882/4_engrossed-amendment-senate.xml"
+    HR2882_V5 = "bills/118-hr-2882/5_engrossed-amendment-house.xml"
 
     @staticmethod
     def _skip_if_missing(*paths):

@@ -307,13 +307,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_dl.add_argument("bill_type", choices=sorted(BILL_TYPES.keys()), help="Bill type (e.g. hr, s)")
     p_dl.add_argument("number", type=int, help="Bill number")
     p_dl.add_argument("--version", type=int, default=None, help="Specific version number (1-indexed)")
-    p_dl.add_argument("--output-dir", type=Path, default=Path("output"), help="Output directory")
+    p_dl.add_argument("--output-dir", type=Path, default=Path("bills"), help="Output directory")
 
     # download-all: bulk download for a year range
     p_all = subparsers.add_parser("download-all", help="Download all appropriations bill versions for a year range")
     p_all.add_argument("start_year", type=int, help="Start year (e.g. 2024)")
     p_all.add_argument("end_year", type=int, help="End year (e.g. 2026)")
-    p_all.add_argument("--output-dir", type=Path, default=Path("output"), help="Output directory")
+    p_all.add_argument("--output-dir", type=Path, default=Path("bills"), help="Output directory")
 
     return parser
 

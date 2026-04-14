@@ -3,9 +3,11 @@
 __pycache__/
 .pytest_cache/
 .venv/
-output/
+bills/*
+!bills/.gitkeep
+reports/*
+!reports/.gitkeep
 plans/
 test_data/
 *.json
 *.csv
-*.html
