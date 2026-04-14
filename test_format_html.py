@@ -1,6 +1,6 @@
 """Tests for HTML bill diff report formatter."""
 
-from formatters.html import build_financial_table, word_diff
+from formatters.html import build_change_card, build_financial_table, word_diff
 
 
 class TestWordDiff:
@@ -173,3 +173,81 @@ class TestBuildFinancialTable:
         })]
         html = build_financial_table(changes)
         assert "50.0%" in html
+
+
+class TestBuildChangeCard:
+    def test_modified_has_inline_diff(self):
+        change = _change(change_type="modified", index=3)
+        change["old_text"] = "appropriated $1,000 for projects"
+        change["new_text"] = "appropriated $2,000 for projects"
+        html = build_change_card(change, 3)
+        assert 'id="change-3"' in html
+        assert "<del>" in html
+        assert "<ins>" in html
+        assert "modified" in html.lower()
+
+    def test_modified_low_similarity_shows_blocks(self):
+        change = _change(change_type="modified", index=0)
+        change["old_text"] = "completely different original text here"
+        change["new_text"] = "nothing matching whatsoever in replacement"
+        html = build_change_card(change, 0)
+        # Should fall back to old/new blocks, not inline diff
+        assert "old-text" in html or "removed" in html.lower()
+        assert "new-text" in html or "added" in html.lower()
+
+    def test_added_card(self):
+        change = _change(change_type="added", index=1)
+        change["display_path_old"] = None
+        change["new_text"] = "new section text here"
+        html = build_change_card(change, 1)
+        assert 'id="change-1"' in html
+        assert "new section text here" in html
+        assert "added" in html.lower()
+
+    def test_removed_card(self):
+        change = _change(change_type="removed", index=2)
+        change["display_path_new"] = None
+        change["old_text"] = "removed section text"
+        html = build_change_card(change, 2)
+        assert 'id="change-2"' in html
+        assert "removed section text" in html
+        assert "removed" in html.lower()
+
+    def test_moved_card_shows_paths(self):
+        change = _change(change_type="moved", index=0)
+        change["display_path_old"] = ["Title I", "Old Section"]
+        change["display_path_new"] = ["Title II", "New Section"]
+        change["old_text"] = "same text"
+        change["new_text"] = "same text"
+        html = build_change_card(change, 0)
+        assert "Old Section" in html
+        assert "New Section" in html
+        assert "moved" in html.lower()
+
+    def test_financial_callout(self):
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000000],
+                "new_amounts": [2000000],
+                "amounts_changed": True,
+            },
+        )
+        change["old_text"] = "appropriated $1,000,000 total"
+        change["new_text"] = "appropriated $2,000,000 total"
+        html = build_change_card(change, 0)
+        assert "$1,000,000" in html
+        assert "$2,000,000" in html
+
+    def test_section_number_displayed(self):
+        change = _change(index=0)
+        change["section_number"] = "Sec. 101"
+        html = build_change_card(change, 0)
+        assert "Sec. 101" in html
+
+    def test_html_escaped_in_text(self):
+        change = _change(change_type="added", index=0)
+        change["new_text"] = "amount < $1,000 & more"
+        html = build_change_card(change, 0)
+        assert "&lt;" in html
+        assert "&amp;" in html

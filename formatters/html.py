@@ -133,3 +133,92 @@ def build_financial_table(changes: list[dict]) -> str:
 
     lines.append("</tbody></table>")
     return "\n".join(lines)
+
+
+def _display_path(change: dict) -> str:
+    """Return the best display path for a change, joined with ' > '."""
+    parts = change.get("display_path_new") or change.get("display_path_old") or []
+    return " &gt; ".join(escape(p) for p in parts)
+
+
+def _financial_callout(financial: dict) -> str:
+    """Render a financial callout box for a change card."""
+    old_amounts = financial.get("old_amounts", [])
+    new_amounts = financial.get("new_amounts", [])
+    max_len = max(len(old_amounts), len(new_amounts), 1)
+
+    rows = []
+    for i in range(max_len):
+        old_val = old_amounts[i] if i < len(old_amounts) else None
+        new_val = new_amounts[i] if i < len(new_amounts) else None
+        old_str = _fmt_dollar(old_val) if old_val is not None else "\u2014"
+        new_str = _fmt_dollar(new_val) if new_val is not None else "\u2014"
+
+        if old_val is not None and new_val is not None:
+            change_str, _, _ = _fmt_change(old_val, new_val)
+        elif new_val is not None:
+            change_str = f"+{_fmt_dollar(new_val)}"
+        elif old_val is not None:
+            change_str = f"-{_fmt_dollar(old_val)}"
+        else:
+            continue
+        rows.append(f"<div>{old_str} &rarr; {new_str} ({change_str})</div>")
+
+    return f'<div class="financial-callout">{"".join(rows)}</div>'
+
+
+def build_change_card(change: dict, index: int) -> str:
+    """Render a single change as an HTML card."""
+    change_type = change.get("change_type", "modified")
+    path = _display_path(change)
+    section = escape(change.get("section_number", "") or "")
+    old_text = change.get("old_text") or ""
+    new_text = change.get("new_text") or ""
+
+    parts = [f'<div class="change-card {change_type}" id="change-{index}">']
+
+    # Header
+    parts.append(f'<div class="change-header">')
+    parts.append(f'<span class="badge badge-{change_type}">{escape(change_type)}</span>')
+    parts.append(f'<h3>{path}</h3>')
+    if section:
+        parts.append(f'<span class="section-number">{section}</span>')
+    parts.append('</div>')
+
+    # Body
+    if change_type == "modified":
+        diff_html = word_diff(old_text, new_text)
+        if diff_html is not None:
+            parts.append(f'<div class="change-body diff-inline">{diff_html}</div>')
+        else:
+            parts.append(f'<div class="change-body">')
+            parts.append(f'<div class="old-text">{escape(old_text)}</div>')
+            parts.append(f'<div class="new-text">{escape(new_text)}</div>')
+            parts.append('</div>')
+    elif change_type == "added":
+        parts.append(f'<div class="change-body added-text">{escape(new_text)}</div>')
+    elif change_type == "removed":
+        parts.append(f'<div class="change-body removed-text">{escape(old_text)}</div>')
+    elif change_type == "moved":
+        old_path_parts = change.get("display_path_old") or []
+        new_path_parts = change.get("display_path_new") or []
+        old_path = " &gt; ".join(escape(p) for p in old_path_parts)
+        new_path = " &gt; ".join(escape(p) for p in new_path_parts)
+        parts.append(f'<div class="move-info">Moved: {old_path} &rarr; {new_path}</div>')
+        if old_text != new_text:
+            diff_html = word_diff(old_text, new_text)
+            if diff_html is not None:
+                parts.append(f'<div class="change-body diff-inline">{diff_html}</div>')
+            else:
+                parts.append(f'<div class="change-body">')
+                parts.append(f'<div class="old-text">{escape(old_text)}</div>')
+                parts.append(f'<div class="new-text">{escape(new_text)}</div>')
+                parts.append('</div>')
+
+    # Financial callout
+    fin = change.get("financial")
+    if fin and fin.get("amounts_changed"):
+        parts.append(_financial_callout(fin))
+
+    parts.append('</div>')
+    return "\n".join(parts)
