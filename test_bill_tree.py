@@ -50,7 +50,7 @@ class TestExtractTextContent:
 
     def test_whitespace_normalized(self):
         el = ET.fromstring("<text>Code— (1)provides  assistance</text>")
-        assert extract_text_content(el) == "Code— (1)provides assistance"
+        assert extract_text_content(el) == "Code—(1)provides assistance"
 
     def test_newlines_collapsed(self):
         el = ET.fromstring("<text>first line\n  second line\n  third</text>")
@@ -60,7 +60,31 @@ class TestExtractTextContent:
         el = ET.fromstring(
             "<text>Suicidology.(b) <enum>(1)</enum>None  of the funds</text>"
         )
-        assert extract_text_content(el) == "Suicidology.(b) (1)None of the funds"
+        assert extract_text_content(el) == "Suicidology.(b)(1)None of the funds"
+
+    def test_list_marker_spacing_normalized(self):
+        el = ET.fromstring("<text>and (2)adheres to all</text>")
+        assert extract_text_content(el) == "and(2)adheres to all"
+
+    def test_roman_numeral_marker_normalized(self):
+        el = ET.fromstring("<text>Code— (iv)the term</text>")
+        assert extract_text_content(el) == "Code—(iv)the term"
+
+    def test_uppercase_marker_normalized(self):
+        el = ET.fromstring("<text>and (B)the term</text>")
+        assert extract_text_content(el) == "and(B)the term"
+
+    def test_acronym_spacing_kept(self):
+        el = ET.fromstring("<text>Rural Housing Service (RHS) provides</text>")
+        assert extract_text_content(el) == "Rural Housing Service (RHS) provides"
+
+    def test_year_spacing_kept(self):
+        el = ET.fromstring("<text>Stat. 4302 (2008) and</text>")
+        assert extract_text_content(el) == "Stat. 4302 (2008) and"
+
+    def test_long_parenthetical_spacing_kept(self):
+        el = ET.fromstring("<text>the (Comptroller) shall</text>")
+        assert extract_text_content(el) == "the (Comptroller) shall"
 
 
 class TestGetHeaderText:
