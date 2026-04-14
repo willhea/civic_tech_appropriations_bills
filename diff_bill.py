@@ -34,6 +34,79 @@ def extract_amounts(text: str) -> tuple[int, ...]:
     return tuple(results)
 
 
+def _extract_word_amounts(words: list[str]) -> list[tuple[int, int]]:
+    """Find dollar amounts in a word list, returning (word_index, value) pairs.
+
+    Filters $0 amounts. Assumes amendment annotations already stripped.
+    """
+    results = []
+    for i, word in enumerate(words):
+        m = _DOLLAR_RE.search(word)
+        if m:
+            value = int(m.group().replace("$", "").replace(",", ""))
+            if value != 0:
+                results.append((i, value))
+    return results
+
+
+def match_amounts(
+    old_text: str | None, new_text: str | None,
+) -> list[tuple[int | None, int | None]]:
+    """Pair dollar amounts across old/new text using word-level diff alignment.
+
+    Returns list of (old_value, new_value) pairs where:
+    - (old, new): matched pair (same or changed amount in same context)
+    - (old, None): removed amount
+    - (None, new): added amount
+
+    Uses SequenceMatcher to align old/new words, then traces dollar amounts
+    through the diff opcodes to determine pairing.
+    """
+    old_clean = _AMENDMENT_RE.sub("", old_text) if old_text else ""
+    new_clean = _AMENDMENT_RE.sub("", new_text) if new_text else ""
+    old_words = old_clean.split()
+    new_words = new_clean.split()
+
+    old_amounts = _extract_word_amounts(old_words)
+    new_amounts = _extract_word_amounts(new_words)
+
+    if not old_amounts and not new_amounts:
+        return []
+
+    # Handle one side empty (added/removed sections)
+    if not old_words:
+        return [(None, val) for _, val in new_amounts]
+    if not new_words:
+        return [(val, None) for _, val in old_amounts]
+
+    sm = difflib.SequenceMatcher(None, old_words, new_words, autojunk=False)
+    pairs: list[tuple[int | None, int | None]] = []
+
+    for op, i1, i2, j1, j2 in sm.get_opcodes():
+        old_in_range = [(idx, val) for idx, val in old_amounts if i1 <= idx < i2]
+        new_in_range = [(idx, val) for idx, val in new_amounts if j1 <= idx < j2]
+
+        if op == "equal":
+            # Equal blocks: amounts should match 1:1
+            for (_, ov), (_, nv) in zip(old_in_range, new_in_range):
+                pairs.append((ov, nv))
+        elif op == "delete":
+            for _, ov in old_in_range:
+                pairs.append((ov, None))
+        elif op == "insert":
+            for _, nv in new_in_range:
+                pairs.append((None, nv))
+        elif op == "replace":
+            # Pair positionally within the replace block
+            max_len = max(len(old_in_range), len(new_in_range))
+            for k in range(max_len):
+                ov = old_in_range[k][1] if k < len(old_in_range) else None
+                nv = new_in_range[k][1] if k < len(new_in_range) else None
+                pairs.append((ov, nv))
+
+    return pairs
+
+
 @dataclass(frozen=True)
 class FinancialChange:
     """Financial analysis of a single NodeDiff."""
@@ -41,6 +114,7 @@ class FinancialChange:
     old_amounts: tuple[int, ...]
     new_amounts: tuple[int, ...]
     amounts_changed: bool
+    paired_amounts: tuple[tuple[int | None, int | None], ...]
 
 
 def compute_financial_change(
@@ -56,10 +130,12 @@ def compute_financial_change(
     if not old_amounts and not new_amounts:
         return None
 
+    paired = match_amounts(old_text, new_text)
     return FinancialChange(
         old_amounts=old_amounts,
         new_amounts=new_amounts,
         amounts_changed=Counter(old_amounts) != Counter(new_amounts),
+        paired_amounts=tuple(paired),
     )
 
 
@@ -69,6 +145,7 @@ def financial_change_to_dict(fc: FinancialChange) -> dict:
         "old_amounts": list(fc.old_amounts),
         "new_amounts": list(fc.new_amounts),
         "amounts_changed": fc.amounts_changed,
+        "paired_amounts": [list(pair) for pair in fc.paired_amounts],
     }
 
 

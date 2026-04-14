@@ -5,6 +5,7 @@ from diff_bill import (
     compute_financial_change,
     extract_amounts,
     financial_change_to_dict,
+    match_amounts,
 )
 
 
@@ -79,6 +80,7 @@ class TestComputeFinancialChange:
         assert result.amounts_changed is True
         assert result.old_amounts == (1876875000,)
         assert result.new_amounts == (2022775000,)
+        assert result.paired_amounts == ((1876875000, 2022775000),)
 
     def test_amounts_unchanged(self):
         result = compute_financial_change(
@@ -97,6 +99,7 @@ class TestComputeFinancialChange:
         assert result.amounts_changed is True
         assert result.old_amounts == ()
         assert result.new_amounts == (2022775000,)
+        assert result.paired_amounts == ((None, 2022775000),)
 
     def test_removed_section_with_amounts(self):
         result = compute_financial_change(
@@ -135,12 +138,14 @@ class TestFinancialChangeToDict:
             old_amounts=(1876875000,),
             new_amounts=(2022775000,),
             amounts_changed=True,
+            paired_amounts=((1876875000, 2022775000),),
         )
         result = financial_change_to_dict(fc)
         assert result == {
             "old_amounts": [1876875000],
             "new_amounts": [2022775000],
             "amounts_changed": True,
+            "paired_amounts": [[1876875000, 2022775000]],
         }
 
     def test_serialize_empty_amounts(self):
@@ -148,6 +153,7 @@ class TestFinancialChangeToDict:
             old_amounts=(),
             new_amounts=(5000000,),
             amounts_changed=True,
+            paired_amounts=((None, 5000000),),
         )
         result = financial_change_to_dict(fc)
         assert result["old_amounts"] == []
@@ -319,3 +325,89 @@ class TestIntegrationFinancial:
         ])
         assert with_amounts < total
         assert with_amounts > 0
+
+
+class TestMatchAmounts:
+    def test_identical_texts(self):
+        """All amounts pair with themselves when text is identical."""
+        text = (
+            "For expenses, $5,000,000: Provided, That $1,000,000 "
+            "shall be for operations."
+        )
+        pairs = match_amounts(text, text)
+        assert pairs == [(5000000, 5000000), (1000000, 1000000)]
+
+    def test_inserted_amount(self):
+        """New proviso inserted mid-text: appears as (None, new), others pair correctly."""
+        old = (
+            "For expenses, $5,000,000: Provided, That $3,000,000 "
+            "shall be for operations."
+        )
+        new = (
+            "For expenses, $5,000,000: Provided, That $2,000,000 "
+            "shall remain available until September 30, 2028: "
+            "Provided further, That $3,000,000 shall be for operations."
+        )
+        pairs = match_amounts(old, new)
+        assert pairs == [(5000000, 5000000), (None, 2000000), (3000000, 3000000)]
+
+    def test_removed_amount(self):
+        """Proviso removed: its amount appears as (old, None)."""
+        old = (
+            "For expenses, $5,000,000: Provided, That $2,000,000 "
+            "shall remain available: Provided further, That "
+            "$3,000,000 shall be for operations."
+        )
+        new = (
+            "For expenses, $5,000,000: Provided, That "
+            "$3,000,000 shall be for operations."
+        )
+        pairs = match_amounts(old, new)
+        assert pairs == [(5000000, 5000000), (2000000, None), (3000000, 3000000)]
+
+    def test_changed_amount_same_context(self):
+        """Amount value changes but surrounding text stays: paired as (old, new)."""
+        old = "For construction, $1,876,875,000, to remain available until September 30, 2028."
+        new = "For construction, $2,022,775,000, to remain available until September 30, 2028."
+        pairs = match_amounts(old, new)
+        assert pairs == [(1876875000, 2022775000)]
+
+    def test_both_none(self):
+        """Both texts None returns empty list."""
+        assert match_amounts(None, None) == []
+
+    def test_old_none_added_section(self):
+        """Old text None (added section): all amounts as (None, new)."""
+        pairs = match_amounts(None, "For expenses, $5,000,000, to remain available.")
+        assert pairs == [(None, 5000000)]
+
+    def test_new_none_removed_section(self):
+        """New text None (removed section): all amounts as (old, None)."""
+        pairs = match_amounts("For expenses, $5,000,000, to remain available.", None)
+        assert pairs == [(5000000, None)]
+
+    def test_replace_block_multiple_amounts(self):
+        """Amounts in a rewritten clause pair positionally within the block."""
+        old = "For A, $1,000,000 and $2,000,000 for purposes."
+        new = "For A, $3,000,000 and $4,000,000 for purposes."
+        pairs = match_amounts(old, new)
+        assert pairs == [(1000000, 3000000), (2000000, 4000000)]
+
+    def test_no_amounts_either_side(self):
+        """No dollar amounts in either text returns empty list."""
+        pairs = match_amounts("No amounts here.", "Still no amounts.")
+        assert pairs == []
+
+    def test_amendment_annotations_stripped(self):
+        """Amendment annotations are stripped before matching."""
+        old = "For expenses, $5,000,000 (increased by $1,000,000), to remain."
+        new = "For expenses, $5,000,000, to remain."
+        pairs = match_amounts(old, new)
+        assert pairs == [(5000000, 5000000)]
+
+    def test_zero_amounts_filtered(self):
+        """$0 amounts are excluded from pairing."""
+        old = "appropriation estimated at $0: Provided, $5,000,000 for ops."
+        new = "appropriation estimated at $0: Provided, $7,000,000 for ops."
+        pairs = match_amounts(old, new)
+        assert pairs == [(5000000, 7000000)]

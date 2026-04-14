@@ -101,6 +101,7 @@ class TestBuildFinancialTable:
             "old_amounts": [1000000],
             "new_amounts": [2000000],
             "amounts_changed": True,
+            "paired_amounts": [[1000000, 2000000]],
         })]
         html = build_financial_table(changes)
         assert "<table" in html
@@ -113,6 +114,7 @@ class TestBuildFinancialTable:
             "old_amounts": [1000000, 500000],
             "new_amounts": [2000000, 600000],
             "amounts_changed": True,
+            "paired_amounts": [[1000000, 2000000], [500000, 600000]],
         })]
         html = build_financial_table(changes)
         assert "$1,000,000" in html
@@ -120,16 +122,31 @@ class TestBuildFinancialTable:
         assert "$2,000,000" in html
         assert "$600,000" in html
 
-    def test_mismatched_amount_counts(self):
+    def test_mismatched_amount_counts_with_paired(self):
+        """Inserted amount appears as (None, new) via paired_amounts."""
         changes = [_change(financial={
             "old_amounts": [1000000, 500000],
             "new_amounts": [2000000, 600000, 300000],
             "amounts_changed": True,
+            "paired_amounts": [[1000000, 2000000], [None, 600000], [500000, 300000]],
         })]
         html = build_financial_table(changes)
-        # Should render without error and include all amounts
         assert "$300,000" in html
         assert "$1,000,000" in html
+        assert "$600,000" in html
+        # The inserted amount should show em-dash for old
+        assert "\u2014" in html
+
+    def test_fallback_to_positional_without_paired(self):
+        """When paired_amounts is absent, fall back to positional pairing."""
+        changes = [_change(financial={
+            "old_amounts": [1000000],
+            "new_amounts": [2000000],
+            "amounts_changed": True,
+        })]
+        html = build_financial_table(changes)
+        assert "$1,000,000" in html
+        assert "$2,000,000" in html
 
     def test_added_section_no_old_amounts(self):
         changes = [_change(
@@ -138,6 +155,7 @@ class TestBuildFinancialTable:
                 "old_amounts": [],
                 "new_amounts": [5000000],
                 "amounts_changed": True,
+                "paired_amounts": [[None, 5000000]],
             },
         )]
         html = build_financial_table(changes)
@@ -151,6 +169,7 @@ class TestBuildFinancialTable:
                 "old_amounts": [3000000],
                 "new_amounts": [],
                 "amounts_changed": True,
+                "paired_amounts": [[3000000, None]],
             },
         )]
         html = build_financial_table(changes)
@@ -167,6 +186,7 @@ class TestBuildFinancialTable:
             "old_amounts": [100],
             "new_amounts": [200],
             "amounts_changed": True,
+            "paired_amounts": [[100, 200]],
         })]
         html = build_financial_table(changes)
         assert 'href="#change-0"' in html
@@ -176,6 +196,7 @@ class TestBuildFinancialTable:
             "old_amounts": [1000000],
             "new_amounts": [1500000],
             "amounts_changed": True,
+            "paired_amounts": [[1000000, 1500000]],
         })]
         html = build_financial_table(changes)
         assert "50.0%" in html
@@ -237,6 +258,7 @@ class TestBuildChangeCard:
                 "old_amounts": [1000000],
                 "new_amounts": [2000000],
                 "amounts_changed": True,
+                "paired_amounts": [[1000000, 2000000]],
             },
         )
         change["old_text"] = "appropriated $1,000,000 total"
@@ -327,6 +349,7 @@ def _sample_diff_dict(**overrides):
                     "old_amounts": [1000000],
                     "new_amounts": [2000000],
                     "amounts_changed": True,
+                    "paired_amounts": [[1000000, 2000000]],
                 },
             },
             {

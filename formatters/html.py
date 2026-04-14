@@ -68,17 +68,27 @@ def build_financial_table(changes: list[dict]) -> str:
         fin = change.get("financial")
         if not fin or not fin.get("amounts_changed"):
             continue
-        old_amounts = fin.get("old_amounts", [])
-        new_amounts = fin.get("new_amounts", [])
         path_parts = change.get("display_path_new") or change.get("display_path_old") or []
         path = escape(" &gt; ".join(path_parts))
         section = escape(change.get("section_number", "") or "")
+        # Use paired_amounts if available, fall back to positional pairing
+        paired = fin.get("paired_amounts")
+        if paired:
+            amount_pairs = [(p[0], p[1]) for p in paired]
+        else:
+            old_amounts = fin.get("old_amounts", [])
+            new_amounts = fin.get("new_amounts", [])
+            max_len = max(len(old_amounts), len(new_amounts))
+            amount_pairs = [
+                (old_amounts[j] if j < len(old_amounts) else None,
+                 new_amounts[j] if j < len(new_amounts) else None)
+                for j in range(max_len)
+            ]
         rows.append({
             "index": i,
             "path": path,
             "section": section,
-            "old_amounts": old_amounts,
-            "new_amounts": new_amounts,
+            "amount_pairs": amount_pairs,
         })
 
     if not rows:
@@ -97,14 +107,10 @@ def build_financial_table(changes: list[dict]) -> str:
     ]
 
     for row in rows:
-        old_amounts = row["old_amounts"]
-        new_amounts = row["new_amounts"]
-        max_len = max(len(old_amounts), len(new_amounts))
+        amount_pairs = row["amount_pairs"]
+        num_pairs = len(amount_pairs)
 
-        for j in range(max_len):
-            old_val = old_amounts[j] if j < len(old_amounts) else None
-            new_val = new_amounts[j] if j < len(new_amounts) else None
-
+        for j, (old_val, new_val) in enumerate(amount_pairs):
             old_str = _fmt_dollar(old_val) if old_val is not None else "\u2014"
             new_str = _fmt_dollar(new_val) if new_val is not None else "\u2014"
 
@@ -123,7 +129,7 @@ def build_financial_table(changes: list[dict]) -> str:
 
             # Show path only on first sub-row
             if j == 0:
-                rowspan = f' rowspan="{max_len}"' if max_len > 1 else ""
+                rowspan = f' rowspan="{num_pairs}"' if num_pairs > 1 else ""
                 path_cell = f'<td{rowspan}><a href="#change-{row["index"]}">{row["path"]}</a></td>'
             else:
                 path_cell = ""
@@ -150,14 +156,22 @@ def _display_path(change: dict) -> str:
 
 def _financial_callout(financial: dict) -> str:
     """Render a financial callout box for a change card."""
-    old_amounts = financial.get("old_amounts", [])
-    new_amounts = financial.get("new_amounts", [])
-    max_len = max(len(old_amounts), len(new_amounts), 1)
+    # Use paired_amounts if available, fall back to positional pairing
+    paired = financial.get("paired_amounts")
+    if paired:
+        amount_pairs = [(p[0], p[1]) for p in paired]
+    else:
+        old_amounts = financial.get("old_amounts", [])
+        new_amounts = financial.get("new_amounts", [])
+        max_len = max(len(old_amounts), len(new_amounts), 1)
+        amount_pairs = [
+            (old_amounts[i] if i < len(old_amounts) else None,
+             new_amounts[i] if i < len(new_amounts) else None)
+            for i in range(max_len)
+        ]
 
     rows = []
-    for i in range(max_len):
-        old_val = old_amounts[i] if i < len(old_amounts) else None
-        new_val = new_amounts[i] if i < len(new_amounts) else None
+    for old_val, new_val in amount_pairs:
         old_str = _fmt_dollar(old_val) if old_val is not None else "\u2014"
         new_str = _fmt_dollar(new_val) if new_val is not None else "\u2014"
 
