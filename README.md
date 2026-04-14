@@ -53,7 +53,14 @@ uv run python diff_bill.py compare old.xml new.xml --include-unchanged
 
 # Save to file
 uv run python diff_bill.py compare old.xml new.xml -o diff.json
+
+# Generate a standalone HTML report
+uv run python diff_bill.py compare old.xml new.xml --format html -o report.html
 ```
+
+### HTML report
+
+`--format html` produces a self-contained HTML file that can be opened in any browser. Includes a sidebar for navigating between changes, a financial summary table, and word-level inline diffs highlighting exactly what changed. Financial data is automatically included without needing the `--financial` flag.
 
 ### Change types
 
@@ -68,6 +75,16 @@ uv run python diff_bill.py compare old.xml new.xml -o diff.json
 ### Financial filtering
 
 `--financial` filters to sections where dollar amounts changed and adds amount details to the JSON output. Sections where text changed but amounts stayed the same are excluded.
+
+### Amendment annotations
+
+Engrossed bill versions (the text after a floor vote) contain procedural annotations recording adopted amendments, e.g.:
+
+```
+$1,517,455,000 (increased by $103,000,000) (reduced by $103,000,000)
+```
+
+These `(increased by $X)` and `(reduced by $X)` parentheticals are bookkeeping, not actual appropriation amounts. The base amount already reflects the final figure. The tool strips these annotations before comparing dollar amounts so they don't create phantom financial changes.
 
 ## Output Structure
 
@@ -86,6 +103,7 @@ Three modules:
 - **`fetch_bills.py`** - Downloads bill XML from Congress.gov API v3. CLI commands: `versions`, `download`, `download-all`.
 - **`bill_tree.py`** - Normalizes bill XML into a `BillTree` of `BillNode` objects. Handles three structural shapes: with divisions, with titles only, and flat sections.
 - **`diff_bill.py`** - Compares two `BillTree`s. Matches sections by normalized header path, detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts for financial filtering.
+- **`formatters/html.py`** - Generates standalone HTML reports from diff output with sidebar navigation, financial summary table, and word-level inline diffs.
 
 ## Testing
 
@@ -95,6 +113,7 @@ uv run pytest test_bill_tree.py        # Normalization tests
 uv run pytest test_diff_bill.py        # Diff/matching tests
 uv run pytest test_financial_diff.py   # Financial filtering tests
 uv run pytest test_reconcile.py        # Section move detection tests
+uv run pytest test_format_html.py      # HTML report formatter tests
 ```
 
 Integration tests use real XML files from `output/` and skip if not present.
