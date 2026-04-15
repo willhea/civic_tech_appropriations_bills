@@ -36,6 +36,19 @@ def normalize_header(text: str) -> str:
     return " ".join(text.lower().split())
 
 
+def normalize_division_title(division_label: str) -> str:
+    """Extract and normalize the descriptive title from a division label.
+
+    'Division A: Military Construction' -> 'military construction'
+    'Division F' -> ''
+    '' -> ''
+    """
+    if ":" not in division_label:
+        return ""
+    title = division_label.split(":", 1)[1]
+    return normalize_header(title)
+
+
 def find_bill_body(root: ET.Element) -> ET.Element:
     """Find the effective body element from a bill or amendment-doc root.
 
