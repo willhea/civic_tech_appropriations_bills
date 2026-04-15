@@ -5223,6 +5223,133 @@
         "salaries and expenses"
       ],
       "expected_amount": 505383000
+    },
+    {
+      "bill": "113-hr-3547",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2014",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3400000
+    },
+    {
+      "bill": "113-hr-83",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2015",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3371000
+    },
+    {
+      "bill": "114-hr-2029",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2016",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3784000
+    },
+    {
+      "bill": "115-hr-244",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2017",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3838000
+    },
+    {
+      "bill": "115-hr-1625",
+      "version": "7_enrolled-bill.xml",
+      "fy": "FY 2018",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3838000
+    },
+    {
+      "bill": "115-hr-5895",
+      "version": "5_enrolled-bill.xml",
+      "fy": "FY 2019",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3798000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "OFFICE OF THE ATTENDING PHYSICIAN",
+      "match_path": [
+        "legislative branch",
+        "joint items",
+        "office of the attending physician"
+      ],
+      "expected_amount": 3868000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Office of the Whistleblower Ombudsman",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "salaries, officers and employees"
+      ],
+      "expected_amount": 750000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Intern Allowance for Majority Leadership Offices",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowance for compensation of interns in house leadership offices"
+      ],
+      "expected_amount": 200000
+    },
+    {
+      "bill": "116-hr-1865",
+      "version": "6_enrolled-bill.xml",
+      "fy": "FY 2020",
+      "chamber": "house",
+      "excel_name": "Intern Allowance for Minority Leadership Offices",
+      "match_path": [
+        "legislative branch",
+        "house of representatives",
+        "allowance for compensation of interns in house leadership offices"
+      ],
+      "expected_amount": 165000
     }
   ]
 }

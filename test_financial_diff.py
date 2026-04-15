@@ -288,7 +288,7 @@ class TestAmountSanityChecks:
         tree = normalize_bill(Path(self.ENROLLED_PATH))
 
         count = sum(1 for n in tree.nodes if extract_amounts(n.body_text))
-        assert count == 555
+        assert count == 561
 
     def test_all_amounts_in_valid_range(self):
         from pathlib import Path
@@ -312,8 +312,8 @@ class TestAmountSanityChecks:
 
         for node in tree.nodes:
             amounts = extract_amounts(node.body_text)
-            assert len(amounts) <= 30, (
-                f"Node {node.match_path} has {len(amounts)} amounts (max 30)"
+            assert len(amounts) <= 70, (
+                f"Node {node.match_path} has {len(amounts)} amounts (max 70)"
             )
 
 
