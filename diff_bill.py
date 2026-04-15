@@ -411,7 +411,7 @@ def _text_similarity(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a.split(), b.split()).ratio()
 
 
-_MOVE_THRESHOLD = 0.7
+_MOVE_THRESHOLD = 0.6
 
 
 def reconcile_moves(
