@@ -347,6 +347,32 @@ class TestWalkTitle:
         assert nodes[1].match_path == ("dept", "regular account")
         assert nodes[1].header_text == "(INCLUDING TRANSFER OF FUNDS)"
 
+    def test_empty_intermediate_header_does_not_clobber_prev_name(self):
+        """Empty header on intermediate should not clobber prev_name for parenthetical siblings."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPT</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Real Account</header>"
+            "<text>For expenses, $100,000.</text>"
+            "</appropriations-intermediate>"
+            '<appropriations-intermediate id="AI2">'
+            "<header></header>"
+            "<text>Additional amount, $200,000.</text>"
+            "</appropriations-intermediate>"
+            '<appropriations-intermediate id="AI3">'
+            "<header>(INCLUDING TRANSFER OF FUNDS)</header>"
+            "<text>Of the funds, not more than $50,000 may transfer.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 3
+        # Third node is parenthetical; should inherit "Real Account" from first,
+        # not empty string from second
+        assert nodes[2].match_path == ("dept", "real account")
+
     def test_section_with_enum(self):
         """A section produces a node with section_number in the path."""
         title = ET.fromstring(
