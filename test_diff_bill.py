@@ -79,8 +79,8 @@ class TestMatchNodes:
         assert len(added) == 1
         assert len(removed) == 1
 
-    def test_duplicate_paths_matched_by_position(self):
-        """Multiple nodes with same match_path are paired by position order."""
+    def test_duplicate_paths_matched_by_similarity(self):
+        """Multiple nodes with same match_path are paired by text similarity."""
         old = _tree([
             _node(("dup",), "old first"),
             _node(("dup",), "old second"),
@@ -92,10 +92,10 @@ class TestMatchNodes:
         pairs = match_nodes(old, new)
         matched = [(o, n) for o, n in pairs if o is not None and n is not None]
         assert len(matched) == 2
-        assert matched[0][0].body_text == "old first"
-        assert matched[0][1].body_text == "new first"
-        assert matched[1][0].body_text == "old second"
-        assert matched[1][1].body_text == "new second"
+        # Each old node should pair with its most similar new node
+        pair_set = {(o.body_text, n.body_text) for o, n in matched}
+        assert ("old first", "new first") in pair_set
+        assert ("old second", "new second") in pair_set
 
     def test_uneven_duplicates(self):
         """When one side has more duplicates, extras show as added/removed."""
