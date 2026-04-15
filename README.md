@@ -155,12 +155,27 @@ Four modules:
 ## Testing
 
 ```bash
-uv run pytest                          # All tests
-uv run pytest test_bill_tree.py        # Normalization tests
-uv run pytest test_diff_bill.py        # Diff/matching tests
-uv run pytest test_financial_diff.py   # Financial filtering tests
-uv run pytest test_reconcile.py        # Section move detection tests
-uv run pytest test_format_html.py      # HTML report formatter tests
+uv run pytest                              # All tests
+uv run pytest test_bill_tree.py            # Normalization tests
+uv run pytest test_diff_bill.py            # Diff/matching tests
+uv run pytest test_financial_diff.py       # Financial filtering tests
+uv run pytest test_reconcile.py            # Section move detection tests
+uv run pytest test_format_html.py          # HTML report formatter tests
+uv run pytest test_validate_extraction.py  # External validation tests
 ```
 
-Integration tests use real XML files from `bills/` and skip if not present.
+Integration tests use real XML files from `bills/` and skip if not present. To run the full suite including validation tests, download the required bills:
+
+```bash
+source .env  # load API key
+uv run python fetch_bills.py download 118 hr 4366
+uv run python fetch_bills.py download 116 hr 1865
+uv run python fetch_bills.py download 115 hr 5895
+uv run python fetch_bills.py download 115 hr 1625
+uv run python fetch_bills.py download 115 hr 244
+uv run python fetch_bills.py download 114 hr 2029
+uv run python fetch_bills.py download 113 hr 83
+uv run python fetch_bills.py download 113 hr 3547
+```
+
+The validation tests compare 404 extracted line items across 7 Legislative Branch bills (FY2014-FY2020) against amounts from a curated appropriations spreadsheet.
