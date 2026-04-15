@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from bill_tree import BillNode, BillTree, normalize_bill
+from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
 from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
 
 
@@ -533,3 +533,34 @@ class TestEndToEnd:
         parsed = json.loads(json_str)
         assert parsed["congress"] == 118
         assert len(parsed["changes"]) == len(result.changes)
+
+
+V4_PATH = Path("bills/118-hr-4366/4_engrossed-amendment-senate.xml")
+V5_PATH = Path("bills/118-hr-4366/5_engrossed-amendment-house.xml")
+
+
+@pytest.mark.skipif(
+    not V4_PATH.exists() or not V5_PATH.exists(),
+    reason="Real XML not present",
+)
+class TestCrossDivisionIntegration:
+    """Validate that division-aware matching reduces cross-division mismatches."""
+
+    def test_cross_division_mismatches_below_target(self):
+        """Issue #1/#9: cross-division mismatches reduced from 226 to <50."""
+        old = normalize_bill(V4_PATH)
+        new = normalize_bill(V5_PATH)
+        result = diff_bills(old, new)
+
+        cross_div = 0
+        for c in result.changes:
+            if c.display_path_old and c.display_path_new:
+                old_first = c.display_path_old[0] if c.display_path_old else ""
+                new_first = c.display_path_new[0] if c.display_path_new else ""
+                if old_first.startswith("Division") and new_first.startswith("Division"):
+                    old_title = normalize_division_title(old_first)
+                    new_title = normalize_division_title(new_first)
+                    if old_title and new_title and old_title != new_title:
+                        cross_div += 1
+
+        assert cross_div < 50, f"Cross-division mismatches: {cross_div} (target: <50)"
