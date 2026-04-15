@@ -299,7 +299,8 @@ class TestCli:
     def test_compare_to_stdout(self):
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
-             str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH)],
+             str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
+             "--format", "json"],
             capture_output=True, text=True,
         )
         assert result.returncode == 0
@@ -313,7 +314,7 @@ class TestCli:
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
              str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
-             "-o", str(out)],
+             "--format", "json", "-o", str(out)],
             capture_output=True, text=True,
         )
         assert result.returncode == 0
@@ -325,7 +326,7 @@ class TestCli:
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
              str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
-             "--filter", "military construction, army"],
+             "--format", "json", "--filter", "military construction, army"],
             capture_output=True, text=True,
         )
         assert result.returncode == 0

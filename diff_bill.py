@@ -576,8 +576,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="Only show sections with financial changes; add amount details to output",
     )
     compare.add_argument(
-        "--format", choices=["json", "html"], default="json",
-        help="Output format (default: json)",
+        "--format", choices=["json", "html"], default="html",
+        help="Output format (default: html)",
     )
 
     return parser

@@ -231,7 +231,7 @@ class TestCliFinancial:
                 "uv", "run", "python", "diff_bill.py", "compare",
                 "bills/118-hr-8774/1_reported-in-house.xml",
                 "bills/118-hr-8774/2_engrossed-in-house.xml",
-                "--financial",
+                "--format", "json", "--financial",
             ],
             capture_output=True, text=True,
         )
@@ -255,6 +255,7 @@ class TestCliFinancial:
                 "uv", "run", "python", "diff_bill.py", "compare",
                 "bills/118-hr-8774/1_reported-in-house.xml",
                 "bills/118-hr-8774/2_engrossed-in-house.xml",
+                "--format", "json",
             ],
             capture_output=True, text=True,
         )

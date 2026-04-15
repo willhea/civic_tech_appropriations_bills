@@ -454,11 +454,11 @@ class TestCliIntegration:
         args = parser.parse_args(["compare", "a.xml", "b.xml", "--format", "html"])
         assert args.format == "html"
 
-    def test_format_default_is_json(self):
+    def test_format_default_is_html(self):
         from diff_bill import build_parser
         parser = build_parser()
         args = parser.parse_args(["compare", "a.xml", "b.xml"])
-        assert args.format == "json"
+        assert args.format == "html"
 
     def test_format_html_output(self, tmp_path):
         """HTML format produces a valid HTML file via the CLI."""
