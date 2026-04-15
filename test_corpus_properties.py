@@ -138,6 +138,12 @@ _KNOWN_DUPLICATE_COUNTS: dict[str, int] = {
     "118-hr-4366/4_engrossed-amendment-senate.xml": 7,
     "118-hr-4366/5_engrossed-amendment-house.xml": 33,
     "118-hr-4366/6_enrolled-bill.xml": 33,
+    # Fresh bills added for overfitting smoke test (2026-04-15)
+    "117-hr-4432/1_reported-in-house.xml": 1,
+    "117-hr-4502/1_reported-in-house.xml": 1,
+    "117-hr-4502/2_engrossed-in-house.xml": 39,
+    "117-hr-4502/3_received-in-senate.xml": 39,
+    "118-hr-4820/1_reported-in-house.xml": 7,
 }
 
 
