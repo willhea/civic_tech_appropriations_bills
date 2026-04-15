@@ -127,6 +127,94 @@ def _build_paths(
     return tuple(match_parts), tuple(display_parts)
 
 
+def _process_appro_element(
+    child: ET.Element,
+    title_header: str,
+    division_label: str,
+    current_major: str | None,
+    current_intermediate: str | None,
+    prev_name: str | None,
+    nodes: list[BillNode],
+) -> tuple[str | None, str | None, str | None]:
+    """Process one appropriations-* element, updating context and appending nodes.
+
+    Returns updated (current_major, current_intermediate, prev_name).
+    """
+    tag = child.tag
+
+    if tag == "appropriations-major":
+        current_major = get_header_text(child)
+        current_intermediate = None
+        prev_name = current_major
+
+        body_text = _extract_appropriations_text(child)
+        if body_text:
+            match_path, display_path = _build_paths(
+                title_header, division_label, current_major, None, None,
+            )
+            nodes.append(BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag=tag,
+                element_id=child.attrib.get("id", ""),
+                header_text=current_major or "",
+                body_text=body_text,
+                section_number="",
+            ))
+
+    elif tag == "appropriations-intermediate":
+        header = get_header_text(child)
+        current_intermediate = header
+
+        if header and _PARENTHETICAL_RE.match(header):
+            effective_header = prev_name
+        else:
+            prev_name = header
+            effective_header = header
+
+        body_text = _extract_appropriations_text(child)
+        if body_text:
+            match_path, display_path = _build_paths(
+                title_header, division_label, current_major, effective_header, None,
+            )
+            nodes.append(BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag=tag,
+                element_id=child.attrib.get("id", ""),
+                header_text=header,
+                body_text=body_text,
+                section_number="",
+            ))
+
+    elif tag == "appropriations-small":
+        header = get_header_text(child)
+
+        if header and _PARENTHETICAL_RE.match(header):
+            effective_header = prev_name
+        else:
+            if header:
+                prev_name = header
+            effective_header = header
+
+        body_text = _extract_appropriations_text(child)
+        if body_text:
+            match_path, display_path = _build_paths(
+                title_header, division_label, current_major, current_intermediate, effective_header,
+            )
+            nodes.append(BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag=tag,
+                element_id=child.attrib.get("id", ""),
+                header_text=header or "",
+                body_text=body_text,
+                section_number="",
+            ))
+
+    return current_major, current_intermediate, prev_name
+
+
 def walk_title(
     title_element: ET.Element,
     title_header: str,
@@ -150,78 +238,11 @@ def walk_title(
     for child in title_element:
         tag = child.tag
 
-        if tag == "appropriations-major":
-            current_major = get_header_text(child)
-            current_intermediate = None
-            prev_name = current_major
-
-            body_text = _extract_appropriations_text(child)
-            if body_text:
-                match_path, display_path = _build_paths(
-                    title_header, division_label, current_major, None, None,
-                )
-                nodes.append(BillNode(
-                    match_path=match_path,
-                    display_path=display_path,
-                    tag=tag,
-                    element_id=child.attrib.get("id", ""),
-                    header_text=current_major or "",
-                    body_text=body_text,
-
-                    section_number="",
-                ))
-
-        elif tag == "appropriations-intermediate":
-            header = get_header_text(child)
-            current_intermediate = header
-
-            if header and _PARENTHETICAL_RE.match(header):
-                effective_header = prev_name
-            else:
-                prev_name = header
-                effective_header = header
-
-            body_text = _extract_appropriations_text(child)
-            if body_text:
-                match_path, display_path = _build_paths(
-                    title_header, division_label, current_major, effective_header, None,
-                )
-                nodes.append(BillNode(
-                    match_path=match_path,
-                    display_path=display_path,
-                    tag=tag,
-                    element_id=child.attrib.get("id", ""),
-                    header_text=header,
-                    body_text=body_text,
-
-                    section_number="",
-                ))
-
-        elif tag == "appropriations-small":
-            header = get_header_text(child)
-
-            if header and _PARENTHETICAL_RE.match(header):
-                effective_header = prev_name
-            else:
-                if header:
-                    prev_name = header
-                effective_header = header
-
-            body_text = _extract_appropriations_text(child)
-            if body_text:
-                match_path, display_path = _build_paths(
-                    title_header, division_label, current_major, current_intermediate, effective_header,
-                )
-                nodes.append(BillNode(
-                    match_path=match_path,
-                    display_path=display_path,
-                    tag=tag,
-                    element_id=child.attrib.get("id", ""),
-                    header_text=header or "",
-                    body_text=body_text,
-
-                    section_number="",
-                ))
+        if tag.startswith("appropriations-"):
+            current_major, current_intermediate, prev_name = _process_appro_element(
+                child, title_header, division_label,
+                current_major, current_intermediate, prev_name, nodes,
+            )
 
         elif tag == "section":
             enum_el = child.find("enum")
@@ -242,7 +263,6 @@ def walk_title(
                     element_id=child.attrib.get("id", ""),
                     header_text=get_header_text(child),
                     body_text=body_text,
-
                     section_number=section_num,
                 ))
 
