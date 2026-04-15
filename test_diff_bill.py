@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from bill_tree import BillNode, BillTree, normalize_bill
-from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, match_nodes
+from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
 
 
 def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate"):
@@ -289,6 +289,59 @@ class TestBillDiffToDict:
         assert change["match_path"] == ["dept", "account"]
         assert change["change_type"] == "added"
         assert change["new_text"] == "For expenses, $1,000."
+
+
+class TestFilterDiff:
+    def _make_diff(self):
+        """Build a BillDiff with mixed change types for filter testing."""
+        return BillDiff(
+            old_version="v1",
+            new_version="v2",
+            congress=118,
+            bill_type="hr",
+            bill_number=1,
+            summary={"added": 1, "removed": 1, "modified": 1, "unchanged": 1, "moved": 0},
+            changes=[
+                NodeDiff(
+                    display_path_old=("A",), display_path_new=("A",),
+                    match_path=("a",), change_type="unchanged",
+                    old_text="same", new_text="same", text_diff=None,
+                    section_number="", element_id_old="", element_id_new="",
+                ),
+                NodeDiff(
+                    display_path_old=("B",), display_path_new=("B",),
+                    match_path=("b",), change_type="modified",
+                    old_text="For expenses, $1,000.", new_text="For expenses, $2,000.",
+                    text_diff=["- $1,000", "+ $2,000"],
+                    section_number="", element_id_old="", element_id_new="",
+                ),
+                NodeDiff(
+                    display_path_old=("C",), display_path_new=None,
+                    match_path=("c",), change_type="removed",
+                    old_text="old only", new_text=None, text_diff=None,
+                    section_number="", element_id_old="", element_id_new="",
+                ),
+                NodeDiff(
+                    display_path_old=None, display_path_new=("D",),
+                    match_path=("d",), change_type="added",
+                    old_text=None, new_text="new only", text_diff=None,
+                    section_number="", element_id_old="", element_id_new="",
+                ),
+            ],
+        )
+
+    def test_filtered_summary_matches_changes(self):
+        """After filtering, summary counts should match the actual changes list."""
+        diff = self._make_diff()
+        # Filter to text match "b" - should keep only the modified node
+        filtered = filter_diff(diff, filter_text="b")
+        assert len(filtered.changes) == 1
+        assert filtered.changes[0].change_type == "modified"
+        # Summary should reflect the filtered state
+        assert filtered.summary["modified"] == 1
+        assert filtered.summary["added"] == 0
+        assert filtered.summary["removed"] == 0
+        assert filtered.summary["unchanged"] == 0
 
 
 @pytest.mark.skipif(
