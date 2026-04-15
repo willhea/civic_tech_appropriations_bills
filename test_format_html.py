@@ -514,8 +514,9 @@ class TestCliIntegration:
         )
         assert result.returncode == 0, result.stderr
         content = out.read_text()
-        # Amendment annotations are stripped, so no phantom $0 financial changes
-        assert "Financial Summary" not in content
+        # v1->v2 has floor amendment annotations that change effective amounts.
+        # These are now correctly detected as financial changes.
+        assert "Financial Summary" in content
 
     def test_format_html_v1_v6_has_financial_summary(self, tmp_path):
         """v1 vs v6 (enrolled) has genuine financial changes."""
