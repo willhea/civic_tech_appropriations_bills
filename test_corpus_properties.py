@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from bill_tree import find_bill_body, normalize_bill
+from bill_tree import _extract_appropriations_text, find_bill_body, normalize_bill
 
 BILLS_DIR = Path(__file__).parent / "bills"
 ALL_XML_FILES = sorted(BILLS_DIR.glob("**/*.xml"))
@@ -174,4 +174,80 @@ def test_no_duplicate_match_paths(xml_path: Path) -> None:
         assert total_dupes <= known, (
             f"{test_id}: duplicate count increased from {known} to {total_dupes}. "
             f"Sample: {list(dupes.items())[:3]}"
+        )
+
+
+_APPRO_TAGS = {"appropriations-major", "appropriations-intermediate", "appropriations-small"}
+
+# Files with known missing appropriations elements (parser doesn't reach them).
+# Typically caused by elements nested inside divisions/titles the parser skips.
+_KNOWN_MISSING_APPRO: dict[str, int] = {
+    "113-hr-3547/6_enrolled-bill.xml": 310,
+    "115-hr-5895/5_enrolled-bill.xml": 33,
+}
+
+
+def _normalize_ws(text: str) -> str:
+    """Collapse whitespace for comparison."""
+    return " ".join(text.split())
+
+
+@pytest.mark.parametrize(
+    "xml_path",
+    ALL_XML_FILES,
+    ids=[_xml_id(p) for p in ALL_XML_FILES],
+)
+def test_every_appropriations_element_with_text_produces_node(xml_path: Path) -> None:
+    """Every appropriations-* element with text content should map to a parsed node.
+
+    Extracts text using the same function the parser uses, then checks that
+    the normalized text appears in at least one node's body_text.
+    """
+    test_id = _xml_id(xml_path)
+
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    try:
+        body = find_bill_body(root)
+    except ValueError:
+        pytest.skip("No bill body found")
+
+    # Find all appropriations elements with text content
+    appro_elements = []
+    for el in body.iter():
+        if el.tag in _APPRO_TAGS:
+            text = _extract_appropriations_text(el)
+            if text.strip():
+                appro_elements.append((el, text))
+
+    if not appro_elements:
+        pytest.skip("No appropriations elements with text")
+
+    # Parse and collect all node body texts (normalized)
+    bill_tree = normalize_bill(xml_path)
+    node_texts = [_normalize_ws(node.body_text) for node in bill_tree.nodes]
+
+    # Check each appropriations element's text appears in some node
+    missing = []
+    for el, text in appro_elements:
+        normalized = _normalize_ws(text)
+        if not any(normalized in nt for nt in node_texts):
+            preview = normalized[:80]
+            missing.append((el.tag, el.attrib.get("id", "?"), preview))
+
+    total = len(appro_elements)
+    found = total - len(missing)
+
+    known_missing = _KNOWN_MISSING_APPRO.get(test_id, 0)
+
+    if known_missing == 0:
+        assert len(missing) == 0, (
+            f"{test_id}: {len(missing)}/{total} appropriations elements not found in nodes. "
+            f"Sample: {missing[:3]}"
+        )
+    else:
+        assert len(missing) <= known_missing, (
+            f"{test_id}: missing count increased from {known_missing} to {len(missing)}. "
+            f"Sample: {missing[:3]}"
         )
