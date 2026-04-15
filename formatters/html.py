@@ -69,7 +69,7 @@ def build_financial_table(changes: list[dict]) -> str:
         if not fin or not fin.get("amounts_changed"):
             continue
         path_parts = change.get("display_path_new") or change.get("display_path_old") or []
-        path = escape(" &gt; ".join(path_parts))
+        path = " &gt; ".join(escape(p) for p in path_parts)
         section = escape(change.get("section_number", "") or "")
         # Use paired_amounts if available, fall back to positional pairing
         paired = fin.get("paired_amounts")
