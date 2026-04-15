@@ -49,7 +49,8 @@ def find_bill_body(root: ET.Element) -> ET.Element:
     # Amendment doc: <amendment-doc><engrossed-amendment-body><amendment><amendment-block>
     block = root.find(".//engrossed-amendment-body/amendment/amendment-block")
     if block is not None:
-        return block
+        nested = block.find("legis-body")
+        return nested if nested is not None else block
 
     raise ValueError("Could not find bill body in XML")
 
@@ -327,10 +328,11 @@ def _extract_section_text(section: ET.Element) -> str:
     Returns empty string if no text content found.
     """
     text_el = section.find("text")
-    if text_el is not None:
+    has_subsections = section.find("subsection") is not None
+    if text_el is not None and not has_subsections:
         return extract_text_content(text_el)
 
-    # No direct <text> child. Check for subsections or other nested content.
+    # No direct <text> child, or has both <text> and <subsection> children.
     # Extract text from everything except enum and header.
     parts = []
     for child in section:

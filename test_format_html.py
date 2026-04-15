@@ -202,6 +202,22 @@ class TestBuildFinancialTable:
         assert "50.0%" in html
 
 
+    def test_path_not_double_escaped(self):
+        """Path separators should not be double-escaped (issue #15)."""
+        changes = [_change(
+            path=["Division A", "Title I", "Army Operations"],
+            financial={
+                "old_amounts": [1000000],
+                "new_amounts": [2000000],
+                "amounts_changed": True,
+                "paired_amounts": [[1000000, 2000000]],
+            },
+        )]
+        html = build_financial_table(changes)
+        assert "&amp;gt;" not in html
+        assert "Division A" in html
+
+
 class TestBuildChangeCard:
     def test_modified_has_inline_diff(self):
         change = _change(change_type="modified", index=3)

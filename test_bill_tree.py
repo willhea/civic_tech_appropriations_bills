@@ -206,6 +206,30 @@ class TestFindBillBody:
         assert body.tag == "amendment-block"
         assert body.find("section") is not None
 
+    def test_amendment_block_with_nested_legis_body(self):
+        """Amendment-block containing legis-body should return the legis-body."""
+        root = ET.fromstring(
+            '<amendment-doc amend-type="engrossed-amendment">'
+            "<engrossed-amendment-body>"
+            "<amendment>"
+            '<amendment-block style="OLC">'
+            "<legis-body><section><text>Content</text></section></legis-body>"
+            "</amendment-block>"
+            "</amendment>"
+            "</engrossed-amendment-body>"
+            "</amendment-doc>"
+        )
+        body = find_bill_body(root)
+        assert body.find("section") is not None
+
+    def test_amendment_doc_115_hr_244_v5_produces_nodes(self):
+        """Real bill 115-hr-244 v5 should produce nodes (was 0 before fix)."""
+        xml_path = Path("bills/115-hr-244/5_engrossed-amendment-house.xml")
+        if not xml_path.exists():
+            pytest.skip("Bill XML not available locally")
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) >= 5
+
     def test_missing_body_raises(self):
         root = ET.fromstring("<bill><metadata/></bill>")
         with pytest.raises(ValueError, match="Could not find bill body"):
@@ -638,6 +662,32 @@ class TestWalkBodySections:
         assert node.header_text == "Sanctions"
         assert "President shall impose sanctions" in node.body_text
         assert "person that violates" in node.body_text
+
+    def test_section_with_text_and_subsections(self):
+        """Sections with both <text> and <subsection> should capture all content."""
+        body = ET.fromstring(
+            "<legis-body>"
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Reporting</header>"
+            "<text>The agency shall submit a report that includes:</text>"
+            "<subsection>"
+            "<enum>(a)</enum>"
+            "<text>a description of total expenditures of $5,000,000</text>"
+            "</subsection>"
+            "<subsection>"
+            "<enum>(b)</enum>"
+            "<text>an assessment of program effectiveness</text>"
+            "</subsection>"
+            "</section>"
+            "</legis-body>"
+        )
+        nodes = walk_body_sections(body)
+        assert len(nodes) == 1
+        node = nodes[0]
+        assert "shall submit a report" in node.body_text
+        assert "$5,000,000" in node.body_text
+        assert "program effectiveness" in node.body_text
 
     def test_section_without_text_or_subsections(self):
         """Sections with nothing extractable are skipped."""
