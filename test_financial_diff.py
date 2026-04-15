@@ -131,6 +131,24 @@ class TestComputeFinancialChange:
         assert result.amounts_changed is False
         assert result.old_amounts == result.new_amounts
 
+    def test_amendment_annotation_detected(self):
+        """Floor amendment annotations like (increased by $X) should be flagged."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $287,000,000 (increased by $2,000,000).",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is True
+
+    def test_no_amendment_annotation(self):
+        """Text without amendment annotations should not be flagged."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $289,000,000.",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is False
+
 
 class TestFinancialChangeToDict:
     def test_serialize(self):
