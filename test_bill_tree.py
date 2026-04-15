@@ -222,6 +222,14 @@ class TestFindBillBody:
         body = find_bill_body(root)
         assert body.find("section") is not None
 
+    def test_amendment_doc_115_hr_244_v5_produces_nodes(self):
+        """Real bill 115-hr-244 v5 should produce nodes (was 0 before fix)."""
+        xml_path = Path("bills/115-hr-244/5_engrossed-amendment-house.xml")
+        if not xml_path.exists():
+            pytest.skip("Bill XML not available locally")
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) >= 5
+
     def test_missing_body_raises(self):
         root = ET.fromstring("<bill><metadata/></bill>")
         with pytest.raises(ValueError, match="Could not find bill body"):

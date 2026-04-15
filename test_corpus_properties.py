@@ -57,11 +57,8 @@ def _xml_id(xml_path: Path) -> str:
     return f"{xml_path.parent.name}/{xml_path.name}"
 
 
-# 115-hr-244 v5 has 0 nodes due to amendment-doc legis-body wrapper (issue #2).
-# Will be fixed in Part B. Mark as expected failure for now.
-_XFAIL_ZERO_NODES = {
-    "115-hr-244/5_engrossed-amendment-house.xml",
-}
+# Files with known 0-node issues. Currently empty (issue #2 fixed).
+_XFAIL_ZERO_NODES: set[str] = set()
 
 
 @pytest.mark.parametrize(
