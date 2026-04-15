@@ -185,7 +185,8 @@ def _process_appro_element(
         if header and _PARENTHETICAL_RE.match(header):
             effective_header = prev_name
         else:
-            prev_name = header
+            if header:
+                prev_name = header
             effective_header = header
 
         body_text = _extract_appropriations_text(child)
