@@ -49,7 +49,8 @@ def find_bill_body(root: ET.Element) -> ET.Element:
     # Amendment doc: <amendment-doc><engrossed-amendment-body><amendment><amendment-block>
     block = root.find(".//engrossed-amendment-body/amendment/amendment-block")
     if block is not None:
-        return block
+        nested = block.find("legis-body")
+        return nested if nested is not None else block
 
     raise ValueError("Could not find bill body in XML")
 
