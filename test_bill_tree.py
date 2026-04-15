@@ -428,6 +428,30 @@ class TestWalkTitle:
         assert nodes[0].match_path == ("dept", "agency a", "sub a")
         assert nodes[1].match_path == ("dept", "agency b", "sub b")
 
+    def test_intermediate_with_paragraph_children(self):
+        """An intermediate with <text> + <paragraph> children captures all content."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<header>JOINT ITEMS</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Office of the Attending Physician</header>"
+            "<text>For medical supplies, including:</text>"
+            "<paragraph><enum>(1)</enum>"
+            "<text>$9,120 per annum for the Attending Physician</text>"
+            "</paragraph>"
+            "<paragraph><enum>(2)</enum>"
+            "<text>$2,800,000 for reimbursement, $3,868,000 total</text>"
+            "</paragraph>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "JOINT ITEMS", "")
+        assert len(nodes) == 1
+        node = nodes[0]
+        assert "For medical supplies, including:" in node.body_text
+        assert "$9,120" in node.body_text
+        assert "$3,868,000" in node.body_text
+
 
 class TestWalkBodySections:
     """Test walk_body_sections for bills with no titles (e.g., HR 2882 v1-3)."""

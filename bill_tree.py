@@ -155,8 +155,8 @@ def walk_title(
             current_intermediate = None
             prev_name = current_major
 
-            text_el = child.find("text")
-            if text_el is not None:
+            body_text = _extract_appropriations_text(child)
+            if body_text:
                 match_path, display_path = _build_paths(
                     title_header, division_label, current_major, None, None,
                 )
@@ -166,7 +166,7 @@ def walk_title(
                     tag=tag,
                     element_id=child.attrib.get("id", ""),
                     header_text=current_major or "",
-                    body_text=extract_text_content(text_el),
+                    body_text=body_text,
 
                     section_number="",
                 ))
@@ -181,8 +181,8 @@ def walk_title(
                 prev_name = header
                 effective_header = header
 
-            text_el = child.find("text")
-            if text_el is not None:
+            body_text = _extract_appropriations_text(child)
+            if body_text:
                 match_path, display_path = _build_paths(
                     title_header, division_label, current_major, effective_header, None,
                 )
@@ -192,7 +192,7 @@ def walk_title(
                     tag=tag,
                     element_id=child.attrib.get("id", ""),
                     header_text=header,
-                    body_text=extract_text_content(text_el),
+                    body_text=body_text,
 
                     section_number="",
                 ))
@@ -207,8 +207,8 @@ def walk_title(
                     prev_name = header
                 effective_header = header
 
-            text_el = child.find("text")
-            if text_el is not None:
+            body_text = _extract_appropriations_text(child)
+            if body_text:
                 match_path, display_path = _build_paths(
                     title_header, division_label, current_major, current_intermediate, effective_header,
                 )
@@ -218,7 +218,7 @@ def walk_title(
                     tag=tag,
                     element_id=child.attrib.get("id", ""),
                     header_text=header or "",
-                    body_text=extract_text_content(text_el),
+                    body_text=body_text,
 
                     section_number="",
                 ))
