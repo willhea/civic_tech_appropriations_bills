@@ -7,6 +7,7 @@ from pathlib import Path
 from bill_tree import (
     BillNode,
     BillTree,
+    _extract_appropriations_text,
     extract_text_content,
     find_bill_body,
     get_header_text,
@@ -112,6 +113,70 @@ class TestGetHeaderText:
             "</appropriations-major>"
         )
         assert get_header_text(el) == "Department of Veterans Affairs"
+
+
+class TestExtractAppropriationsText:
+    def test_text_with_paragraphs(self):
+        """Element with <text> and <paragraph> children captures all content."""
+        el = ET.fromstring(
+            "<appropriations-intermediate>"
+            "<header>Office of the Attending Physician</header>"
+            "<text>For medical supplies, including:</text>"
+            "<paragraph><enum>(1)</enum><text>$9,120 per annum</text></paragraph>"
+            "<paragraph><enum>(2)</enum><text>$2,800,000 for reimbursement</text></paragraph>"
+            "</appropriations-intermediate>"
+        )
+        result = _extract_appropriations_text(el)
+        assert "For medical supplies, including:" in result
+        assert "$9,120" in result
+        assert "$2,800,000" in result
+
+    def test_text_only(self):
+        """Element with only <text> child returns same as extract_text_content."""
+        el = ET.fromstring(
+            "<appropriations-intermediate>"
+            "<header>Medical services</header>"
+            "<text>For necessary expenses, $60,000,000.</text>"
+            "</appropriations-intermediate>"
+        )
+        result = _extract_appropriations_text(el)
+        assert result == "For necessary expenses, $60,000,000."
+
+    def test_paragraphs_only(self):
+        """Element with only <paragraph> children still returns content."""
+        el = ET.fromstring(
+            "<appropriations-intermediate>"
+            "<header>Some heading</header>"
+            "<paragraph><enum>(1)</enum><text>First item $1,000</text></paragraph>"
+            "<paragraph><enum>(2)</enum><text>Second item $2,000</text></paragraph>"
+            "</appropriations-intermediate>"
+        )
+        result = _extract_appropriations_text(el)
+        assert "$1,000" in result
+        assert "$2,000" in result
+
+    def test_empty_element(self):
+        """Element with only a header returns empty string."""
+        el = ET.fromstring(
+            "<appropriations-major>"
+            "<header>Department of Defense</header>"
+            "</appropriations-major>"
+        )
+        result = _extract_appropriations_text(el)
+        assert result == ""
+
+    def test_excludes_enum_and_header(self):
+        """Top-level enum and header are excluded from output."""
+        el = ET.fromstring(
+            "<appropriations-small>"
+            "<enum>A</enum>"
+            "<header>Salaries</header>"
+            "<text>For expenses, $500,000.</text>"
+            "</appropriations-small>"
+        )
+        result = _extract_appropriations_text(el)
+        assert result == "For expenses, $500,000."
+        assert "Salaries" not in result
 
 
 class TestFindBillBody:

@@ -249,6 +249,21 @@ def walk_title(
     return nodes
 
 
+def _extract_appropriations_text(element: ET.Element) -> str:
+    """Extract all text content from an appropriations element.
+
+    Captures text from all children except <enum> and <header>,
+    including direct <text> children and <paragraph> children.
+    Returns empty string if no text content found.
+    """
+    parts = []
+    for child in element:
+        if child.tag in ("enum", "header"):
+            continue
+        parts.append(extract_text_content(child))
+    return " ".join(part for part in parts if part).strip()
+
+
 def _extract_section_text(section: ET.Element) -> str:
     """Extract text from a section element.
 
