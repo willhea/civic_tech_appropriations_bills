@@ -915,3 +915,19 @@ class TestNormalizeBillIntegration:
         # VA Medical Services should mention inpatient/outpatient care
         med = nodes_by_path[("department of veterans affairs", "veterans health administration", "medical services")]
         assert "inpatient" in med.body_text.lower() or "outpatient" in med.body_text.lower()
+
+
+class TestBillNodeDivisionLabel:
+    def test_division_label_field_accessible(self):
+        """BillNode should have a division_label field."""
+        node = BillNode(
+            match_path=("general provisions",),
+            display_path=("Division A: Military Construction", "General Provisions"),
+            tag="section",
+            element_id="id1",
+            header_text="General Provisions",
+            body_text="Some text",
+            section_number="Sec. 501",
+            division_label="Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024",
+        )
+        assert node.division_label == "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
