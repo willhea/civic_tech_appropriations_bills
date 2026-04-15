@@ -177,6 +177,16 @@ class TestComputeFinancialChange:
         assert result is not None
         assert result.has_amendment_annotations is False
 
+    def test_amendment_annotation_changes_effective_amount(self):
+        """An annotation should make amounts_changed True even when base is same."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $287,000,000 (increased by $2,000,000).",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is True
+        assert result.amounts_changed is True
+
 
 class TestFinancialChangeToDict:
     def test_serialize(self):
