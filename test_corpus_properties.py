@@ -251,3 +251,51 @@ def test_every_appropriations_element_with_text_produces_node(xml_path: Path) ->
             f"{test_id}: missing count increased from {known_missing} to {len(missing)}. "
             f"Sample: {missing[:3]}"
         )
+
+
+# Tags excluded from character coverage: parser stores these in separate fields,
+# not in body_text.
+_CHAR_SKIP_TAGS = {"quote", "header", "enum"}
+
+
+@pytest.mark.parametrize(
+    "xml_path",
+    ALL_XML_FILES,
+    ids=[_xml_id(p) for p in ALL_XML_FILES],
+)
+def test_character_coverage_ratio(xml_path: Path) -> None:
+    """Parser should capture a high ratio of the bill body's text content.
+
+    Compares total characters in the body (excluding quote/header/enum subtrees)
+    against total characters across all node body_text fields.
+    """
+    test_id = _xml_id(xml_path)
+    if test_id in _XFAIL_ZERO_NODES:
+        pytest.xfail(f"Known 0-node issue: {test_id}")
+
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    try:
+        body = find_bill_body(root)
+    except ValueError:
+        pytest.skip("No bill body found")
+
+    raw_text = _collect_body_text_excluding(body, _CHAR_SKIP_TAGS)
+    raw_chars = len(raw_text.strip())
+
+    if raw_chars == 0:
+        pytest.skip("No text content in bill body")
+
+    bill_tree = normalize_bill(xml_path)
+    node_chars = sum(len(node.body_text) for node in bill_tree.nodes)
+
+    ratio = node_chars / raw_chars if raw_chars > 0 else 0.0
+
+    # Low floor catches only catastrophic failures. Actual ratios range from
+    # ~0.12 (amendment docs) to ~1.0+ (full bills). Shell bills and early
+    # versions with little appropriations text have legitimately low ratios.
+    assert ratio >= 0.10, (
+        f"{test_id}: character coverage ratio {ratio:.3f} "
+        f"({node_chars}/{raw_chars} chars)"
+    )
