@@ -452,6 +452,121 @@ class TestWalkTitle:
         assert "$9,120" in node.body_text
         assert "$3,868,000" in node.body_text
 
+    def test_section_wrapping_appropriations(self):
+        """Section containing appropriations-* children produces individual nodes."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<header>LEGISLATIVE BRANCH</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>The following sums are appropriated.</text>"
+            '<appropriations-major id="AM1">'
+            "<header>House of Representatives</header>"
+            "</appropriations-major>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Salaries and Expenses</header>"
+            "<text>For expenses, $1,200,000,000.</text>"
+            "</appropriations-intermediate>"
+            '<appropriations-intermediate id="AI2">'
+            "<header>House Leadership Offices</header>"
+            "<text>For offices, $22,000,000.</text>"
+            "</appropriations-intermediate>"
+            "</section>"
+            "</title>"
+        )
+        nodes = walk_title(title, "LEGISLATIVE BRANCH", "")
+        # Should produce: 1 section node + 2 intermediate nodes (major has no text)
+        assert len(nodes) == 3
+        assert nodes[0].tag == "section"
+        assert nodes[0].body_text == "The following sums are appropriated."
+        assert nodes[1].tag == "appropriations-intermediate"
+        assert nodes[1].match_path == (
+            "legislative branch", "house of representatives", "salaries and expenses",
+        )
+        assert "$1,200,000,000" in nodes[1].body_text
+        assert nodes[2].match_path == (
+            "legislative branch", "house of representatives", "house leadership offices",
+        )
+
+    def test_section_with_text_and_appropriations(self):
+        """Section with own text AND appropriations produces both types of nodes."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<header>DEPT</header>"
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<text>General provision text.</text>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Sub Agency</header>"
+            "<text>For expenses, $500,000.</text>"
+            "</appropriations-intermediate>"
+            "</section>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 2
+        assert nodes[0].tag == "section"
+        assert nodes[0].body_text == "General provision text."
+        assert nodes[1].tag == "appropriations-intermediate"
+        assert "$500,000" in nodes[1].body_text
+
+    def test_section_without_appropriations_unchanged(self):
+        """Regular sections without appropriations children behave as before."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<header>DEPT</header>"
+            '<section id="S1">'
+            "<enum>101.</enum>"
+            "<text>No funds may be used for X.</text>"
+            "</section>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 1
+        assert nodes[0].tag == "section"
+        assert nodes[0].body_text == "No funds may be used for X."
+
+    def test_section_wrapping_scopes_context(self):
+        """Context from section-wrapped appropriations does not leak to siblings."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<header>LEG BRANCH</header>"
+            '<appropriations-major id="AM0">'
+            "<header>Senate</header>"
+            "</appropriations-major>"
+            '<appropriations-intermediate id="AI0">'
+            "<header>Senate salaries</header>"
+            "<text>For salaries, $100,000.</text>"
+            "</appropriations-intermediate>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>Sums appropriated.</text>"
+            '<appropriations-major id="AM1">'
+            "<header>House of Representatives</header>"
+            "</appropriations-major>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>House salaries</header>"
+            "<text>For salaries, $200,000.</text>"
+            "</appropriations-intermediate>"
+            "</section>"
+            '<appropriations-intermediate id="AI2">'
+            "<header>Senate office</header>"
+            "<text>For offices, $300,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "LEG BRANCH", "")
+        # Pre-section: intermediate under Senate context
+        assert nodes[0].match_path == ("leg branch", "senate", "senate salaries")
+        # Section node
+        assert nodes[1].tag == "section"
+        # Inside section: intermediate under House context
+        assert nodes[2].match_path == (
+            "leg branch", "house of representatives", "house salaries",
+        )
+        # After section: context reverts to Senate (not House)
+        assert nodes[3].match_path == ("leg branch", "senate", "senate office")
+
 
 class TestWalkBodySections:
     """Test walk_body_sections for bills with no titles (e.g., HR 2882 v1-3)."""

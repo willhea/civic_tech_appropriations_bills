@@ -245,26 +245,60 @@ def walk_title(
             )
 
         elif tag == "section":
+            has_appro_children = any(
+                c.tag.startswith("appropriations-") for c in child
+            )
+
             enum_el = child.find("enum")
             section_num = ""
             if enum_el is not None and enum_el.text:
                 section_num = f"Sec. {enum_el.text.strip().rstrip('.')}"
 
-            body_text = _extract_section_text(child)
-            if body_text:
-                sec_label = section_num.lower() if section_num else ""
-                match_path, display_path = _build_paths(
-                    title_header, division_label, current_major, current_intermediate, sec_label,
-                )
-                nodes.append(BillNode(
-                    match_path=match_path,
-                    display_path=display_path,
-                    tag=tag,
-                    element_id=child.attrib.get("id", ""),
-                    header_text=get_header_text(child),
-                    body_text=body_text,
-                    section_number=section_num,
-                ))
+            if has_appro_children:
+                # Emit section's own text as a section node (if present)
+                text_el = child.find("text")
+                if text_el is not None:
+                    sec_label = section_num.lower() if section_num else ""
+                    match_path, display_path = _build_paths(
+                        title_header, division_label, current_major, current_intermediate, sec_label,
+                    )
+                    nodes.append(BillNode(
+                        match_path=match_path,
+                        display_path=display_path,
+                        tag=tag,
+                        element_id=child.attrib.get("id", ""),
+                        header_text=get_header_text(child),
+                        body_text=extract_text_content(text_el),
+                        section_number=section_num,
+                    ))
+
+                # Walk appropriations children with scoped context
+                # (changes inside the section should not leak to siblings)
+                sec_major = current_major
+                sec_intermediate = current_intermediate
+                sec_prev = prev_name
+                for sub in child:
+                    if sub.tag.startswith("appropriations-"):
+                        sec_major, sec_intermediate, sec_prev = _process_appro_element(
+                            sub, title_header, division_label,
+                            sec_major, sec_intermediate, sec_prev, nodes,
+                        )
+            else:
+                body_text = _extract_section_text(child)
+                if body_text:
+                    sec_label = section_num.lower() if section_num else ""
+                    match_path, display_path = _build_paths(
+                        title_header, division_label, current_major, current_intermediate, sec_label,
+                    )
+                    nodes.append(BillNode(
+                        match_path=match_path,
+                        display_path=display_path,
+                        tag=tag,
+                        element_id=child.attrib.get("id", ""),
+                        header_text=get_header_text(child),
+                        body_text=body_text,
+                        section_number=section_num,
+                    ))
 
     return nodes
 
