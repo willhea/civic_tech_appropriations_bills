@@ -164,6 +164,7 @@ class TestFinancialChangeToDict:
             "new_amounts": [2022775000],
             "amounts_changed": True,
             "paired_amounts": [[1876875000, 2022775000]],
+            "has_amendment_annotations": False,
         }
 
     def test_serialize_empty_amounts(self):

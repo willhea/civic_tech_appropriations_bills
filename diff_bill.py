@@ -115,6 +115,7 @@ class FinancialChange:
     new_amounts: tuple[int, ...]
     amounts_changed: bool
     paired_amounts: tuple[tuple[int | None, int | None], ...]
+    has_amendment_annotations: bool = False
 
 
 def compute_financial_change(
@@ -124,6 +125,11 @@ def compute_financial_change(
 
     Returns None if no amounts on either side (non-financial section).
     """
+    has_annotations = bool(
+        (old_text and _AMENDMENT_RE.search(old_text))
+        or (new_text and _AMENDMENT_RE.search(new_text))
+    )
+
     old_amounts = extract_amounts(old_text) if old_text else ()
     new_amounts = extract_amounts(new_text) if new_text else ()
 
@@ -136,6 +142,7 @@ def compute_financial_change(
         new_amounts=new_amounts,
         amounts_changed=Counter(old_amounts) != Counter(new_amounts),
         paired_amounts=tuple(paired),
+        has_amendment_annotations=has_annotations,
     )
 
 
@@ -146,6 +153,7 @@ def financial_change_to_dict(fc: FinancialChange) -> dict:
         "new_amounts": list(fc.new_amounts),
         "amounts_changed": fc.amounts_changed,
         "paired_amounts": [list(pair) for pair in fc.paired_amounts],
+        "has_amendment_annotations": fc.has_amendment_annotations,
     }
 
 
