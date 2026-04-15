@@ -60,6 +60,36 @@ class TestReconcileMoves:
         assert result[0].change_type == "removed"
         assert result[1].change_type == "added"
 
+    def test_dead_zone_pair_becomes_moved(self):
+        """Pairs with ~0.67 similarity (in the old 0.4-0.7 dead zone) should now reconcile as moved."""
+        old_text = "For the Maritime Administration, including necessary expenses for ship disposal and related maritime operations and maintenance, $287,000,000, to remain available until expended."
+        # Modified version: ~0.67 similarity (below old 0.7 threshold, above new 0.6)
+        new_text = "For the Maritime Administration, including necessary expenses for ship disposal, environmental remediation, and related maritime operations, $312,000,000, to remain available."
+
+        changes = [
+            _node("removed", old_path=("maritime administration",), old_text=old_text),
+            _node("added", new_path=("maritime administration", "ship disposal"), new_text=new_text),
+        ]
+
+        result = reconcile_moves(changes)
+
+        moved = [c for c in result if c.change_type == "moved"]
+        assert len(moved) == 1
+        assert moved[0].text_diff is not None
+
+    def test_low_similarity_stays_separate(self):
+        """Pairs below the threshold should not be reconciled as moved."""
+        changes = [
+            _node("removed", old_path=("sec. 501",), old_text="Counting Veterans Cancer Act provisions for data collection."),
+            _node("added", new_path=("sec. 201",), new_text="Amending Compacts of Free Association with Pacific Island nations."),
+        ]
+
+        result = reconcile_moves(changes)
+
+        assert len(result) == 2
+        assert result[0].change_type == "removed"
+        assert result[1].change_type == "added"
+
     def test_moved_with_text_changes(self):
         old_text = "For acquisition and construction, $1,876,875,000, to remain available until September 30, 2025."
         new_text = "For acquisition and construction, $2,022,775,000, to remain available until expended."
