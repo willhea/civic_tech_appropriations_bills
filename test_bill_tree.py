@@ -206,6 +206,22 @@ class TestFindBillBody:
         assert body.tag == "amendment-block"
         assert body.find("section") is not None
 
+    def test_amendment_block_with_nested_legis_body(self):
+        """Amendment-block containing legis-body should return the legis-body."""
+        root = ET.fromstring(
+            '<amendment-doc amend-type="engrossed-amendment">'
+            "<engrossed-amendment-body>"
+            "<amendment>"
+            '<amendment-block style="OLC">'
+            "<legis-body><section><text>Content</text></section></legis-body>"
+            "</amendment-block>"
+            "</amendment>"
+            "</engrossed-amendment-body>"
+            "</amendment-doc>"
+        )
+        body = find_bill_body(root)
+        assert body.find("section") is not None
+
     def test_missing_body_raises(self):
         root = ET.fromstring("<bill><metadata/></bill>")
         with pytest.raises(ValueError, match="Could not find bill body"):
