@@ -513,7 +513,7 @@ def filter_diff(
         congress=diff.congress,
         bill_type=diff.bill_type,
         bill_number=diff.bill_number,
-        summary=diff.summary,
+        summary=_count_changes(changes),
         changes=changes,
     )
 
