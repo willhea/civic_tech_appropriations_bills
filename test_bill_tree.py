@@ -663,6 +663,32 @@ class TestWalkBodySections:
         assert "President shall impose sanctions" in node.body_text
         assert "person that violates" in node.body_text
 
+    def test_section_with_text_and_subsections(self):
+        """Sections with both <text> and <subsection> should capture all content."""
+        body = ET.fromstring(
+            "<legis-body>"
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Reporting</header>"
+            "<text>The agency shall submit a report that includes:</text>"
+            "<subsection>"
+            "<enum>(a)</enum>"
+            "<text>a description of total expenditures of $5,000,000</text>"
+            "</subsection>"
+            "<subsection>"
+            "<enum>(b)</enum>"
+            "<text>an assessment of program effectiveness</text>"
+            "</subsection>"
+            "</section>"
+            "</legis-body>"
+        )
+        nodes = walk_body_sections(body)
+        assert len(nodes) == 1
+        node = nodes[0]
+        assert "shall submit a report" in node.body_text
+        assert "$5,000,000" in node.body_text
+        assert "program effectiveness" in node.body_text
+
     def test_section_without_text_or_subsections(self):
         """Sections with nothing extractable are skipped."""
         body = ET.fromstring(
