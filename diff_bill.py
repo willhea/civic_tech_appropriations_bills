@@ -34,6 +34,40 @@ def extract_amounts(text: str) -> tuple[int, ...]:
     return tuple(results)
 
 
+_EFFECTIVE_RE = re.compile(
+    r"(\$[\d,]+)"                                          # base amount
+    r"((?:\s*\((?:increased|reduced|decreased) by \$[\d,]+\))*)",  # zero or more annotations
+)
+_ANNOT_INNER_RE = re.compile(r"\((increased|reduced|decreased) by \$([\d,]+)\)")
+
+
+def extract_effective_amounts(text: str) -> tuple[int, ...]:
+    """Find all dollar amounts with amendment annotations applied.
+
+    For each base amount, consumes any immediately following annotations
+    like (increased by $X) or (reduced by $Y) and computes the effective
+    value. Returns base amounts unchanged when no annotations are present.
+    Filters $0 amounts.
+    """
+    results = []
+    for m in _EFFECTIVE_RE.finditer(text):
+        base_str = m.group(1)
+        base = int(base_str.replace("$", "").replace(",", ""))
+        if base == 0:
+            continue
+        annotations = m.group(2)
+        if annotations:
+            for am in _ANNOT_INNER_RE.finditer(annotations):
+                direction = am.group(1)
+                adj = int(am.group(2).replace(",", ""))
+                if direction == "increased":
+                    base += adj
+                else:
+                    base -= adj
+        results.append(base)
+    return tuple(results)
+
+
 def _extract_word_amounts(words: list[str]) -> list[tuple[int, int]]:
     """Find dollar amounts in a word list, returning (word_index, value) pairs.
 
@@ -115,6 +149,7 @@ class FinancialChange:
     new_amounts: tuple[int, ...]
     amounts_changed: bool
     paired_amounts: tuple[tuple[int | None, int | None], ...]
+    has_amendment_annotations: bool = False
 
 
 def compute_financial_change(
@@ -124,18 +159,29 @@ def compute_financial_change(
 
     Returns None if no amounts on either side (non-financial section).
     """
+    has_annotations = bool(
+        (old_text and _AMENDMENT_RE.search(old_text))
+        or (new_text and _AMENDMENT_RE.search(new_text))
+    )
+
     old_amounts = extract_amounts(old_text) if old_text else ()
     new_amounts = extract_amounts(new_text) if new_text else ()
 
     if not old_amounts and not new_amounts:
         return None
 
+    # Use effective amounts (with annotations applied) for change detection,
+    # but keep raw base amounts for display.
+    old_effective = extract_effective_amounts(old_text) if old_text else ()
+    new_effective = extract_effective_amounts(new_text) if new_text else ()
+
     paired = match_amounts(old_text, new_text)
     return FinancialChange(
         old_amounts=old_amounts,
         new_amounts=new_amounts,
-        amounts_changed=Counter(old_amounts) != Counter(new_amounts),
+        amounts_changed=Counter(old_effective) != Counter(new_effective),
         paired_amounts=tuple(paired),
+        has_amendment_annotations=has_annotations,
     )
 
 
@@ -146,6 +192,7 @@ def financial_change_to_dict(fc: FinancialChange) -> dict:
         "new_amounts": list(fc.new_amounts),
         "amounts_changed": fc.amounts_changed,
         "paired_amounts": [list(pair) for pair in fc.paired_amounts],
+        "has_amendment_annotations": fc.has_amendment_annotations,
     }
 
 

@@ -148,7 +148,7 @@ The 0.4 similarity threshold partially mitigates by splitting dissimilar pairs i
 
 **Key files**: `diff_bill.py` (`match_nodes`), `reconcile.py`
 
-### 10. Floor amendment annotation stripping hides real financial changes (high priority)
+### 10. Floor amendment annotation stripping hides real financial changes (done)
 
 `extract_amounts` strips `(increased by $X)` / `(reduced by $X)` annotations before extracting amounts. This prevents the annotation amount from being counted as a separate line item (correct), but the side effect is that the diff reports `amounts_changed: False` even when floor amendments changed the effective appropriation.
 

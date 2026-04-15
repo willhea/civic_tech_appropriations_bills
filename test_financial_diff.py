@@ -4,6 +4,7 @@ from diff_bill import (
     FinancialChange,
     compute_financial_change,
     extract_amounts,
+    extract_effective_amounts,
     financial_change_to_dict,
     match_amounts,
 )
@@ -70,6 +71,33 @@ class TestExtractAmounts:
         assert extract_amounts(text) == (500000, 100000)
 
 
+class TestExtractEffectiveAmounts:
+    def test_single_increase(self):
+        text = "$287,000,000 (increased by $2,000,000)"
+        assert extract_effective_amounts(text) == (289_000_000,)
+
+    def test_single_decrease(self):
+        text = "$500,000,000 (reduced by $30,000,000)"
+        assert extract_effective_amounts(text) == (470_000_000,)
+
+    def test_stacked_annotations(self):
+        text = "$281,358,000 (reduced by $20,000,000) (reduced by $5,000,000) (increased by $10,000,000)"
+        assert extract_effective_amounts(text) == (266_358_000,)
+
+    def test_no_annotations(self):
+        """Without annotations, returns same as extract_amounts."""
+        text = "For expenses, $500,000 and $1,000,000."
+        assert extract_effective_amounts(text) == (500_000, 1_000_000)
+
+    def test_multiple_bases_one_annotated(self):
+        text = "For salaries, $100,000,000, and for expenses, $50,000,000 (increased by $5,000,000)."
+        assert extract_effective_amounts(text) == (100_000_000, 55_000_000)
+
+    def test_decreased_synonym(self):
+        text = "$1,000,000 (decreased by $100,000)"
+        assert extract_effective_amounts(text) == (900_000,)
+
+
 class TestComputeFinancialChange:
     def test_amounts_changed(self):
         result = compute_financial_change(
@@ -131,6 +159,34 @@ class TestComputeFinancialChange:
         assert result.amounts_changed is False
         assert result.old_amounts == result.new_amounts
 
+    def test_amendment_annotation_detected(self):
+        """Floor amendment annotations like (increased by $X) should be flagged."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $287,000,000 (increased by $2,000,000).",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is True
+
+    def test_no_amendment_annotation(self):
+        """Text without amendment annotations should not be flagged."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $289,000,000.",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is False
+
+    def test_amendment_annotation_changes_effective_amount(self):
+        """An annotation should make amounts_changed True even when base is same."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $287,000,000 (increased by $2,000,000).",
+        )
+        assert result is not None
+        assert result.has_amendment_annotations is True
+        assert result.amounts_changed is True
+
 
 class TestFinancialChangeToDict:
     def test_serialize(self):
@@ -146,6 +202,7 @@ class TestFinancialChangeToDict:
             "new_amounts": [2022775000],
             "amounts_changed": True,
             "paired_amounts": [[1876875000, 2022775000]],
+            "has_amendment_annotations": False,
         }
 
     def test_serialize_empty_amounts(self):
