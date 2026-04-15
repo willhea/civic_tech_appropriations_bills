@@ -147,6 +147,106 @@ class TestMatchNodesIntegration:
         assert len(agriculture_added) > 0
 
 
+class TestDivisionAwareMatching:
+    """Tests for division-aware collision resolution in match_nodes."""
+
+    GP_PATH = ("general provisions",)
+
+    def test_collision_resolved_by_division(self):
+        """Nodes with same match_path but different divisions pair by division, not position."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="mil con provisions", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture provisions", division_label="Division B: Agriculture"),
+            _node(self.GP_PATH, body_text="transport provisions", division_label="Division C: Transportation"),
+        ])
+        # New version has same 3 divisions but in different order
+        new = _tree([
+            _node(self.GP_PATH, body_text="transport provisions new", division_label="Division C: Transportation"),
+            _node(self.GP_PATH, body_text="mil con provisions new", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture provisions new", division_label="Division B: Agriculture"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 3
+        for old_node, new_node in pairs:
+            assert old_node is not None and new_node is not None
+            # Each pair should share the same division title (not positional)
+            old_div = old_node.division_label.split(":")[0]
+            new_div_title = new_node.division_label.split(":", 1)[1].strip().lower()
+            old_div_title = old_node.division_label.split(":", 1)[1].strip().lower()
+            assert old_div_title == new_div_title
+
+    def test_division_letter_change_still_matches(self):
+        """Division letter changes (A->C) should still match by title."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="transport text", division_label="Division C: Transportation"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="transport text updated", division_label="Division F: Transportation"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 1
+        assert pairs[0][0] is not None and pairs[0][1] is not None
+
+    def test_unique_paths_unchanged(self):
+        """Non-colliding paths should behave identically to current (fast path)."""
+        old = _tree([
+            _node(("title i", "sec. 1"), body_text="old text", division_label="Division A: MilCon"),
+            _node(("title ii", "sec. 2"), body_text="old text 2", division_label="Division A: MilCon"),
+        ])
+        new = _tree([
+            _node(("title i", "sec. 1"), body_text="new text", division_label="Division A: MilCon"),
+            _node(("title ii", "sec. 2"), body_text="new text 2", division_label="Division A: MilCon"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 2
+        for o, n in pairs:
+            assert o is not None and n is not None
+            assert o.match_path == n.match_path
+
+    def test_new_division_added(self):
+        """New divisions in the new version appear as (None, new_node)."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="mil con", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture", division_label="Division B: Agriculture"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="mil con", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture", division_label="Division B: Agriculture"),
+            _node(self.GP_PATH, body_text="new defense", division_label="Division C: Defense"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 3
+        matched = [(o, n) for o, n in pairs if o is not None and n is not None]
+        added = [(o, n) for o, n in pairs if o is None]
+        assert len(matched) == 2
+        assert len(added) == 1
+        assert added[0][1].division_label == "Division C: Defense"
+
+    def test_collision_same_division_uses_similarity(self):
+        """When same match_path AND same division, pair by text similarity."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="appropriations for military facilities and construction projects",
+                  division_label="Division A: MilCon"),
+            _node(self.GP_PATH, body_text="appropriations for naval operations and fleet readiness",
+                  division_label="Division A: MilCon"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="appropriations for naval operations and fleet modernization",
+                  division_label="Division A: MilCon"),
+            _node(self.GP_PATH, body_text="appropriations for military facilities and construction upgrades",
+                  division_label="Division A: MilCon"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 2
+        for o, n in pairs:
+            assert o is not None and n is not None
+        # Military/construction should pair together, naval should pair together
+        pair_texts = [(o.body_text, n.body_text) for o, n in pairs]
+        mil_pair = [(o, n) for o, n in pair_texts if "military" in o]
+        assert len(mil_pair) == 1
+        assert "military" in mil_pair[0][1]  # should pair with military, not naval
+
+
 class TestDiffText:
     def test_identical_text_returns_empty(self):
         assert diff_text("same text", "same text") == []
