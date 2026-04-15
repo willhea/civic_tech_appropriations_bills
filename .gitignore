@@ -10,5 +10,4 @@ reports/*
 plans/
 test_data/*
 !test_data/validation_*.json
-!test_data/House_and_Senate_Appropriations_FY_1994_to_present.xlsx
 *.csv
