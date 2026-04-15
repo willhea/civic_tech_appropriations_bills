@@ -9,7 +9,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-from bill_tree import BillNode, BillTree, normalize_bill
+from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
 
 
 # --- Financial amount extraction ---
@@ -196,6 +196,116 @@ def financial_change_to_dict(fc: FinancialChange) -> dict:
     }
 
 
+def _similarity_pair(
+    old_nodes: list[BillNode], new_nodes: list[BillNode],
+) -> list[tuple[BillNode | None, BillNode | None]]:
+    """Greedy best-match pairing by text similarity within a group."""
+    if not old_nodes and not new_nodes:
+        return []
+    if not old_nodes:
+        return [(None, n) for n in new_nodes]
+    if not new_nodes:
+        return [(o, None) for o in old_nodes]
+    if len(old_nodes) == 1 and len(new_nodes) == 1:
+        return [(old_nodes[0], new_nodes[0])]
+
+    # Compute all pairwise similarities
+    candidates: list[tuple[float, int, int]] = []
+    for oi, o in enumerate(old_nodes):
+        o_norm = _normalize_text(o.body_text)
+        for ni, n in enumerate(new_nodes):
+            n_norm = _normalize_text(n.body_text)
+            sim = _text_similarity(o_norm, n_norm)
+            candidates.append((sim, oi, ni))
+
+    # Greedy: highest similarity first
+    candidates.sort(reverse=True)
+    claimed_old: set[int] = set()
+    claimed_new: set[int] = set()
+    pairs: list[tuple[BillNode | None, BillNode | None]] = []
+
+    for _sim, oi, ni in candidates:
+        if oi in claimed_old or ni in claimed_new:
+            continue
+        claimed_old.add(oi)
+        claimed_new.add(ni)
+        pairs.append((old_nodes[oi], new_nodes[ni]))
+
+    # Leftovers
+    for oi, o in enumerate(old_nodes):
+        if oi not in claimed_old:
+            pairs.append((o, None))
+    for ni, n in enumerate(new_nodes):
+        if ni not in claimed_new:
+            pairs.append((None, n))
+
+    return pairs
+
+
+def _match_collision_group(
+    old_nodes: list[BillNode], new_nodes: list[BillNode],
+) -> list[tuple[BillNode | None, BillNode | None]]:
+    """Resolve a collision group (multiple nodes sharing one match_path).
+
+    Uses division titles to sub-group, then text similarity as fallback.
+    """
+    # Step 1: Sub-group by normalized division title
+    old_by_div: dict[str, list[BillNode]] = defaultdict(list)
+    new_by_div: dict[str, list[BillNode]] = defaultdict(list)
+    for node in old_nodes:
+        old_by_div[normalize_division_title(node.division_label)].append(node)
+    for node in new_nodes:
+        new_by_div[normalize_division_title(node.division_label)].append(node)
+
+    pairs: list[tuple[BillNode | None, BillNode | None]] = []
+    unmatched_old: list[BillNode] = []
+    unmatched_new: list[BillNode] = []
+
+    all_divs = dict.fromkeys(list(old_by_div.keys()) + list(new_by_div.keys()))
+
+    # Step 2: Pair within each division sub-group
+    for div_title in all_divs:
+        div_old = old_by_div.get(div_title, [])
+        div_new = new_by_div.get(div_title, [])
+
+        if not div_old:
+            unmatched_new.extend(div_new)
+        elif not div_new:
+            unmatched_old.extend(div_old)
+        else:
+            sub_pairs = _similarity_pair(div_old, div_new)
+            for o, n in sub_pairs:
+                if o is None:
+                    unmatched_new.append(n)
+                elif n is None:
+                    unmatched_old.append(o)
+                else:
+                    pairs.append((o, n))
+
+    # Step 3-4: Cross-division similarity fallback for leftovers
+    if unmatched_old and unmatched_new:
+        cross_pairs = _similarity_pair(unmatched_old, unmatched_new)
+        leftover_old = []
+        leftover_new = []
+        for o, n in cross_pairs:
+            if o is None:
+                leftover_new.append(n)
+            elif n is None:
+                leftover_old.append(o)
+            else:
+                pairs.append((o, n))
+        unmatched_old = leftover_old
+        unmatched_new = leftover_new
+
+    # Step 5: True leftovers
+    for o in unmatched_old:
+        pairs.append((o, None))
+    for n in unmatched_new:
+        pairs.append((None, n))
+
+    return pairs
+
+
 def match_nodes(
     old: BillTree, new: BillTree,
 ) -> list[tuple[BillNode | None, BillNode | None]]:
@@ -206,7 +316,9 @@ def match_nodes(
     - (old, None): removed (only in old)
     - (None, new): added (only in new)
 
-    Duplicate match_paths are paired by position order.
+    For unique match_paths, pairs directly (fast path). For collision groups
+    (multiple nodes sharing one match_path), uses division-aware sub-grouping
+    with text similarity fallback.
     """
     # Group nodes by match_path
     old_groups: dict[tuple[str, ...], list[BillNode]] = defaultdict(list)
@@ -227,11 +339,14 @@ def match_nodes(
         old_nodes = old_groups.get(path, [])
         new_nodes = new_groups.get(path, [])
 
-        # Pair by position
-        for i in range(max(len(old_nodes), len(new_nodes))):
-            old_node = old_nodes[i] if i < len(old_nodes) else None
-            new_node = new_nodes[i] if i < len(new_nodes) else None
-            pairs.append((old_node, new_node))
+        if len(old_nodes) <= 1 and len(new_nodes) <= 1:
+            # Fast path: no collision, preserve current behavior
+            pairs.append((
+                old_nodes[0] if old_nodes else None,
+                new_nodes[0] if new_nodes else None,
+            ))
+        else:
+            pairs.extend(_match_collision_group(old_nodes, new_nodes))
 
     return pairs
 
@@ -296,7 +411,7 @@ def _text_similarity(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a.split(), b.split()).ratio()
 
 
-_MOVE_THRESHOLD = 0.7
+_MOVE_THRESHOLD = 0.6
 
 
 def reconcile_moves(

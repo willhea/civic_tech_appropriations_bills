@@ -4,11 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from bill_tree import BillNode, BillTree, normalize_bill
+from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
 from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
 
 
-def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate"):
+def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate", division_label=""):
     """Helper to build a BillNode with defaults for testing."""
     return BillNode(
         match_path=match_path,
@@ -18,6 +18,7 @@ def _node(match_path, body_text="text", element_id="", header_text="", tag="appr
         header_text=header_text,
         body_text=body_text,
         section_number="",
+        division_label=division_label,
     )
 
 
@@ -78,8 +79,8 @@ class TestMatchNodes:
         assert len(added) == 1
         assert len(removed) == 1
 
-    def test_duplicate_paths_matched_by_position(self):
-        """Multiple nodes with same match_path are paired by position order."""
+    def test_duplicate_paths_matched_by_similarity(self):
+        """Multiple nodes with same match_path are paired by text similarity."""
         old = _tree([
             _node(("dup",), "old first"),
             _node(("dup",), "old second"),
@@ -91,10 +92,10 @@ class TestMatchNodes:
         pairs = match_nodes(old, new)
         matched = [(o, n) for o, n in pairs if o is not None and n is not None]
         assert len(matched) == 2
-        assert matched[0][0].body_text == "old first"
-        assert matched[0][1].body_text == "new first"
-        assert matched[1][0].body_text == "old second"
-        assert matched[1][1].body_text == "new second"
+        # Each old node should pair with its most similar new node
+        pair_set = {(o.body_text, n.body_text) for o, n in matched}
+        assert ("old first", "new first") in pair_set
+        assert ("old second", "new second") in pair_set
 
     def test_uneven_duplicates(self):
         """When one side has more duplicates, extras show as added/removed."""
@@ -144,6 +145,106 @@ class TestMatchNodesIntegration:
         added_paths = {n.match_path for _, n in added}
         agriculture_added = [p for p in added_paths if "agriculture" in str(p).lower()]
         assert len(agriculture_added) > 0
+
+
+class TestDivisionAwareMatching:
+    """Tests for division-aware collision resolution in match_nodes."""
+
+    GP_PATH = ("general provisions",)
+
+    def test_collision_resolved_by_division(self):
+        """Nodes with same match_path but different divisions pair by division, not position."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="mil con provisions", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture provisions", division_label="Division B: Agriculture"),
+            _node(self.GP_PATH, body_text="transport provisions", division_label="Division C: Transportation"),
+        ])
+        # New version has same 3 divisions but in different order
+        new = _tree([
+            _node(self.GP_PATH, body_text="transport provisions new", division_label="Division C: Transportation"),
+            _node(self.GP_PATH, body_text="mil con provisions new", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture provisions new", division_label="Division B: Agriculture"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 3
+        for old_node, new_node in pairs:
+            assert old_node is not None and new_node is not None
+            # Each pair should share the same division title (not positional)
+            old_div = old_node.division_label.split(":")[0]
+            new_div_title = new_node.division_label.split(":", 1)[1].strip().lower()
+            old_div_title = old_node.division_label.split(":", 1)[1].strip().lower()
+            assert old_div_title == new_div_title
+
+    def test_division_letter_change_still_matches(self):
+        """Division letter changes (A->C) should still match by title."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="transport text", division_label="Division C: Transportation"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="transport text updated", division_label="Division F: Transportation"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 1
+        assert pairs[0][0] is not None and pairs[0][1] is not None
+
+    def test_unique_paths_unchanged(self):
+        """Non-colliding paths should behave identically to current (fast path)."""
+        old = _tree([
+            _node(("title i", "sec. 1"), body_text="old text", division_label="Division A: MilCon"),
+            _node(("title ii", "sec. 2"), body_text="old text 2", division_label="Division A: MilCon"),
+        ])
+        new = _tree([
+            _node(("title i", "sec. 1"), body_text="new text", division_label="Division A: MilCon"),
+            _node(("title ii", "sec. 2"), body_text="new text 2", division_label="Division A: MilCon"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 2
+        for o, n in pairs:
+            assert o is not None and n is not None
+            assert o.match_path == n.match_path
+
+    def test_new_division_added(self):
+        """New divisions in the new version appear as (None, new_node)."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="mil con", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture", division_label="Division B: Agriculture"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="mil con", division_label="Division A: Military Construction"),
+            _node(self.GP_PATH, body_text="agriculture", division_label="Division B: Agriculture"),
+            _node(self.GP_PATH, body_text="new defense", division_label="Division C: Defense"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 3
+        matched = [(o, n) for o, n in pairs if o is not None and n is not None]
+        added = [(o, n) for o, n in pairs if o is None]
+        assert len(matched) == 2
+        assert len(added) == 1
+        assert added[0][1].division_label == "Division C: Defense"
+
+    def test_collision_same_division_uses_similarity(self):
+        """When same match_path AND same division, pair by text similarity."""
+        old = _tree([
+            _node(self.GP_PATH, body_text="appropriations for military facilities and construction projects",
+                  division_label="Division A: MilCon"),
+            _node(self.GP_PATH, body_text="appropriations for naval operations and fleet readiness",
+                  division_label="Division A: MilCon"),
+        ])
+        new = _tree([
+            _node(self.GP_PATH, body_text="appropriations for naval operations and fleet modernization",
+                  division_label="Division A: MilCon"),
+            _node(self.GP_PATH, body_text="appropriations for military facilities and construction upgrades",
+                  division_label="Division A: MilCon"),
+        ])
+        pairs = match_nodes(old, new)
+        assert len(pairs) == 2
+        for o, n in pairs:
+            assert o is not None and n is not None
+        # Military/construction should pair together, naval should pair together
+        pair_texts = [(o.body_text, n.body_text) for o, n in pairs]
+        mil_pair = [(o, n) for o, n in pair_texts if "military" in o]
+        assert len(mil_pair) == 1
+        assert "military" in mil_pair[0][1]  # should pair with military, not naval
 
 
 class TestDiffText:
@@ -432,3 +533,34 @@ class TestEndToEnd:
         parsed = json.loads(json_str)
         assert parsed["congress"] == 118
         assert len(parsed["changes"]) == len(result.changes)
+
+
+V4_PATH = Path("bills/118-hr-4366/4_engrossed-amendment-senate.xml")
+V5_PATH = Path("bills/118-hr-4366/5_engrossed-amendment-house.xml")
+
+
+@pytest.mark.skipif(
+    not V4_PATH.exists() or not V5_PATH.exists(),
+    reason="Real XML not present",
+)
+class TestCrossDivisionIntegration:
+    """Validate that division-aware matching reduces cross-division mismatches."""
+
+    def test_cross_division_mismatches_below_target(self):
+        """Issue #1/#9: cross-division mismatches reduced from 226 to <50."""
+        old = normalize_bill(V4_PATH)
+        new = normalize_bill(V5_PATH)
+        result = diff_bills(old, new)
+
+        cross_div = 0
+        for c in result.changes:
+            if c.display_path_old and c.display_path_new:
+                old_first = c.display_path_old[0] if c.display_path_old else ""
+                new_first = c.display_path_new[0] if c.display_path_new else ""
+                if old_first.startswith("Division") and new_first.startswith("Division"):
+                    old_title = normalize_division_title(old_first)
+                    new_title = normalize_division_title(new_first)
+                    if old_title and new_title and old_title != new_title:
+                        cross_div += 1
+
+        assert cross_div < 50, f"Cross-division mismatches: {cross_div} (target: <50)"

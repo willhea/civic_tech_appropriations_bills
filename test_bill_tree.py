@@ -12,6 +12,7 @@ from bill_tree import (
     find_bill_body,
     get_header_text,
     normalize_bill,
+    normalize_division_title,
     normalize_header,
     walk_body_sections,
     walk_title,
@@ -915,3 +916,51 @@ class TestNormalizeBillIntegration:
         # VA Medical Services should mention inpatient/outpatient care
         med = nodes_by_path[("department of veterans affairs", "veterans health administration", "medical services")]
         assert "inpatient" in med.body_text.lower() or "outpatient" in med.body_text.lower()
+
+
+class TestBillNodeDivisionLabel:
+    def test_division_label_field_accessible(self):
+        """BillNode should have a division_label field."""
+        node = BillNode(
+            match_path=("general provisions",),
+            display_path=("Division A: Military Construction", "General Provisions"),
+            tag="section",
+            element_id="id1",
+            header_text="General Provisions",
+            body_text="Some text",
+            section_number="Sec. 501",
+            division_label="Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024",
+        )
+        assert node.division_label == "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_normalize_bill_populates_division_label(self):
+        """normalize_bill should set division_label on nodes from multi-division bills."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        div_a_nodes = [n for n in tree.nodes if n.division_label.startswith("Division A:")]
+        assert len(div_a_nodes) > 0
+        assert "Military Construction" in div_a_nodes[0].division_label
+
+
+class TestNormalizeDivisionTitle:
+    def test_basic(self):
+        assert normalize_division_title("Division A: Military Construction") == "military construction"
+
+    def test_letter_insensitive(self):
+        result_a = normalize_division_title("Division A: Military Construction")
+        result_c = normalize_division_title("Division C: Military Construction")
+        assert result_a == result_c
+
+    def test_long_title(self):
+        label = "Division B: Agriculture, Rural Development, Food and Drug Administration, and Related Agencies"
+        assert normalize_division_title(label) == "agriculture, rural development, food and drug administration, and related agencies"
+
+    def test_empty_string(self):
+        assert normalize_division_title("") == ""
+
+    def test_no_colon(self):
+        assert normalize_division_title("Division F") == ""
+
+    def test_embedded_newline(self):
+        label = "Division B: LEGISLATIVE BRANCH\nAPPROPRIATIONS ACT, 2019"
+        assert normalize_division_title(label) == "legislative branch appropriations act, 2019"

@@ -63,7 +63,7 @@ Next validation data should come from a jurisdiction we haven't developed agains
 
 ## Parser issues
 
-### 1. Cross-division path collisions cause wrong diffs (high priority)
+### 1. Cross-division path collisions cause wrong diffs (done)
 
 Every omnibus bill has dozens of duplicate `match_path` values. Examples from 114-hr-2029: 90 duplicate paths out of 2,227 nodes.
 
@@ -140,7 +140,7 @@ Empty header on intermediate/small sets `prev_name = ""`. Subsequent parenthetic
 
 ## Diff pipeline issues
 
-### 9. Positional pairing breaks on structural changes (high priority)
+### 9. Positional pairing breaks on structural changes (done)
 
 `match_nodes()` groups by `match_path` and pairs by array index. When group sizes differ between versions (divisions added/removed/reordered), pairings become arbitrary. Compounds with issue #1.
 
@@ -158,7 +158,7 @@ The tool needs to either compute effective amounts (base + increases - decreases
 
 **Key files**: `diff_bill.py` (`_AMENDMENT_RE`, `extract_amounts`)
 
-### 11. Section renumbering causes cascading mismatches (medium-high priority)
+### 11. Section renumbering causes cascading mismatches (done)
 
 When a new section is inserted mid-bill, all subsequent sections get renumbered (e.g., old sec. 223 becomes new sec. 224). Since `match_path` includes section numbers, every renumbered section becomes a false mismatch.
 
@@ -170,7 +170,9 @@ When a new section is inserted mid-bill, all subsequent sections get renumbered 
 
 ### 12. Version-to-version node count instability (informational)
 
-Node counts vary dramatically: 115-hr-244 goes from 7 (introduced) to 2,103 (enrolled). Early versions are shell bills that become omnibus vehicles. Diffing these produces mass "removed"/"added" with no useful matching. Arguably correct but not communicated to users.
+Node counts vary dramatically: 115-hr-244 goes from 7 (introduced) to 2,103 (enrolled). Early versions are **shell bills**: short procedural placeholders (a title and a few sections) that Congress later replaces entirely with the real legislative text. They serve as vehicles for the full omnibus content added during the amendment process. Shell bills typically have 5-10 nodes, 0 divisions, and 1-2 dollar amounts.
+
+Diffing shell versions against full versions produces mass "removed"/"added" with no useful matching. Arguably correct but not communicated to users. Property tests skip dollar coverage measurement on shell bills (< 3 amounts) since missing 1 of 1 is noise, not a meaningful accuracy signal.
 
 ---
 
