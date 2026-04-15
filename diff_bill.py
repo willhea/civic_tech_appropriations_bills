@@ -480,54 +480,55 @@ def bill_diff_to_dict(diff: BillDiff, *, financial: bool = False) -> dict:
 # --- CLI ---
 
 
+def filter_diff(
+    diff: BillDiff,
+    *,
+    include_unchanged: bool = False,
+    filter_text: str | None = None,
+    financial_only: bool = False,
+) -> BillDiff:
+    """Apply filters to a BillDiff, returning a new BillDiff with filtered changes."""
+    changes = list(diff.changes)
+
+    if not include_unchanged:
+        changes = [c for c in changes if c.change_type != "unchanged"]
+
+    if filter_text:
+        filter_lower = filter_text.lower()
+        changes = [
+            c for c in changes
+            if filter_lower in " ".join(c.match_path)
+        ]
+
+    if financial_only:
+        changes = [
+            c for c in changes
+            if (fc := compute_financial_change(c.old_text, c.new_text)) is not None
+            and fc.amounts_changed
+        ]
+
+    return BillDiff(
+        old_version=diff.old_version,
+        new_version=diff.new_version,
+        congress=diff.congress,
+        bill_type=diff.bill_type,
+        bill_number=diff.bill_number,
+        summary=diff.summary,
+        changes=changes,
+    )
+
+
 def cmd_compare(args: argparse.Namespace) -> None:
     old_tree = normalize_bill(Path(args.old_xml))
     new_tree = normalize_bill(Path(args.new_xml))
     result = diff_bills(old_tree, new_tree)
 
-    # Filter out unchanged by default
-    if not args.include_unchanged:
-        result = BillDiff(
-            old_version=result.old_version,
-            new_version=result.new_version,
-            congress=result.congress,
-            bill_type=result.bill_type,
-            bill_number=result.bill_number,
-            summary=result.summary,
-            changes=[c for c in result.changes if c.change_type != "unchanged"],
-        )
-
-    # Apply filter
-    if args.filter:
-        filter_lower = args.filter.lower()
-        result = BillDiff(
-            old_version=result.old_version,
-            new_version=result.new_version,
-            congress=result.congress,
-            bill_type=result.bill_type,
-            bill_number=result.bill_number,
-            summary=result.summary,
-            changes=[
-                c for c in result.changes
-                if filter_lower in " ".join(c.match_path)
-            ],
-        )
-
-    # Apply financial filter
-    if args.financial:
-        result = BillDiff(
-            old_version=result.old_version,
-            new_version=result.new_version,
-            congress=result.congress,
-            bill_type=result.bill_type,
-            bill_number=result.bill_number,
-            summary=result.summary,
-            changes=[
-                c for c in result.changes
-                if (fc := compute_financial_change(c.old_text, c.new_text)) is not None
-                and fc.amounts_changed
-            ],
-        )
+    result = filter_diff(
+        result,
+        include_unchanged=args.include_unchanged,
+        filter_text=args.filter,
+        financial_only=args.financial,
+    )
 
     fmt = getattr(args, "format", "json")
     # HTML always gets financial enrichment; JSON only when --financial is passed
