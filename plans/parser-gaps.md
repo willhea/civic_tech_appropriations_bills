@@ -80,7 +80,7 @@ Root cause: `match_path` deliberately excludes division labels (to support match
 
 **Test coverage gap**: Validation fixture has 0 path collisions. No cross-version matching tests.
 
-### 2. Amendment-doc versions with `legis-body` wrapper produce 0 nodes (high priority)
+### 2. Amendment-doc versions with `legis-body` wrapper produce 0 nodes (done)
 
 Two versions of 115-hr-244 produce 0 nodes:
 - `4_engrossed-amendment-senate.xml`: empty amendment-block (0 chars, legitimate)
@@ -92,7 +92,7 @@ Root cause: Parser finds `amendment-block` via `find_bill_body()`, then looks fo
 
 **Test coverage gap**: No test covers amendment-block with nested legis-body.
 
-### 3. `_extract_section_text` loses subsection content (medium priority)
+### 3. `_extract_section_text` loses subsection content (done)
 
 When a section has BOTH a direct `<text>` child AND `<subsection>` children, only `<text>` content is returned. Found 2 instances in 116-hr-1865 (out of 1,525 sections):
 - Sec. 788: captures 97 chars instead of 1,096
@@ -176,7 +176,7 @@ Node counts vary dramatically: 115-hr-244 goes from 7 (introduced) to 2,103 (enr
 
 ## HTML report bugs
 
-### 15. Double-escaping in financial table paths (confirmed)
+### 15. Double-escaping in financial table paths (done)
 
 `formatters/html.py` line 72: `escape(" > ".join(path_parts))` double-escapes `>` into `&amp;gt;`. Users see literal `&gt;` in every financial table row. Fix pattern exists at line 154.
 
@@ -194,7 +194,7 @@ Sort function reorders `<tr>` independently, separating parent rows from sub-row
 
 **Key files**: `formatters/html.py` (lines 386-404)
 
-### 18. Summary bar count mismatch with `--financial` / `--filter`
+### 18. Summary bar count mismatch with `--financial` / `--filter` (done)
 
 Filtered changes use unfiltered summary counts. Summary claims more changes than are displayed.
 
