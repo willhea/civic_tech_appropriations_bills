@@ -12,6 +12,7 @@ from bill_tree import (
     find_bill_body,
     get_header_text,
     normalize_bill,
+    normalize_division_title,
     normalize_header,
     walk_body_sections,
     walk_title,
@@ -939,3 +940,27 @@ class TestBillNodeDivisionLabel:
         div_a_nodes = [n for n in tree.nodes if n.division_label.startswith("Division A:")]
         assert len(div_a_nodes) > 0
         assert "Military Construction" in div_a_nodes[0].division_label
+
+
+class TestNormalizeDivisionTitle:
+    def test_basic(self):
+        assert normalize_division_title("Division A: Military Construction") == "military construction"
+
+    def test_letter_insensitive(self):
+        result_a = normalize_division_title("Division A: Military Construction")
+        result_c = normalize_division_title("Division C: Military Construction")
+        assert result_a == result_c
+
+    def test_long_title(self):
+        label = "Division B: Agriculture, Rural Development, Food and Drug Administration, and Related Agencies"
+        assert normalize_division_title(label) == "agriculture, rural development, food and drug administration, and related agencies"
+
+    def test_empty_string(self):
+        assert normalize_division_title("") == ""
+
+    def test_no_colon(self):
+        assert normalize_division_title("Division F") == ""
+
+    def test_embedded_newline(self):
+        label = "Division B: LEGISLATIVE BRANCH\nAPPROPRIATIONS ACT, 2019"
+        assert normalize_division_title(label) == "legislative branch appropriations act, 2019"
