@@ -114,3 +114,64 @@ def test_every_dollar_amount_appears_in_a_node(xml_path: Path) -> None:
         f"{test_id}: {len(missing)}/{total} amounts missing (ratio={ratio:.3f}). "
         f"Sample missing: {missing[:5]}"
     )
+
+
+# Files known to have duplicate match_paths (cross-division collisions, issue #1).
+# Values are the current duplicate counts. Files not listed must have zero duplicates.
+_KNOWN_DUPLICATE_COUNTS: dict[str, int] = {
+    "113-hr-3547/5_engrossed-amendment-house.xml": 150,
+    "113-hr-3547/6_enrolled-bill.xml": 73,
+    "113-hr-83/6_engrossed-amendment-house.xml": 112,
+    "113-hr-83/7_enrolled-bill.xml": 112,
+    "114-hr-2029/6_engrossed-amendment-house.xml": 156,
+    "114-hr-2029/7_enrolled-bill.xml": 156,
+    "115-hr-1625/7_enrolled-bill.xml": 153,
+    "115-hr-244/6_enrolled-bill.xml": 136,
+    "115-hr-5895/2_engrossed-in-house.xml": 20,
+    "115-hr-5895/3_placed-on-calendar-senate.xml": 20,
+    "115-hr-5895/4_engrossed-amendment-senate.xml": 6,
+    "115-hr-5895/5_enrolled-bill.xml": 2,
+    "116-hr-1865/5_engrossed-amendment-house.xml": 55,
+    "116-hr-1865/6_enrolled-bill.xml": 55,
+    "118-hr-2882/5_engrossed-amendment-house.xml": 41,
+    "118-hr-2882/6_enrolled-bill.xml": 41,
+    "118-hr-4366/4_engrossed-amendment-senate.xml": 7,
+    "118-hr-4366/5_engrossed-amendment-house.xml": 33,
+    "118-hr-4366/6_enrolled-bill.xml": 33,
+}
+
+
+@pytest.mark.parametrize(
+    "xml_path",
+    ALL_XML_FILES,
+    ids=[_xml_id(p) for p in ALL_XML_FILES],
+)
+def test_no_duplicate_match_paths(xml_path: Path) -> None:
+    """Each node's match_path should be unique within a bill.
+
+    Duplicates indicate cross-division path collisions (issue #1).
+    Files with known duplicates assert the count hasn't increased.
+    Files with no known duplicates assert zero.
+    """
+    test_id = _xml_id(xml_path)
+    bill_tree = normalize_bill(xml_path)
+
+    if not bill_tree.nodes:
+        pytest.skip("No nodes parsed")
+
+    counts = Counter(node.match_path for node in bill_tree.nodes)
+    dupes = {k: v for k, v in counts.items() if v > 1}
+    total_dupes = sum(v - 1 for v in dupes.values())
+
+    known = _KNOWN_DUPLICATE_COUNTS.get(test_id, 0)
+
+    if known == 0:
+        assert total_dupes == 0, (
+            f"{test_id}: unexpected {total_dupes} duplicate match_paths. "
+            f"Sample: {list(dupes.items())[:3]}"
+        )
+    else:
+        assert total_dupes <= known, (
+            f"{test_id}: duplicate count increased from {known} to {total_dupes}. "
+            f"Sample: {list(dupes.items())[:3]}"
+        )
