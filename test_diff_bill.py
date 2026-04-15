@@ -8,7 +8,7 @@ from bill_tree import BillNode, BillTree, normalize_bill
 from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
 
 
-def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate"):
+def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate", division_label=""):
     """Helper to build a BillNode with defaults for testing."""
     return BillNode(
         match_path=match_path,
@@ -18,6 +18,7 @@ def _node(match_path, body_text="text", element_id="", header_text="", tag="appr
         header_text=header_text,
         body_text=body_text,
         section_number="",
+        division_label=division_label,
     )
 
 

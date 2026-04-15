@@ -17,6 +17,7 @@ class BillNode:
     header_text: str
     body_text: str
     section_number: str
+    division_label: str
 
 
 @dataclass(frozen=True)
@@ -161,6 +162,7 @@ def _process_appro_element(
                 header_text=current_major or "",
                 body_text=body_text,
                 section_number="",
+                division_label=division_label,
             ))
 
     elif tag == "appropriations-intermediate":
@@ -186,6 +188,7 @@ def _process_appro_element(
                 header_text=header,
                 body_text=body_text,
                 section_number="",
+                division_label=division_label,
             ))
 
     elif tag == "appropriations-small":
@@ -211,6 +214,7 @@ def _process_appro_element(
                 header_text=header or "",
                 body_text=body_text,
                 section_number="",
+                division_label=division_label,
             ))
 
     return current_major, current_intermediate, prev_name
@@ -271,6 +275,7 @@ def walk_title(
                         header_text=get_header_text(child),
                         body_text=extract_text_content(text_el),
                         section_number=section_num,
+                        division_label=division_label,
                     ))
 
                 # Walk appropriations children with scoped context
@@ -299,6 +304,7 @@ def walk_title(
                         header_text=get_header_text(child),
                         body_text=body_text,
                         section_number=section_num,
+                        division_label=division_label,
                     ))
 
     return nodes
@@ -376,6 +382,7 @@ def walk_body_sections(body: ET.Element) -> list[BillNode]:
             header_text=get_header_text(child),
             body_text=body_text,
             section_number=section_num,
+            division_label="",
         ))
 
     return nodes

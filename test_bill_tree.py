@@ -931,3 +931,11 @@ class TestBillNodeDivisionLabel:
             division_label="Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024",
         )
         assert node.division_label == "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_normalize_bill_populates_division_label(self):
+        """normalize_bill should set division_label on nodes from multi-division bills."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        div_a_nodes = [n for n in tree.nodes if n.division_label.startswith("Division A:")]
+        assert len(div_a_nodes) > 0
+        assert "Military Construction" in div_a_nodes[0].division_label
