@@ -1,5 +1,7 @@
 """Tests for HTML bill diff report formatter."""
 
+import pytest
+
 from formatters.html import (
     build_change_card,
     build_financial_table,
@@ -78,21 +80,7 @@ class TestWordDiff:
         assert result is not None
 
 
-def _change(*, change_type="modified", path=None, financial=None, index=0):
-    """Build a minimal change dict for testing."""
-    return {
-        "display_path_old": path or ["DEPT", "Section"],
-        "display_path_new": path or ["DEPT", "Section"],
-        "match_path": [p.lower() for p in (path or ["DEPT", "Section"])],
-        "change_type": change_type,
-        "old_text": "old",
-        "new_text": "new",
-        "text_diff": [],
-        "section_number": "",
-        "element_id_old": f"old-{index}",
-        "element_id_new": f"new-{index}",
-        **({"financial": financial} if financial else {}),
-    }
+from conftest import make_change_dict as _change
 
 
 class TestBuildFinancialTable:
@@ -561,6 +549,7 @@ class TestCliIntegration:
         args = parser.parse_args(["compare", "a.xml", "b.xml"])
         assert args.format == "html"
 
+    @pytest.mark.slow
     def test_format_html_output(self, tmp_path):
         """HTML format produces a valid HTML file via the CLI."""
         import subprocess
@@ -581,6 +570,7 @@ class TestCliIntegration:
         content = out.read_text()
         assert content.startswith("<!DOCTYPE html>")
 
+    @pytest.mark.slow
     def test_format_html_v1_v2_no_phantom_financial(self, tmp_path):
         """v1 vs v2 has no real financial changes after amendment stripping."""
         import subprocess
@@ -603,6 +593,7 @@ class TestCliIntegration:
         # These are now correctly detected as financial changes.
         assert "Financial Summary" in content
 
+    @pytest.mark.slow
     def test_format_html_v1_v6_has_financial_summary(self, tmp_path):
         """v1 vs v6 (enrolled) has genuine financial changes."""
         import subprocess

@@ -156,7 +156,8 @@ Four modules:
 ## Testing
 
 ```bash
-uv run pytest                              # All tests
+uv run pytest -m "not slow"               # Fast unit tests (~1s, no XML files needed)
+uv run pytest                              # All tests (needs bills/ XML files)
 uv run pytest test_bill_tree.py            # Normalization tests
 uv run pytest test_diff_bill.py            # Diff/matching tests
 uv run pytest test_financial_diff.py       # Financial filtering tests
@@ -165,6 +166,8 @@ uv run pytest test_format_html.py          # HTML report formatter tests
 uv run pytest test_corpus_properties.py    # Corpus-wide property tests
 uv run pytest test_validate_extraction.py  # External validation tests
 ```
+
+Tests that require real bill XML files are marked `@pytest.mark.slow`. The fast suite (`-m "not slow"`) runs 218 unit tests using inline XML and mocked data. CI runs the fast suite automatically on every PR.
 
 Integration tests use real XML files from `bills/` and skip if not present. To run the full suite including validation tests, download the required bills:
 

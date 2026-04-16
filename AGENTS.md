@@ -6,7 +6,8 @@ Guidelines for AI coding agents working on this repository.
 
 ```bash
 uv sync                          # Install dependencies
-uv run pytest                    # Run all tests
+uv run pytest -m "not slow"     # Fast tests only (~1s)
+uv run pytest                    # All tests (needs bills/ XML files)
 uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 ```
 
@@ -21,12 +22,12 @@ uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 
 ## Test conventions
 
+- Tests requiring real bill XML files are marked `@pytest.mark.slow`; CI runs only fast tests
+- Shared test helpers live in `conftest.py`: `make_bill_node()`, `make_bill_tree()`, `make_node_diff()`, `make_change_dict()`
+- Session-scoped fixtures in `conftest.py` cache parsed bill trees and diffs to avoid redundant XML parsing
 - `fetch_bills.py` tests use `respx.mock` decorator and monkeypatch `time.sleep`
-- `bill_tree.py` tests use inline XML snippets; integration tests skip if real XML files are absent
-- `diff_bill.py` tests use helper functions `_node()` and `_tree()` to build fixtures; `_node()` accepts `division_label` kwarg
-- `test_reconcile.py` tests use a local `_node()` helper that builds `NodeDiff` objects
+- `bill_tree.py` tests use inline XML snippets; integration tests use session fixtures
 - `test_corpus_properties.py` parametrizes over all XML files in `bills/`; uses `_KNOWN_DUPLICATE_COUNTS` and `_KNOWN_MISSING_APPRO` dicts for per-file baselines
 - Bill DTD XML uses flat-sibling `appropriations-major/intermediate/small` tags (not nested)
 - Dollar amounts are embedded in prose `<text>` elements, extracted via regex
-- `formatters/html.py` tests use `_change()` and `_sample_diff_dict()` helpers to build fixtures
 - HTML formatter functions (`word_diff`, `build_financial_table`, etc.) are individually testable
