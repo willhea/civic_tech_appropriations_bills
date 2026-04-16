@@ -135,6 +135,26 @@ class TestBuildFinancialTable:
         # The inserted amount should show em-dash for old
         assert "\u2014" in html
 
+    def test_table_shows_effective_amounts_when_annotations_present(self):
+        """Financial table should use effective amounts when annotations present."""
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [287000000],
+                    "new_amounts": [287000000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[287000000, 287000000]],
+                    "has_amendment_annotations": True,
+                    "old_amounts_effective": [287000000],
+                    "new_amounts_effective": [289000000],
+                }
+            )
+        ]
+        html = build_financial_table(changes)
+        # Should show effective new amount ($289M) and the +$2M change
+        assert "$289,000,000" in html
+        assert "+$2,000,000" in html
+
     def test_fallback_to_positional_without_paired(self):
         """When paired_amounts is absent, fall back to positional pairing."""
         changes = [

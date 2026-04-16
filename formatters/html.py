@@ -71,18 +71,7 @@ def build_financial_table(changes: list[dict]) -> str:
         path_parts = change.get("display_path_new") or change.get("display_path_old") or []
         path = " &gt; ".join(escape(p) for p in path_parts)
         section = escape(change.get("section_number", "") or "")
-        # Use paired_amounts if available, fall back to positional pairing
-        paired = fin.get("paired_amounts")
-        if paired:
-            amount_pairs = [(p[0], p[1]) for p in paired]
-        else:
-            old_amounts = fin.get("old_amounts", [])
-            new_amounts = fin.get("new_amounts", [])
-            max_len = max(len(old_amounts), len(new_amounts))
-            amount_pairs = [
-                (old_amounts[j] if j < len(old_amounts) else None, new_amounts[j] if j < len(new_amounts) else None)
-                for j in range(max_len)
-            ]
+        amount_pairs = _get_amount_pairs(fin)
         rows.append(
             {
                 "index": i,
