@@ -649,6 +649,36 @@ class TestWalkTitle:
         assert nodes[1].match_path == ("policy provisions", "tax relief", "sec. 102")
 
 
+    def test_subtitle_with_nested_part(self):
+        """Sections inside a part inside a subtitle should include both headers in path."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>EXTENSIONS</header>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Health Programs</header>"
+            '<part id="P1">'
+            "<enum>I</enum>"
+            "<header>Medicare</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>The Medicare program is extended through 2025.</text>"
+            "</section>"
+            '<section id="S102">'
+            "<enum>102.</enum>"
+            "<text>Reimbursement rates are adjusted.</text>"
+            "</section>"
+            "</part>"
+            "</subtitle>"
+            "</title>"
+        )
+        nodes = walk_title(title, "EXTENSIONS", "")
+        assert len(nodes) == 2
+        # Path should include both subtitle and part headers
+        assert nodes[0].match_path == ("extensions", "health programs", "medicare", "sec. 101")
+        assert nodes[1].match_path == ("extensions", "health programs", "medicare", "sec. 102")
+
     def test_subtitle_context_does_not_leak(self):
         """Subtitle context should not leak back to title-level siblings."""
         title = ET.fromstring(
