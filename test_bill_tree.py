@@ -998,7 +998,7 @@ class TestNormalizeBillIntegration:
     def test_enrolled_bill_node_count(self):
         tree = normalize_bill(ENROLLED_BILL_PATH)
         assert tree.congress == 118
-        assert len(tree.nodes) == 1066
+        assert len(tree.nodes) == 1095
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_no_empty_body_text(self):
@@ -1049,7 +1049,7 @@ class TestNormalizeBillIntegration:
         assert by_letter["D"] == 107
         assert by_letter["E"] == 186
         assert by_letter["F"] == 239
-        assert by_letter["G"] == 15
+        assert by_letter["G"] == 44
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_content_matches_path(self):
