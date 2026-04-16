@@ -649,6 +649,43 @@ class TestWalkTitle:
         assert nodes[1].match_path == ("policy provisions", "tax relief", "sec. 102")
 
 
+    def test_subtitle_context_does_not_leak(self):
+        """Subtitle context should not leak back to title-level siblings."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPT</header>"
+            '<appropriations-major id="AM1">'
+            "<header>Agency A</header>"
+            "</appropriations-major>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Sub Agency</header>"
+            "<text>For expenses, $100,000.</text>"
+            "</appropriations-intermediate>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Tax Provisions</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>The tax credit is extended.</text>"
+            "</section>"
+            "</subtitle>"
+            '<appropriations-intermediate id="AI2">'
+            "<header>Another Sub Agency</header>"
+            "<text>For operations, $200,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 3
+        # First node: Sub Agency under Agency A
+        assert nodes[0].match_path == ("dept", "agency a", "sub agency")
+        # Second node: section inside subtitle
+        assert nodes[1].match_path == ("dept", "tax provisions", "sec. 101")
+        # Third node: should be back under Agency A, not Tax Provisions
+        assert nodes[2].match_path == ("dept", "agency a", "another sub agency")
+
+
 class TestWalkBodySections:
     """Test walk_body_sections for bills with no titles (e.g., HR 2882 v1-3)."""
 
