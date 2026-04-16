@@ -185,7 +185,11 @@ def _financial_callout(financial: dict) -> str:
             continue
         rows.append(f"<div>{old_str} &rarr; {new_str} ({change_str})</div>")
 
-    return f'<div class="financial-callout">{"".join(rows)}</div>'
+    callout = f'<div class="financial-callout">{"".join(rows)}'
+    if financial.get("has_amendment_annotations"):
+        callout += '<div class="amendment-note">Includes floor amendment annotations (increased/reduced by)</div>'
+    callout += '</div>'
+    return callout
 
 
 def build_change_card(change: dict, index: int) -> str:
@@ -334,6 +338,8 @@ tr.decrease .change-amount { color: #721c24; }
 .old-text { background: #ffe6e6; padding: 8px; border-radius: 4px; margin-bottom: 8px; }
 .new-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
 .move-info { font-size: 13px; color: #004085; margin-bottom: 8px; }
+.amendment-note { font-size: 12px; color: #856404; background: #fff3cd; padding: 4px 8px;
+  border-radius: 3px; margin-top: 4px; }
 
 /* Inline diff */
 del { background: #fecdd3; text-decoration: line-through; color: #9a3412; }

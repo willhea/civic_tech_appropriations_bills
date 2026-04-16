@@ -294,6 +294,40 @@ class TestBuildChangeCard:
         assert "$1,000,000" in html
         assert "$2,000,000" in html
 
+    def test_amendment_annotation_badge_in_callout(self):
+        """Financial callout should show a warning badge when amendment annotations present."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [287000000],
+                "new_amounts": [289000000],
+                "amounts_changed": True,
+                "paired_amounts": [[287000000, 289000000]],
+                "has_amendment_annotations": True,
+            },
+        )
+        change["old_text"] = "$287,000,000"
+        change["new_text"] = "$287,000,000 (increased by $2,000,000)"
+        html = build_change_card(change, 0)
+        assert "amendment" in html.lower()
+
+    def test_no_amendment_badge_when_absent(self):
+        """No amendment badge when has_amendment_annotations is False."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000000],
+                "new_amounts": [2000000],
+                "amounts_changed": True,
+                "paired_amounts": [[1000000, 2000000]],
+                "has_amendment_annotations": False,
+            },
+        )
+        change["old_text"] = "$1,000,000"
+        change["new_text"] = "$2,000,000"
+        html = build_change_card(change, 0)
+        assert "amendment" not in html.lower()
+
     def test_section_number_displayed(self):
         change = _change(index=0)
         change["section_number"] = "Sec. 101"
