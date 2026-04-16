@@ -267,6 +267,17 @@ class TestBuildChangeCard:
         assert "New Section" in html
         assert "moved" in html.lower()
 
+    def test_moved_card_shows_body_when_text_identical(self):
+        """Moved cards should show body text even when old and new text are identical."""
+        change = _change(change_type="moved", index=0)
+        change["display_path_old"] = ["Title I", "Sec. 5"]
+        change["display_path_new"] = ["Title II", "Sec. 10"]
+        change["old_text"] = "For acquisition and construction, $2,022,775,000, to remain available."
+        change["new_text"] = "For acquisition and construction, $2,022,775,000, to remain available."
+        html = build_change_card(change, 0)
+        assert "$2,022,775,000" in html
+        assert "change-body" in html
+
     def test_financial_callout(self):
         change = _change(
             change_type="modified",
@@ -283,6 +294,40 @@ class TestBuildChangeCard:
         assert "$1,000,000" in html
         assert "$2,000,000" in html
 
+    def test_amendment_annotation_badge_in_callout(self):
+        """Financial callout should show a warning badge when amendment annotations present."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [287000000],
+                "new_amounts": [289000000],
+                "amounts_changed": True,
+                "paired_amounts": [[287000000, 289000000]],
+                "has_amendment_annotations": True,
+            },
+        )
+        change["old_text"] = "$287,000,000"
+        change["new_text"] = "$287,000,000 (increased by $2,000,000)"
+        html = build_change_card(change, 0)
+        assert "amendment" in html.lower()
+
+    def test_no_amendment_badge_when_absent(self):
+        """No amendment badge when has_amendment_annotations is False."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000000],
+                "new_amounts": [2000000],
+                "amounts_changed": True,
+                "paired_amounts": [[1000000, 2000000]],
+                "has_amendment_annotations": False,
+            },
+        )
+        change["old_text"] = "$1,000,000"
+        change["new_text"] = "$2,000,000"
+        html = build_change_card(change, 0)
+        assert "amendment" not in html.lower()
+
     def test_section_number_displayed(self):
         change = _change(index=0)
         change["section_number"] = "Sec. 101"
@@ -296,6 +341,46 @@ class TestBuildChangeCard:
         assert "&lt;" in html
         assert "&amp;" in html
 
+
+    def test_rows_have_group_attribute_for_sort(self):
+        """Rows in a rowspan group should share a data-group attribute for JS sort."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000, 2000],
+                "new_amounts": [1500, 2500],
+                "amounts_changed": True,
+                "paired_amounts": [[1000, 1500], [2000, 2500]],
+            },
+        )
+        html = build_financial_table([change])
+        trs = [line for line in html.split("\n") if line.strip().startswith("<tr")]
+        assert len(trs) >= 2
+        # Both rows should share the same data-group value
+        assert 'data-group="0"' in trs[0]
+        assert 'data-group="0"' in trs[1]
+
+    def test_sub_row_amounts_have_css_class(self):
+        """Sub-rows (no path cell due to rowspan) should still have colored amounts."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000, 2000],
+                "new_amounts": [1500, 2500],
+                "amounts_changed": True,
+                "paired_amounts": [[1000, 1500], [2000, 2500]],
+            },
+        )
+        html = build_financial_table([change])
+        # Sub-row (second <tr>) has no path cell, only 4 <td>s.
+        # nth-child(4) would hit wrong cell. CSS classes should work instead.
+        trs = [line for line in html.split("\n") if line.strip().startswith("<tr")]
+        assert len(trs) >= 2
+        # Both rows should have the increase class on their amount cells
+        for tr in trs:
+            assert 'class="increase"' in tr or 'class="decrease"' in tr or 'class="unchanged"' in tr
+            # Amount cells should have a class that CSS can target for coloring
+            assert 'class="amount change-amount"' in tr
 
 class TestBuildSidebar:
     def test_nav_items_present(self):

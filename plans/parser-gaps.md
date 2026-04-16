@@ -184,13 +184,13 @@ Diffing shell versions against full versions produces mass "removed"/"added" wit
 
 **Key files**: `formatters/html.py` (line 72)
 
-### 16. Financial table CSS coloring breaks on sub-rows
+### 16. Financial table CSS coloring breaks on sub-rows (done)
 
 `nth-child(4)` and `nth-child(5)` CSS selectors target wrong cells in sub-rows where `rowspan` reduces the `<td>` count.
 
 **Key files**: `formatters/html.py` (lines 316-317)
 
-### 17. Table sort JS breaks rowspan grouping
+### 17. Table sort JS breaks rowspan grouping (done)
 
 Sort function reorders `<tr>` independently, separating parent rows from sub-rows.
 
@@ -202,7 +202,7 @@ Filtered changes use unfiltered summary counts. Summary claims more changes than
 
 **Key files**: `diff_bill.py` (lines 500-530)
 
-### 19. Moved cards suppress body text
+### 19. Moved cards suppress body text (done)
 
 When `old_text == new_text`, moved cards show only path change, no content. 26 of 34 moved sections in a real diff have no visible body text.
 
