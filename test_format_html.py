@@ -326,6 +326,26 @@ class TestBuildChangeCard:
         html = build_change_card(change, 0)
         assert "amendment" in html.lower()
 
+    def test_callout_shows_effective_amounts_when_annotations_present(self):
+        """When amendments change effective amounts, callout should show effective values."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [287000000],
+                "new_amounts": [287000000],
+                "amounts_changed": True,
+                "paired_amounts": [[287000000, 287000000]],
+                "has_amendment_annotations": True,
+                "old_amounts_effective": [287000000],
+                "new_amounts_effective": [289000000],
+            },
+        )
+        change["old_text"] = "$287,000,000"
+        change["new_text"] = "$287,000,000 (increased by $2,000,000)"
+        html = build_change_card(change, 0)
+        # Should show effective new amount ($289M), not base ($287M)
+        assert "$289,000,000" in html
+
     def test_no_amendment_badge_when_absent(self):
         """No amendment badge when has_amendment_annotations is False."""
         change = _change(

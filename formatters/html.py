@@ -155,20 +155,37 @@ def _display_path(change: dict) -> str:
     return " &gt; ".join(escape(p) for p in parts)
 
 
-def _financial_callout(financial: dict) -> str:
-    """Render a financial callout box for a change card."""
-    # Use paired_amounts if available, fall back to positional pairing
+def _get_amount_pairs(financial: dict) -> list[tuple[int | None, int | None]]:
+    """Extract (old, new) amount pairs from financial data.
+
+    When amendment annotations are present and effective amounts are available,
+    uses effective amounts (with annotations applied) so the display reflects
+    real appropriation changes rather than unchanged base amounts.
+    """
+    old_eff = financial.get("old_amounts_effective", [])
+    new_eff = financial.get("new_amounts_effective", [])
+    if financial.get("has_amendment_annotations") and (old_eff or new_eff):
+        max_len = max(len(old_eff), len(new_eff), 1)
+        return [
+            (old_eff[i] if i < len(old_eff) else None, new_eff[i] if i < len(new_eff) else None) for i in range(max_len)
+        ]
+
     paired = financial.get("paired_amounts")
     if paired:
-        amount_pairs = [(p[0], p[1]) for p in paired]
-    else:
-        old_amounts = financial.get("old_amounts", [])
-        new_amounts = financial.get("new_amounts", [])
-        max_len = max(len(old_amounts), len(new_amounts), 1)
-        amount_pairs = [
-            (old_amounts[i] if i < len(old_amounts) else None, new_amounts[i] if i < len(new_amounts) else None)
-            for i in range(max_len)
-        ]
+        return [(p[0], p[1]) for p in paired]
+
+    old_amounts = financial.get("old_amounts", [])
+    new_amounts = financial.get("new_amounts", [])
+    max_len = max(len(old_amounts), len(new_amounts), 1)
+    return [
+        (old_amounts[i] if i < len(old_amounts) else None, new_amounts[i] if i < len(new_amounts) else None)
+        for i in range(max_len)
+    ]
+
+
+def _financial_callout(financial: dict) -> str:
+    """Render a financial callout box for a change card."""
+    amount_pairs = _get_amount_pairs(financial)
 
     rows = []
     for old_val, new_val in amount_pairs:
