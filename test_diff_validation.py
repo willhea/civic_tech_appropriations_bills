@@ -123,30 +123,35 @@ class TestControlledDiff:
 
     # -- Financial validation --
 
-    def test_financial_changes_are_annotation_only(self, hr4366_v1_v2_diff):
-        """All financial changes in v1->v2 come from floor amendment annotations.
+    def test_no_false_positive_financial_changes(self, hr4366_v1_v2_diff):
+        """No sections should be flagged as financially changed in v1->v2.
 
-        Base dollar amounts are identical; only effective amounts (after applying
-        'increased by' / 'reduced by' annotations) differ. This documents the
-        amendment annotation display gap (issue #7): the report shows base amounts
-        as unchanged while real appropriations shifted.
+        All dollar amounts are identical between versions. The only differences
+        are floor amendment annotations which reference the budget request
+        baseline, not the previous version.
         """
         financially_changed = []
         for c in hr4366_v1_v2_diff.changes:
             if c.old_text and c.new_text:
                 fc = compute_financial_change(c.old_text, c.new_text)
                 if fc and fc.amounts_changed:
-                    financially_changed.append((c, fc))
+                    financially_changed.append(c.match_path)
 
-        assert len(financially_changed) == 7
+        assert len(financially_changed) == 0, f"False positive financial changes: {financially_changed}"
 
-        for change, fc in financially_changed:
-            assert fc.has_amendment_annotations, f"Expected amendment annotations: {change.match_path}"
-            # Base amounts are identical in every pair
-            for old_val, new_val in fc.paired_amounts:
-                assert old_val == new_val, (
-                    f"Base amounts differ (not annotation-only): {old_val} != {new_val} in {change.match_path}"
-                )
+    def test_amendment_annotations_still_flagged(self, hr4366_v1_v2_diff):
+        """Sections with amendment annotations should have has_amendment_annotations=True.
+
+        The flag is informational even though amounts_changed is False.
+        """
+        annotated = []
+        for c in hr4366_v1_v2_diff.changes:
+            if c.old_text and c.new_text:
+                fc = compute_financial_change(c.old_text, c.new_text)
+                if fc and fc.has_amendment_annotations:
+                    annotated.append(c.match_path)
+
+        assert len(annotated) >= 7, f"Expected at least 7 sections with amendment annotations, got {len(annotated)}"
 
     def test_milcon_army_has_amounts_but_base_unchanged(self, hr4366_v1_v2_diff):
         """MilCon Army has dollar amounts but base amounts didn't change."""

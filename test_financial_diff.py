@@ -184,15 +184,19 @@ class TestComputeFinancialChange:
         assert result is not None
         assert result.has_amendment_annotations is False
 
-    def test_amendment_annotation_changes_effective_amount(self):
-        """An annotation should make amounts_changed True even when base is same."""
+    def test_annotation_without_base_change_not_flagged(self):
+        """Annotations alone should not flag amounts_changed.
+
+        Annotations reference the budget request baseline, not the previous
+        bill version. The base amount ($287M) is the real appropriation.
+        """
         result = compute_financial_change(
             old_text="For expenses, $287,000,000.",
             new_text="For expenses, $287,000,000 (increased by $2,000,000).",
         )
         assert result is not None
         assert result.has_amendment_annotations is True
-        assert result.amounts_changed is True
+        assert result.amounts_changed is False
 
 
 class TestFinancialChangeToDict:

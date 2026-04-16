@@ -170,16 +170,11 @@ def compute_financial_change(
     if not old_amounts and not new_amounts:
         return None
 
-    # Use effective amounts (with annotations applied) for change detection,
-    # but keep raw base amounts for display.
-    old_effective = extract_effective_amounts(old_text) if old_text else ()
-    new_effective = extract_effective_amounts(new_text) if new_text else ()
-
     paired = match_amounts(old_text, new_text)
     return FinancialChange(
         old_amounts=old_amounts,
         new_amounts=new_amounts,
-        amounts_changed=Counter(old_effective) != Counter(new_effective),
+        amounts_changed=Counter(old_amounts) != Counter(new_amounts),
         paired_amounts=tuple(paired),
         has_amendment_annotations=has_annotations,
     )
