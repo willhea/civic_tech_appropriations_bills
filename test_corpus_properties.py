@@ -115,8 +115,7 @@ def test_every_dollar_amount_appears_in_a_node(xml_path: Path) -> None:
     ratio = found / total
 
     assert ratio >= 0.80, (
-        f"{test_id}: {len(missing)}/{total} amounts missing (ratio={ratio:.3f}). "
-        f"Sample missing: {missing[:5]}"
+        f"{test_id}: {len(missing)}/{total} amounts missing (ratio={ratio:.3f}). Sample missing: {missing[:5]}"
     )
 
 
@@ -181,13 +180,11 @@ def test_no_duplicate_match_paths(xml_path: Path) -> None:
 
     if known == 0:
         assert total_dupes == 0, (
-            f"{test_id}: unexpected {total_dupes} duplicate match_paths. "
-            f"Sample: {list(dupes.items())[:3]}"
+            f"{test_id}: unexpected {total_dupes} duplicate match_paths. Sample: {list(dupes.items())[:3]}"
         )
     else:
         assert total_dupes <= known, (
-            f"{test_id}: duplicate count increased from {known} to {total_dupes}. "
-            f"Sample: {list(dupes.items())[:3]}"
+            f"{test_id}: duplicate count increased from {known} to {total_dupes}. Sample: {list(dupes.items())[:3]}"
         )
 
 
@@ -254,19 +251,17 @@ def test_every_appropriations_element_with_text_produces_node(xml_path: Path) ->
             missing.append((el.tag, el.attrib.get("id", "?"), preview))
 
     total = len(appro_elements)
-    found = total - len(missing)
+    total - len(missing)
 
     known_missing = _KNOWN_MISSING_APPRO.get(test_id, 0)
 
     if known_missing == 0:
         assert len(missing) == 0, (
-            f"{test_id}: {len(missing)}/{total} appropriations elements not found in nodes. "
-            f"Sample: {missing[:3]}"
+            f"{test_id}: {len(missing)}/{total} appropriations elements not found in nodes. Sample: {missing[:3]}"
         )
     else:
         assert len(missing) <= known_missing, (
-            f"{test_id}: missing count increased from {known_missing} to {len(missing)}. "
-            f"Sample: {missing[:3]}"
+            f"{test_id}: missing count increased from {known_missing} to {len(missing)}. Sample: {missing[:3]}"
         )
 
 
@@ -312,7 +307,4 @@ def test_character_coverage_ratio(xml_path: Path) -> None:
     # Low floor catches only catastrophic failures. Actual ratios range from
     # ~0.12 (amendment docs) to ~1.0+ (full bills). Shell bills and early
     # versions with little appropriations text have legitimately low ratios.
-    assert ratio >= 0.10, (
-        f"{test_id}: character coverage ratio {ratio:.3f} "
-        f"({node_chars}/{raw_chars} chars)"
-    )
+    assert ratio >= 0.10, f"{test_id}: character coverage ratio {ratio:.3f} ({node_chars}/{raw_chars} chars)"

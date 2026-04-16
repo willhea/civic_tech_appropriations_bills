@@ -11,10 +11,9 @@ from pathlib import Path
 from bill_tree import normalize_bill, normalize_division_title
 from diff_bill import diff_bills
 
-
 FRESH_BILLS = [
     "bills/117-hr-2471",  # Consolidated Appropriations Act, 2022
-    "bills/116-hr-133",   # Consolidated Appropriations Act, 2021
+    "bills/116-hr-133",  # Consolidated Appropriations Act, 2021
 ]
 
 
@@ -51,9 +50,7 @@ def main():
             try:
                 tree = normalize_bill(v)
                 trees[v.name] = tree
-                divs = sorted(set(
-                    n.division_label for n in tree.nodes if n.division_label
-                ))
+                divs = sorted(set(n.division_label for n in tree.nodes if n.division_label))
                 print(f"  {v.name}: {len(tree.nodes)} nodes, {len(divs)} divisions")
             except Exception as e:
                 print(f"  {v.name}: PARSE ERROR: {e}")
@@ -65,7 +62,7 @@ def main():
             continue
 
         print(f"\n  {'Version Pair':<55} {'Total':>6} {'X-Div':>6} {'Moved':>6}")
-        print(f"  {'-'*55} {'-'*6} {'-'*6} {'-'*6}")
+        print(f"  {'-' * 55} {'-' * 6} {'-' * 6} {'-' * 6}")
 
         for i in range(len(version_names) - 1):
             old_name = version_names[i]

@@ -1,14 +1,10 @@
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import pytest
 
-from pathlib import Path
-
-from conftest import HR4366_V1_PATH, HR4366_V6_PATH
-
 from bill_tree import (
     BillNode,
-    BillTree,
     _extract_appropriations_text,
     extract_text_content,
     find_bill_body,
@@ -61,9 +57,7 @@ class TestExtractTextContent:
         assert extract_text_content(el) == "first line second line third"
 
     def test_nested_whitespace_normalized(self):
-        el = ET.fromstring(
-            "<text>Suicidology.(b) <enum>(1)</enum>None  of the funds</text>"
-        )
+        el = ET.fromstring("<text>Suicidology.(b) <enum>(1)</enum>None  of the funds</text>")
         assert extract_text_content(el) == "Suicidology.(b)(1)None of the funds"
 
     def test_list_marker_spacing_normalized(self):
@@ -102,11 +96,7 @@ class TestGetHeaderText:
         assert get_header_text(el) == "Military construction, army"
 
     def test_without_header(self):
-        el = ET.fromstring(
-            "<appropriations-intermediate>"
-            "<text>Some text</text>"
-            "</appropriations-intermediate>"
-        )
+        el = ET.fromstring("<appropriations-intermediate><text>Some text</text></appropriations-intermediate>")
         assert get_header_text(el) == ""
 
     def test_header_with_nested_elements(self):
@@ -160,11 +150,7 @@ class TestExtractAppropriationsText:
 
     def test_empty_element(self):
         """Element with only a header returns empty string."""
-        el = ET.fromstring(
-            "<appropriations-major>"
-            "<header>Department of Defense</header>"
-            "</appropriations-major>"
-        )
+        el = ET.fromstring("<appropriations-major><header>Department of Defense</header></appropriations-major>")
         result = _extract_appropriations_text(el)
         assert result == ""
 
@@ -185,9 +171,7 @@ class TestExtractAppropriationsText:
 class TestFindBillBody:
     def test_bill_with_legis_body(self):
         root = ET.fromstring(
-            '<bill bill-stage="Enrolled-Bill">'
-            "<legis-body><section><text>Content</text></section></legis-body>"
-            "</bill>"
+            '<bill bill-stage="Enrolled-Bill"><legis-body><section><text>Content</text></section></legis-body></bill>'
         )
         body = find_bill_body(root)
         assert body.tag == "legis-body"
@@ -278,7 +262,7 @@ class TestWalkTitle:
             "</appropriations-major>"
             '<appropriations-intermediate id="AI1">'
             "<header>Medical services</header>"
-            '<text>For necessary expenses, $60,000,000.</text>'
+            "<text>For necessary expenses, $60,000,000.</text>"
             "</appropriations-intermediate>"
             "</title>"
         )
@@ -534,11 +518,15 @@ class TestWalkTitle:
         assert nodes[0].body_text == "The following sums are appropriated."
         assert nodes[1].tag == "appropriations-intermediate"
         assert nodes[1].match_path == (
-            "legislative branch", "house of representatives", "salaries and expenses",
+            "legislative branch",
+            "house of representatives",
+            "salaries and expenses",
         )
         assert "$1,200,000,000" in nodes[1].body_text
         assert nodes[2].match_path == (
-            "legislative branch", "house of representatives", "house leadership offices",
+            "legislative branch",
+            "house of representatives",
+            "house leadership offices",
         )
 
     def test_section_with_text_and_appropriations(self):
@@ -615,7 +603,9 @@ class TestWalkTitle:
         assert nodes[1].tag == "section"
         # Inside section: intermediate under House context
         assert nodes[2].match_path == (
-            "leg branch", "house of representatives", "house salaries",
+            "leg branch",
+            "house of representatives",
+            "house salaries",
         )
         # After section: context reverts to Senate (not House)
         assert nodes[3].match_path == ("leg branch", "senate", "senate office")
@@ -649,7 +639,6 @@ class TestWalkTitle:
         assert "extended" in nodes[0].body_text
         assert nodes[1].section_number == "Sec. 102"
         assert nodes[1].match_path == ("policy provisions", "tax relief", "sec. 102")
-
 
     def test_subtitle_with_nested_part(self):
         """Sections inside a part inside a subtitle should include both headers in path."""
@@ -818,12 +807,7 @@ class TestWalkBodySections:
     def test_section_without_text_or_subsections(self):
         """Sections with nothing extractable are skipped."""
         body = ET.fromstring(
-            "<legis-body>"
-            '<section id="S1">'
-            "<enum>1.</enum>"
-            "<header>Short title</header>"
-            "</section>"
-            "</legis-body>"
+            '<legis-body><section id="S1"><enum>1.</enum><header>Short title</header></section></legis-body>'
         )
         nodes = walk_body_sections(body)
         assert len(nodes) == 0
@@ -1066,14 +1050,22 @@ class TestNormalizeBillIntegration:
         assert empty == [], f"Nodes with empty body_text: {[n.display_path for n in empty[:5]]}"
 
     def test_enrolled_has_all_seven_divisions(self, hr4366_v6):
-        div_labels = sorted(set(
-            n.display_path[0] for n in hr4366_v6.nodes
-            if n.display_path and n.display_path[0].startswith("Division")
-        ))
+        div_labels = sorted(
+            set(
+                n.display_path[0]
+                for n in hr4366_v6.nodes
+                if n.display_path and n.display_path[0].startswith("Division")
+            )
+        )
         assert len(div_labels) == 7
         expected_prefixes = [
-            "Division A:", "Division B:", "Division C:", "Division D:",
-            "Division E:", "Division F:", "Division G:",
+            "Division A:",
+            "Division B:",
+            "Division C:",
+            "Division D:",
+            "Division E:",
+            "Division F:",
+            "Division G:",
         ]
         for prefix in expected_prefixes:
             assert any(d.startswith(prefix) for d in div_labels), f"Missing {prefix}"
@@ -1125,9 +1117,13 @@ class TestBillNodeDivisionLabel:
             header_text="General Provisions",
             body_text="Some text",
             section_number="Sec. 501",
-            division_label="Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024",
+            division_label=(
+                "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
+            ),
         )
-        assert node.division_label == "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
+        assert node.division_label == (
+            "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
+        )
 
     @pytest.mark.slow
     def test_normalize_bill_populates_division_label(self, hr4366_v6):
@@ -1148,7 +1144,10 @@ class TestNormalizeDivisionTitle:
 
     def test_long_title(self):
         label = "Division B: Agriculture, Rural Development, Food and Drug Administration, and Related Agencies"
-        assert normalize_division_title(label) == "agriculture, rural development, food and drug administration, and related agencies"
+        assert (
+            normalize_division_title(label)
+            == "agriculture, rural development, food and drug administration, and related agencies"
+        )
 
     def test_empty_string(self):
         assert normalize_division_title("") == ""

@@ -2,6 +2,7 @@
 
 import pytest
 
+from conftest import make_change_dict as _change
 from formatters.html import (
     build_change_card,
     build_financial_table,
@@ -80,17 +81,18 @@ class TestWordDiff:
         assert result is not None
 
 
-from conftest import make_change_dict as _change
-
-
 class TestBuildFinancialTable:
     def test_single_amount_row(self):
-        changes = [_change(financial={
-            "old_amounts": [1000000],
-            "new_amounts": [2000000],
-            "amounts_changed": True,
-            "paired_amounts": [[1000000, 2000000]],
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [1000000],
+                    "new_amounts": [2000000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[1000000, 2000000]],
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert "<table" in html
         assert "$1,000,000" in html
@@ -98,12 +100,16 @@ class TestBuildFinancialTable:
         assert "+$1,000,000" in html
 
     def test_multiple_amounts_sub_rows(self):
-        changes = [_change(financial={
-            "old_amounts": [1000000, 500000],
-            "new_amounts": [2000000, 600000],
-            "amounts_changed": True,
-            "paired_amounts": [[1000000, 2000000], [500000, 600000]],
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [1000000, 500000],
+                    "new_amounts": [2000000, 600000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[1000000, 2000000], [500000, 600000]],
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert "$1,000,000" in html
         assert "$500,000" in html
@@ -112,12 +118,16 @@ class TestBuildFinancialTable:
 
     def test_mismatched_amount_counts_with_paired(self):
         """Inserted amount appears as (None, new) via paired_amounts."""
-        changes = [_change(financial={
-            "old_amounts": [1000000, 500000],
-            "new_amounts": [2000000, 600000, 300000],
-            "amounts_changed": True,
-            "paired_amounts": [[1000000, 2000000], [None, 600000], [500000, 300000]],
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [1000000, 500000],
+                    "new_amounts": [2000000, 600000, 300000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[1000000, 2000000], [None, 600000], [500000, 300000]],
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert "$300,000" in html
         assert "$1,000,000" in html
@@ -127,39 +137,47 @@ class TestBuildFinancialTable:
 
     def test_fallback_to_positional_without_paired(self):
         """When paired_amounts is absent, fall back to positional pairing."""
-        changes = [_change(financial={
-            "old_amounts": [1000000],
-            "new_amounts": [2000000],
-            "amounts_changed": True,
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [1000000],
+                    "new_amounts": [2000000],
+                    "amounts_changed": True,
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert "$1,000,000" in html
         assert "$2,000,000" in html
 
     def test_added_section_no_old_amounts(self):
-        changes = [_change(
-            change_type="added",
-            financial={
-                "old_amounts": [],
-                "new_amounts": [5000000],
-                "amounts_changed": True,
-                "paired_amounts": [[None, 5000000]],
-            },
-        )]
+        changes = [
+            _change(
+                change_type="added",
+                financial={
+                    "old_amounts": [],
+                    "new_amounts": [5000000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[None, 5000000]],
+                },
+            )
+        ]
         html = build_financial_table(changes)
         assert "$5,000,000" in html
         assert "\u2014" in html  # em-dash for missing old amount
 
     def test_removed_section_no_new_amounts(self):
-        changes = [_change(
-            change_type="removed",
-            financial={
-                "old_amounts": [3000000],
-                "new_amounts": [],
-                "amounts_changed": True,
-                "paired_amounts": [[3000000, None]],
-            },
-        )]
+        changes = [
+            _change(
+                change_type="removed",
+                financial={
+                    "old_amounts": [3000000],
+                    "new_amounts": [],
+                    "amounts_changed": True,
+                    "paired_amounts": [[3000000, None]],
+                },
+            )
+        ]
         html = build_financial_table(changes)
         assert "$3,000,000" in html
         assert "\u2014" in html  # em-dash for missing new amount
@@ -170,37 +188,46 @@ class TestBuildFinancialTable:
         assert html == ""
 
     def test_row_links_to_change_anchor(self):
-        changes = [_change(financial={
-            "old_amounts": [100],
-            "new_amounts": [200],
-            "amounts_changed": True,
-            "paired_amounts": [[100, 200]],
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [100],
+                    "new_amounts": [200],
+                    "amounts_changed": True,
+                    "paired_amounts": [[100, 200]],
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert 'href="#change-0"' in html
 
     def test_percentage_change(self):
-        changes = [_change(financial={
-            "old_amounts": [1000000],
-            "new_amounts": [1500000],
-            "amounts_changed": True,
-            "paired_amounts": [[1000000, 1500000]],
-        })]
+        changes = [
+            _change(
+                financial={
+                    "old_amounts": [1000000],
+                    "new_amounts": [1500000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[1000000, 1500000]],
+                }
+            )
+        ]
         html = build_financial_table(changes)
         assert "50.0%" in html
 
-
     def test_path_not_double_escaped(self):
         """Path separators should not be double-escaped (issue #15)."""
-        changes = [_change(
-            path=["Division A", "Title I", "Army Operations"],
-            financial={
-                "old_amounts": [1000000],
-                "new_amounts": [2000000],
-                "amounts_changed": True,
-                "paired_amounts": [[1000000, 2000000]],
-            },
-        )]
+        changes = [
+            _change(
+                path=["Division A", "Title I", "Army Operations"],
+                financial={
+                    "old_amounts": [1000000],
+                    "new_amounts": [2000000],
+                    "amounts_changed": True,
+                    "paired_amounts": [[1000000, 2000000]],
+                },
+            )
+        ]
         html = build_financial_table(changes)
         assert "&amp;gt;" not in html
         assert "Division A" in html
@@ -329,7 +356,6 @@ class TestBuildChangeCard:
         assert "&lt;" in html
         assert "&amp;" in html
 
-
     def test_rows_have_group_attribute_for_sort(self):
         """Rows in a rowspan group should share a data-group attribute for JS sort."""
         change = _change(
@@ -369,6 +395,7 @@ class TestBuildChangeCard:
             assert 'class="increase"' in tr or 'class="decrease"' in tr or 'class="unchanged"' in tr
             # Amount cells should have a class that CSS can target for coloring
             assert 'class="amount change-amount"' in tr
+
 
 class TestBuildSidebar:
     def test_nav_items_present(self):
@@ -528,9 +555,16 @@ class TestFormatHtml:
         assert "Financial Summary" not in html
 
     def test_empty_changes(self):
-        diff = _sample_diff_dict(changes=[], summary={
-            "added": 0, "removed": 0, "modified": 0, "unchanged": 0, "moved": 0,
-        })
+        diff = _sample_diff_dict(
+            changes=[],
+            summary={
+                "added": 0,
+                "removed": 0,
+                "modified": 0,
+                "unchanged": 0,
+                "moved": 0,
+            },
+        )
         html = format_html(diff)
         assert "<!DOCTYPE html>" in html
         assert "No changes found" in html
@@ -539,12 +573,14 @@ class TestFormatHtml:
 class TestCliIntegration:
     def test_format_flag_accepted(self):
         from diff_bill import build_parser
+
         parser = build_parser()
         args = parser.parse_args(["compare", "a.xml", "b.xml", "--format", "html"])
         assert args.format == "html"
 
     def test_format_default_is_html(self):
         from diff_bill import build_parser
+
         parser = build_parser()
         args = parser.parse_args(["compare", "a.xml", "b.xml"])
         assert args.format == "html"
@@ -553,18 +589,21 @@ class TestCliIntegration:
     def test_format_html_output(self, tmp_path):
         """HTML format produces a valid HTML file via the CLI."""
         import subprocess
+
         old = "bills/118-hr-4366/1_reported-in-house.xml"
         new = "bills/118-hr-4366/2_engrossed-in-house.xml"
         import os
+
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest
+
             pytest.skip("Real bill XMLs not available")
 
         out = tmp_path / "report.html"
         result = subprocess.run(
-            ["uv", "run", "python", "diff_bill.py", "compare", old, new,
-             "--format", "html", "-o", str(out)],
-            capture_output=True, text=True,
+            ["uv", "run", "python", "diff_bill.py", "compare", old, new, "--format", "html", "-o", str(out)],
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0, result.stderr
         content = out.read_text()
@@ -574,18 +613,21 @@ class TestCliIntegration:
     def test_format_html_v1_v2_no_phantom_financial(self, tmp_path):
         """v1 vs v2 has no real financial changes after amendment stripping."""
         import subprocess
+
         old = "bills/118-hr-4366/1_reported-in-house.xml"
         new = "bills/118-hr-4366/2_engrossed-in-house.xml"
         import os
+
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest
+
             pytest.skip("Real bill XMLs not available")
 
         out = tmp_path / "report.html"
         result = subprocess.run(
-            ["uv", "run", "python", "diff_bill.py", "compare", old, new,
-             "--format", "html", "-o", str(out)],
-            capture_output=True, text=True,
+            ["uv", "run", "python", "diff_bill.py", "compare", old, new, "--format", "html", "-o", str(out)],
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0, result.stderr
         content = out.read_text()
@@ -597,18 +639,21 @@ class TestCliIntegration:
     def test_format_html_v1_v6_has_financial_summary(self, tmp_path):
         """v1 vs v6 (enrolled) has genuine financial changes."""
         import subprocess
+
         old = "bills/118-hr-4366/1_reported-in-house.xml"
         new = "bills/118-hr-4366/6_enrolled-bill.xml"
         import os
+
         if not os.path.exists(old) or not os.path.exists(new):
             import pytest
+
             pytest.skip("Real bill XMLs not available")
 
         out = tmp_path / "report.html"
         result = subprocess.run(
-            ["uv", "run", "python", "diff_bill.py", "compare", old, new,
-             "--format", "html", "-o", str(out)],
-            capture_output=True, text=True,
+            ["uv", "run", "python", "diff_bill.py", "compare", old, new, "--format", "html", "-o", str(out)],
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0, result.stderr
         content = out.read_text()

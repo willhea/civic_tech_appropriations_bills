@@ -95,11 +95,26 @@ def get_header_text(element: ET.Element) -> str:
 _PARENTHETICAL_RE = re.compile(r"^\(.*\)$")
 
 _CONGRESS_WORDS = {
-    "first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5,
-    "sixth": 6, "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10,
-    "eleventh": 11, "twelfth": 12, "thirteenth": 13, "fourteenth": 14,
-    "fifteenth": 15, "sixteenth": 16, "seventeenth": 17, "eighteenth": 18,
-    "nineteenth": 19, "twentieth": 20,
+    "first": 1,
+    "second": 2,
+    "third": 3,
+    "fourth": 4,
+    "fifth": 5,
+    "sixth": 6,
+    "seventh": 7,
+    "eighth": 8,
+    "ninth": 9,
+    "tenth": 10,
+    "eleventh": 11,
+    "twelfth": 12,
+    "thirteenth": 13,
+    "fourteenth": 14,
+    "fifteenth": 15,
+    "sixteenth": 16,
+    "seventeenth": 17,
+    "eighteenth": 18,
+    "nineteenth": 19,
+    "twentieth": 20,
 }
 
 _LEGIS_NUM_RE = re.compile(r"([A-Z])\.\s*(?:[A-Z]*\.?\s*)?(\d+)")
@@ -165,18 +180,24 @@ def _process_appro_element(
         body_text = _extract_appropriations_text(child)
         if body_text:
             match_path, display_path = _build_paths(
-                title_header, division_label, current_major, None, None,
+                title_header,
+                division_label,
+                current_major,
+                None,
+                None,
             )
-            nodes.append(BillNode(
-                match_path=match_path,
-                display_path=display_path,
-                tag=tag,
-                element_id=child.attrib.get("id", ""),
-                header_text=current_major or "",
-                body_text=body_text,
-                section_number="",
-                division_label=division_label,
-            ))
+            nodes.append(
+                BillNode(
+                    match_path=match_path,
+                    display_path=display_path,
+                    tag=tag,
+                    element_id=child.attrib.get("id", ""),
+                    header_text=current_major or "",
+                    body_text=body_text,
+                    section_number="",
+                    division_label=division_label,
+                )
+            )
 
     elif tag == "appropriations-intermediate":
         header = get_header_text(child)
@@ -192,18 +213,24 @@ def _process_appro_element(
         body_text = _extract_appropriations_text(child)
         if body_text:
             match_path, display_path = _build_paths(
-                title_header, division_label, current_major, effective_header, None,
+                title_header,
+                division_label,
+                current_major,
+                effective_header,
+                None,
             )
-            nodes.append(BillNode(
-                match_path=match_path,
-                display_path=display_path,
-                tag=tag,
-                element_id=child.attrib.get("id", ""),
-                header_text=header,
-                body_text=body_text,
-                section_number="",
-                division_label=division_label,
-            ))
+            nodes.append(
+                BillNode(
+                    match_path=match_path,
+                    display_path=display_path,
+                    tag=tag,
+                    element_id=child.attrib.get("id", ""),
+                    header_text=header,
+                    body_text=body_text,
+                    section_number="",
+                    division_label=division_label,
+                )
+            )
 
     elif tag == "appropriations-small":
         header = get_header_text(child)
@@ -218,18 +245,24 @@ def _process_appro_element(
         body_text = _extract_appropriations_text(child)
         if body_text:
             match_path, display_path = _build_paths(
-                title_header, division_label, current_major, current_intermediate, effective_header,
+                title_header,
+                division_label,
+                current_major,
+                current_intermediate,
+                effective_header,
             )
-            nodes.append(BillNode(
-                match_path=match_path,
-                display_path=display_path,
-                tag=tag,
-                element_id=child.attrib.get("id", ""),
-                header_text=header or "",
-                body_text=body_text,
-                section_number="",
-                division_label=division_label,
-            ))
+            nodes.append(
+                BillNode(
+                    match_path=match_path,
+                    display_path=display_path,
+                    tag=tag,
+                    element_id=child.attrib.get("id", ""),
+                    header_text=header or "",
+                    body_text=body_text,
+                    section_number="",
+                    division_label=division_label,
+                )
+            )
 
     return current_major, current_intermediate, prev_name
 
@@ -250,9 +283,7 @@ def _process_section_element(
       then walk appropriations children with scoped context.
     - Plain sections: emit a single node with all section text.
     """
-    has_appro_children = any(
-        c.tag.startswith("appropriations-") for c in section
-    )
+    has_appro_children = any(c.tag.startswith("appropriations-") for c in section)
 
     enum_el = section.find("enum")
     section_num = ""
@@ -264,18 +295,24 @@ def _process_section_element(
         if text_el is not None:
             sec_label = section_num.lower() if section_num else ""
             match_path, display_path = _build_paths(
-                title_header, division_label, current_major, current_intermediate, sec_label,
+                title_header,
+                division_label,
+                current_major,
+                current_intermediate,
+                sec_label,
             )
-            nodes.append(BillNode(
-                match_path=match_path,
-                display_path=display_path,
-                tag="section",
-                element_id=section.attrib.get("id", ""),
-                header_text=get_header_text(section),
-                body_text=extract_text_content(text_el),
-                section_number=section_num,
-                division_label=division_label,
-            ))
+            nodes.append(
+                BillNode(
+                    match_path=match_path,
+                    display_path=display_path,
+                    tag="section",
+                    element_id=section.attrib.get("id", ""),
+                    header_text=get_header_text(section),
+                    body_text=extract_text_content(text_el),
+                    section_number=section_num,
+                    division_label=division_label,
+                )
+            )
 
         # Walk appropriations children with scoped context
         sec_major = current_major
@@ -284,26 +321,37 @@ def _process_section_element(
         for sub in section:
             if sub.tag.startswith("appropriations-"):
                 sec_major, sec_intermediate, sec_prev = _process_appro_element(
-                    sub, title_header, division_label,
-                    sec_major, sec_intermediate, sec_prev, nodes,
+                    sub,
+                    title_header,
+                    division_label,
+                    sec_major,
+                    sec_intermediate,
+                    sec_prev,
+                    nodes,
                 )
     else:
         body_text = _extract_section_text(section)
         if body_text:
             sec_label = section_num.lower() if section_num else ""
             match_path, display_path = _build_paths(
-                title_header, division_label, current_major, current_intermediate, sec_label,
+                title_header,
+                division_label,
+                current_major,
+                current_intermediate,
+                sec_label,
             )
-            nodes.append(BillNode(
-                match_path=match_path,
-                display_path=display_path,
-                tag="section",
-                element_id=section.attrib.get("id", ""),
-                header_text=get_header_text(section),
-                body_text=body_text,
-                section_number=section_num,
-                division_label=division_label,
-            ))
+            nodes.append(
+                BillNode(
+                    match_path=match_path,
+                    display_path=display_path,
+                    tag="section",
+                    element_id=section.attrib.get("id", ""),
+                    header_text=get_header_text(section),
+                    body_text=body_text,
+                    section_number=section_num,
+                    division_label=division_label,
+                )
+            )
 
 
 _STRUCTURAL_TAGS = {"subtitle", "part", "chapter", "subchapter"}
@@ -333,14 +381,24 @@ def _walk_structural_children(
 
         if tag.startswith("appropriations-"):
             current_major, current_intermediate, prev_name = _process_appro_element(
-                child, title_header, division_label,
-                current_major, current_intermediate, prev_name, nodes,
+                child,
+                title_header,
+                division_label,
+                current_major,
+                current_intermediate,
+                prev_name,
+                nodes,
             )
 
         elif tag == "section":
             _process_section_element(
-                child, title_header, division_label,
-                current_major, current_intermediate, prev_name, nodes,
+                child,
+                title_header,
+                division_label,
+                current_major,
+                current_intermediate,
+                prev_name,
+                nodes,
             )
 
         elif tag in _STRUCTURAL_TAGS:
@@ -356,15 +414,22 @@ def _walk_structural_children(
                 sub_major = current_major
                 if current_intermediate is not None:
                     # Third+ level: concatenate into intermediate
-                    sub_intermediate: str | None = f"{current_intermediate} - {container_header}" if container_header else current_intermediate
+                    sub_intermediate: str | None = (
+                        f"{current_intermediate} - {container_header}" if container_header else current_intermediate
+                    )
                 else:
                     sub_intermediate = container_header
             else:
                 sub_major = container_header
                 sub_intermediate = None
             _walk_structural_children(
-                child, title_header, division_label,
-                sub_major, sub_intermediate, None, nodes,
+                child,
+                title_header,
+                division_label,
+                sub_major,
+                sub_intermediate,
+                None,
+                nodes,
                 _in_structural_container=True,
             )
             current_major = saved_major
@@ -391,8 +456,13 @@ def walk_title(
     """
     nodes: list[BillNode] = []
     _walk_structural_children(
-        title_element, title_header, division_label,
-        None, None, None, nodes,
+        title_element,
+        title_header,
+        division_label,
+        None,
+        None,
+        None,
+        nodes,
     )
     return nodes
 
@@ -461,16 +531,18 @@ def walk_body_sections(body: ET.Element) -> list[BillNode]:
         match_path = (sec_label,) if sec_label else ()
         display_path = (section_num,) if section_num else ()
 
-        nodes.append(BillNode(
-            match_path=match_path,
-            display_path=display_path,
-            tag="section",
-            element_id=child.attrib.get("id", ""),
-            header_text=get_header_text(child),
-            body_text=body_text,
-            section_number=section_num,
-            division_label="",
-        ))
+        nodes.append(
+            BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag="section",
+                element_id=child.attrib.get("id", ""),
+                header_text=get_header_text(child),
+                body_text=body_text,
+                section_number=section_num,
+                division_label="",
+            )
+        )
 
     return nodes
 
