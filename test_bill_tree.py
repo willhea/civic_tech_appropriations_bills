@@ -992,6 +992,15 @@ class TestNormalizeBillIntegration:
             assert any(d.startswith(prefix) for d in div_labels), f"Missing {prefix}"
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_enrolled_has_preamble_sections(self):
+        """Preamble sections (Short Title, etc.) should be captured alongside divisions."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        sec1 = [n for n in tree.nodes if n.section_number == "Sec. 1"]
+        assert len(sec1) == 1
+        assert "cited as" in sec1[0].body_text.lower()
+        assert sec1[0].division_label == ""
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_division_node_counts(self):
         """Each division has an expected number of nodes."""
         tree = normalize_bill(ENROLLED_BILL_PATH)
