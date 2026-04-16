@@ -373,26 +373,6 @@ def _adjacent_version_pairs():
     return pairs
 
 
-# Known duplicate modified/moved entries caused by cross-division collision
-# groups in omnibus bills. Duplicate "unchanged" entries are common and harmless
-# (same section name in multiple divisions, all unchanged). Only modified/moved
-# duplicates indicate real matching bugs.
-_KNOWN_MODIFIED_MOVED_DUPLICATES = {
-    # 114-hr-2029 v6->v7: general provisions sec. 514 in multiple divisions
-    ("114-hr-2029", "6", "7"): 1,
-    # 118-hr-4366 v4->v5: transportation/HUD collision group duplicates
-    ("118-hr-4366", "4", "5"): 4,
-}
-
-
-def _known_duplicate_count(old_path, new_path):
-    """Look up expected duplicate count for a version pair."""
-    bill_name = old_path.parent.name
-    old_idx = old_path.name.split("_")[0]
-    new_idx = new_path.name.split("_")[0]
-    return _KNOWN_MODIFIED_MOVED_DUPLICATES.get((bill_name, old_idx, new_idx), 0)
-
-
 @pytest.mark.slow
 @pytest.mark.parametrize("old_path,new_path", _adjacent_version_pairs())
 class TestCorpusDiffSmoke:
@@ -424,26 +404,21 @@ class TestCorpusDiffSmoke:
                 )
                 assert sim >= 0.4, f"False match leaked through (sim={sim:.2f}): {c.match_path}"
 
-    def test_no_unexpected_duplicate_changes(self, old_path, new_path):
-        """Same (match_path, change_type) should not appear twice for modified/moved.
+    def test_unique_element_id_pairs(self, old_path, new_path):
+        """Every change should have a unique (element_id_old, element_id_new) pair.
 
-        Duplicate "unchanged" entries are expected in omnibus bills (same section
-        name in multiple divisions). But duplicate modified/moved entries indicate
-        collision group bugs. Known cases tracked in _KNOWN_MODIFIED_MOVED_DUPLICATES.
+        In omnibus bills, the same match_path legitimately appears in multiple
+        divisions. Element IDs are always unique per XML element, so they serve
+        as the correct uniqueness key for pairings.
         """
         old_tree = normalize_bill(old_path)
         new_tree = normalize_bill(new_path)
         result = diff_bills(old_tree, new_tree)
 
-        counts = Counter(
-            (c.match_path, c.change_type) for c in result.changes if c.change_type in ("modified", "moved")
-        )
-        duplicates = {k: v for k, v in counts.items() if v > 1}
-        expected = _known_duplicate_count(old_path, new_path)
+        id_pairs = Counter((c.element_id_old, c.element_id_new) for c in result.changes)
+        duplicates = {k: v for k, v in id_pairs.items() if v > 1}
 
-        assert len(duplicates) <= expected, (
-            f"Unexpected duplicate modified/moved ({len(duplicates)}, expected <={expected}): {list(duplicates.keys())}"
-        )
+        assert len(duplicates) == 0, f"Duplicate element_id pairs ({len(duplicates)}): {list(duplicates.keys())[:5]}"
 
     def test_summary_counts_non_negative(self, old_path, new_path):
         """All summary counts should be non-negative."""
