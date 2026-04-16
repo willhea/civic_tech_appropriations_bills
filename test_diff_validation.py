@@ -127,9 +127,7 @@ class TestControlledDiff:
         """All financial changes in v1->v2 come from floor amendment annotations.
 
         Base dollar amounts are identical; only effective amounts (after applying
-        'increased by' / 'reduced by' annotations) differ. This documents the
-        amendment annotation display gap (issue #7): the report shows base amounts
-        as unchanged while real appropriations shifted.
+        'increased by' / 'reduced by' annotations) differ.
         """
         financially_changed = []
         for c in hr4366_v1_v2_diff.changes:
@@ -147,6 +145,10 @@ class TestControlledDiff:
                 assert old_val == new_val, (
                     f"Base amounts differ (not annotation-only): {old_val} != {new_val} in {change.match_path}"
                 )
+            # Effective amounts differ (the real appropriation changed)
+            assert fc.old_amounts_effective != fc.new_amounts_effective, (
+                f"Effective amounts should differ: {change.match_path}"
+            )
 
     def test_milcon_army_has_amounts_but_base_unchanged(self, hr4366_v1_v2_diff):
         """MilCon Army has dollar amounts but base amounts didn't change."""
