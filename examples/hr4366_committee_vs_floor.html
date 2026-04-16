@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bill Comparison: HR 4366</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height: 1.6; }
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 300px; position: fixed; top: 0; left: 0; height: 100vh;
+  overflow-y: auto; background: #f7f7f7; border-right: 1px solid #ddd; padding: 12px; }
+.sidebar input { width: 100%; padding: 6px 8px; margin-bottom: 8px;
+  border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+.sidebar ul { list-style: none; }
+.sidebar li { margin-bottom: 2px; }
+.sidebar a { display: block; padding: 4px 6px; text-decoration: none;
+  color: #333; font-size: 13px; border-radius: 3px; }
+.sidebar a:hover { background: #e8e8e8; }
+
+/* Main content */
+.main { margin-left: 300px; padding: 24px 32px; max-width: 900px; flex: 1; }
+
+/* Header */
+.report-header h1 { font-size: 22px; margin-bottom: 4px; }
+.report-header .versions { color: #666; font-size: 15px; margin-bottom: 16px; }
+.summary-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.summary-item { font-size: 14px; }
+.summary-item strong { margin-right: 4px; }
+
+/* Badges */
+.badge { display: inline-block; padding: 1px 6px; border-radius: 3px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-modified { background: #fff3cd; color: #856404; }
+.badge-added { background: #d4edda; color: #155724; }
+.badge-removed { background: #f8d7da; color: #721c24; }
+.badge-moved { background: #cce5ff; color: #004085; }
+
+/* Financial table */
+.financial-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+.financial-table th { background: #f0f0f0; text-align: left; padding: 8px; border-bottom: 2px solid #ccc; }
+.financial-table td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+.financial-table .amount { text-align: right; font-variant-numeric: tabular-nums; }
+.financial-table a { color: #0056b3; text-decoration: none; }
+.financial-table a:hover { text-decoration: underline; }
+tr.increase .change-amount { color: #155724; }
+tr.decrease .change-amount { color: #721c24; }
+
+/* Change cards */
+.change-card { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 16px;
+  padding: 16px; background: #fff; }
+.change-card.added { border-left: 4px solid #28a745; }
+.change-card.removed { border-left: 4px solid #dc3545; }
+.change-card.modified { border-left: 4px solid #ffc107; }
+.change-card.moved { border-left: 4px solid #007bff; }
+.change-header { margin-bottom: 12px; }
+.change-header h3 { font-size: 16px; display: inline; margin-left: 8px; }
+.section-number { display: block; font-size: 13px; color: #666; margin-top: 2px; }
+.change-body { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.added-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.removed-text { background: #ffe6e6; padding: 8px; border-radius: 4px; text-decoration: line-through; color: #666; }
+.old-text { background: #ffe6e6; padding: 8px; border-radius: 4px; margin-bottom: 8px; }
+.new-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.move-info { font-size: 13px; color: #004085; margin-bottom: 8px; }
+.amendment-note { font-size: 12px; color: #856404; background: #fff3cd; padding: 4px 8px;
+  border-radius: 3px; margin-top: 4px; }
+
+/* Inline diff */
+del { background: #fecdd3; text-decoration: line-through; color: #9a3412; }
+ins { background: #bbf7d0; text-decoration: none; color: #166534; }
+
+/* Financial callout */
+.financial-callout { margin-top: 10px; padding: 8px 12px; background: #f0f7ff;
+  border: 1px solid #b6d4fe; border-radius: 4px; font-size: 13px; }
+
+/* Navigation buttons */
+.nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10; }
+.nav-buttons button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 4px;
+  background: #fff; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.nav-buttons button:hover { background: #f0f0f0; }
+
+/* Print */
+@media print {
+  .sidebar, .nav-buttons, #sidebar-filter { display: none; }
+  .main { margin-left: 0; }
+  .change-card { break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<input type="text" id="sidebar-filter" placeholder="Filter sections...">
+<ul><li class="nav-item" data-type="modified"><a href="#change-0"><span class="badge badge-modified">modified</span> DEPARTMENT OF DEFENSE &gt; Military construction, army</a></li><li class="nav-item" data-type="modified"><a href="#change-1"><span class="badge badge-modified">modified</span> Sec. 130 — DEPARTMENT OF DEFENSE &gt; Administrative provisions &gt; sec. 130</a></li><li class="nav-item" data-type="modified"><a href="#change-2"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans benefits administration &gt; VETERANS HOUSING BENEFIT PROGRAM FUND</a></li><li class="nav-item" data-type="modified"><a href="#change-3"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans benefits administration &gt; GENERAL OPERATING EXPENSES, VETERANS BENEFITS ADMINISTRATION</a></li><li class="nav-item" data-type="modified"><a href="#change-4"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL SERVICES</a></li><li class="nav-item" data-type="modified"><a href="#change-5"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL COMMUNITY CARE</a></li><li class="nav-item" data-type="modified"><a href="#change-6"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL SUPPORT AND COMPLIANCE</a></li><li class="nav-item" data-type="modified"><a href="#change-7"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL AND PROSTHETIC RESEARCH</a></li><li class="nav-item" data-type="modified"><a href="#change-8"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; National cemetery administration</a></li><li class="nav-item" data-type="modified"><a href="#change-9"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GENERAL ADMINISTRATION</a></li><li class="nav-item" data-type="modified"><a href="#change-10"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; BOARD OF VETERANS APPEALS</a></li><li class="nav-item" data-type="modified"><a href="#change-11"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; INFORMATION TECHNOLOGY SYSTEMS</a></li><li class="nav-item" data-type="modified"><a href="#change-12"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; VETERANS ELECTRONIC HEALTH RECORD</a></li><li class="nav-item" data-type="modified"><a href="#change-13"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GRANTS FOR CONSTRUCTION OF STATE EXTENDED CARE FACILITIES</a></li><li class="nav-item" data-type="modified"><a href="#change-14"><span class="badge badge-modified">modified</span> DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GRANTS FOR CONSTRUCTION OF VETERANS CEMETERIES</a></li><li class="nav-item" data-type="modified"><a href="#change-15"><span class="badge badge-modified">modified</span> Sec. 414 — GENERAL PROVISIONS &gt; sec. 414</a></li><li class="nav-item" data-type="added"><a href="#change-16"><span class="badge badge-added">added</span> Sec. 418 — GENERAL PROVISIONS &gt; sec. 418</a></li><li class="nav-item" data-type="added"><a href="#change-17"><span class="badge badge-added">added</span> Sec. 419 — GENERAL PROVISIONS &gt; sec. 419</a></li><li class="nav-item" data-type="added"><a href="#change-18"><span class="badge badge-added">added</span> Sec. 421 — GENERAL PROVISIONS &gt; sec. 421</a></li><li class="nav-item" data-type="added"><a href="#change-19"><span class="badge badge-added">added</span> Sec. 422 — GENERAL PROVISIONS &gt; sec. 422</a></li><li class="nav-item" data-type="added"><a href="#change-20"><span class="badge badge-added">added</span> Sec. 423 — GENERAL PROVISIONS &gt; sec. 423</a></li><li class="nav-item" data-type="added"><a href="#change-21"><span class="badge badge-added">added</span> Sec. 424 — GENERAL PROVISIONS &gt; sec. 424</a></li><li class="nav-item" data-type="added"><a href="#change-22"><span class="badge badge-added">added</span> Sec. 425 — GENERAL PROVISIONS &gt; sec. 425</a></li><li class="nav-item" data-type="moved"><a href="#change-23"><span class="badge badge-moved">moved</span> Sec. 420 — GENERAL PROVISIONS &gt; sec. 420</a></li></ul>
+</nav>
+<div class="main">
+<div class="report-header">
+<h1>HR 4366 &mdash; Bill Comparison</h1>
+<div class="versions">v1: reported-in-house &rarr; v2: engrossed-in-house &middot; 118th Congress</div>
+<div class="summary-bar"><span class="summary-item"><span class="badge badge-added">added</span> <strong>7</strong></span><span class="summary-item"><span class="badge badge-modified">modified</span> <strong>16</strong></span><span class="summary-item"><span class="badge badge-moved">moved</span> <strong>1</strong></span></div>
+</div>
+
+<h2>Changes</h2>
+<div class="change-card modified" id="change-0">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF DEFENSE &gt; Military construction, army</h3>
+</div>
+<div class="change-body diff-inline">For acquisition, construction, installation, and equipment of temporary or permanent public works, military installations, facilities, and real property for the Army as currently authorized by law, including personnel in the Army Corps of Engineers and other personal services necessary for the purposes of this appropriation, and for construction and operation of facilities in support of the functions of the Commander in Chief, <del>$1,517,455,000,</del> <ins>$1,517,455,000 (increased by $103,000,000) (reduced by $103,000,000),</ins> to remain available until September 30, 2028: Provided, That, of this amount, not to exceed $345,775,000 shall be available for study, planning, design, architect and engineer services, and host nation support, as authorized by law, unless the Secretary of the Army determines that additional obligations are necessary for such purposes and notifies the Committees on Appropriations of both Houses of Congress of the determination and the reasons therefor: Provided further, That of the amount made available under this heading, $162,900,000 shall be for the projects and activities, and in the amounts, specified in the table under the heading Military Construction, Army in the report accompanying this Act, in addition to amounts otherwise available for such purposes.</div>
+</div>
+<div class="change-card modified" id="change-1">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF DEFENSE &gt; Administrative provisions &gt; sec. 130</h3>
+<span class="section-number">Sec. 130</span>
+</div>
+<div class="change-body diff-inline">For an additional amount for the accounts and in the amounts specified for planning and design, for child development centers, to remain available until September 30, 2028:Military Construction, Army, <del>$25,000,000;Military</del> <ins>$25,000,000 (increased by $25,000,000) (reduced by $25,000,000);Military</ins> Construction, Navy and Marine Corps, <del>$25,000,000;</del> <ins>$25,000,000 (increased by $25,000,000) (reduced by $25,000,000);</ins> andMilitary Construction, Air Force, <del>$25,000,000:Provided,</del> <ins>$25,000,000 (increased by $25,000,000) (reduced by $25,000,000):Provided,</ins> That not later than 60 days after the date of enactment of this Act, the Secretary of the military department concerned, or their designee, shall submit to the Committees on Appropriations of both Houses of Congress an expenditure plan for funds provided under this section.</div>
+</div>
+<div class="change-card modified" id="change-2">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans benefits administration &gt; VETERANS HOUSING BENEFIT PROGRAM FUND</h3>
+</div>
+<div class="change-body diff-inline">For the cost of direct and guaranteed loans, such sums as may be necessary to carry out the program, as authorized by subchapters I through III of chapter 37 of title 38, United States Code: Provided, That such costs, including the cost of modifying such loans, shall be as defined in section 502 of the Congressional Budget Act of 1974: Provided further, That, during fiscal year 2024, within the resources available, not to exceed $500,000 in gross obligations for direct loans are authorized for specially adapted housing loans. In addition, for administrative expenses to carry out the direct and guaranteed loan programs, <del>$316,742,419.</del> <ins>$316,742,419 (increased by $2,000,000) (reduced by $2,000,000) (reduced by $1,000,000) (increased by $1,000,000).</ins></div>
+</div>
+<div class="change-card modified" id="change-3">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans benefits administration &gt; GENERAL OPERATING EXPENSES, VETERANS BENEFITS ADMINISTRATION</h3>
+</div>
+<div class="change-body diff-inline">For necessary operating expenses of the Veterans Benefits Administration, not otherwise provided for, including hire of passenger motor vehicles, reimbursement of the General Services Administration for security guard services, and reimbursement of the Department of Defense for the cost of overseas employee mail, <del>$3,899,000,000:</del> <ins>$3,899,000,000 (reduced by $1,000,000) (increased by $1,000,000) (reduced by $1,000,000) (increased by $1,000,000) (reduced by $1,000,000) (increased by $1,000,000) (increased by $10,000,000)(reduced by $10,000,000):</ins> Provided, That expenses for services and assistance authorized under paragraphs(1),(2),(5), and(11) of section 3104(a) of title 38, United States Code, that the Secretary of Veterans Affairs determines are necessary to enable entitled veterans:(1) to the maximum extent feasible, to become employable and to obtain and maintain suitable employment; or(2) to achieve maximum independence in daily living, shall be charged to this account: Provided further, That, of the funds made available under this heading, not to exceed 10 percent shall remain available until September 30, 2025.</div>
+</div>
+<div class="change-card modified" id="change-4">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL SERVICES</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses for furnishing, as authorized by law, inpatient and outpatient care and treatment to beneficiaries of the Department of Veterans Affairs and veterans described in section 1705(a) of title 38, United States Code, including care and treatment in facilities not under the jurisdiction of the Department, and including medical supplies and equipment, bioengineering services, food services, and salaries and expenses of healthcare employees hired under title 38, United States Code, assistance and support services for caregivers as authorized by section 1720G of title 38, United States Code, loan repayments authorized by section 604 of the Caregivers and Veterans Omnibus Health Services Act of 2010 (Public Law 111–163; 124 Stat. 1174; 38 U.S.C. 7681 note), monthly assistance allowances authorized by section 322(d) of title 38, United States Code, grants authorized by section 521A of title 38, United States Code, and administrative expenses necessary to carry out sections 322(d) and 521A of title 38, United States Code, and hospital care and medical services authorized by section 1787 of title 38, United States Code; <del>$71,000,000,000,</del> <ins>$71,000,000,000 (reduced by $10,000,000) (increased by $10,000,000) (reduced by $2,000,000) (increased by $2,000,000) (increased by $10,000,000) (reduced by $10,000,000) (reduced by $5,000,000) (increased by $5,000,000) (reduced by $1,000,000) (increased by $1,000,000) (reduced by $10,000,000) (increased by $10,000,000) (reduced by $2,000,000) (increased by $2,000,000) (reduced by $1,000,000) (increased by $1,000,000) (reduced by $10,000,000) (increased by $10,000,000) (increased by $1,000,000) (reduced by $1,000,000),</ins> plus reimbursements, shall become available on October 1, 2024, and shall remain available until September 30, 2025: Provided, That, of the amount made available on October 1, 2024, under this heading, $2,000,000,000 shall remain available until September 30, 2026: Provided further, That, notwithstanding any other provision of law, the Secretary of Veterans Affairs shall establish a priority for the provision of medical treatment for veterans who have service-connected disabilities, lower income, or have special needs: Provided further, That, notwithstanding any other provision of law, the Secretary of Veterans Affairs shall give priority funding for the provision of basic medical benefits to veterans in enrollment priority groups 1 through 6: Provided further, That, notwithstanding any other provision of law, the Secretary of Veterans Affairs may authorize the dispensing of prescription drugs from Veterans Health Administration facilities to enrolled veterans with privately written prescriptions based on requirements established by the Secretary: Provided further, That the implementation of the program described in the previous proviso shall incur no additional cost to the Department of Veterans Affairs: Provided further, That the Secretary of Veterans Affairs shall ensure that sufficient amounts appropriated under this heading for medical supplies and equipment are available for the acquisition of prosthetics designed specifically for female veterans: Provided further, That nothing in section 2044(e)(1) of title 38, United States Code, may be construed as limiting amounts that may be made available under this heading for fiscal years 2024 and 2025 in this or prior Acts.</div>
+</div>
+<div class="change-card modified" id="change-5">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL COMMUNITY CARE</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses for furnishing health care to individuals pursuant to chapter 17 of title 38, United States Code, at non-Department facilities, <del>$20,382,000,000,</del> <ins>$20,382,000,000 (reduced by $1,000,000) (increased by $1,000,000),</ins> plus reimbursements, shall become available on October 1, 2024, and shall remain available until September 30, 2025: Provided, That, of the amount made available on October 1, 2024, under this heading, $2,000,000,000 shall remain available until September 30, 2026.</div>
+</div>
+<div class="change-card modified" id="change-6">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL SUPPORT AND COMPLIANCE</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses in the administration of the medical, hospital, nursing home, domiciliary, construction, supply, and research activities, as authorized by law; administrative expenses in support of capital policy activities; and administrative and legal expenses of the Department for collecting and recovering amounts owed the Department as authorized under chapter 17 of title 38, United States Code, and the Federal Medical Care Recovery Act (42 U.S.C. 2651 et seq.), <del>$11,800,000,000,</del> <ins>$11,800,000,000 (reduced by $1,000,000) (increased by $1,000,000),</ins> plus reimbursements, shall become available on October 1, 2024, and shall remain available until September 30, 2025: Provided, That, of the amount made available on October 1, 2024, under this heading, $350,000,000 shall remain available until September 30, 2026.</div>
+</div>
+<div class="change-card modified" id="change-7">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Veterans health administration &gt; MEDICAL AND PROSTHETIC RESEARCH</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses in carrying out programs of medical and prosthetic research and development as authorized by chapter 73 of title 38, United States Code, <del>$938,000,000,</del> <ins>$938,000,000 (increased by $3,000,000) (reduced by $20,000,000) (increased by $20,000,000),</ins> plus reimbursements, shall remain available until September 30, 2025: Provided, That the Secretary of Veterans Affairs shall ensure that sufficient amounts appropriated under this heading are available for prosthetic research specifically for female veterans, and for toxic exposure research.</div>
+</div>
+<div class="change-card modified" id="change-8">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; National cemetery administration</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the National Cemetery Administration for operations and maintenance, not otherwise provided for, including uniforms or allowances therefor; cemeterial expenses as authorized by law; purchase of one passenger motor vehicle for use in cemeterial operations; hire of passenger motor vehicles; and repair, alteration or improvement of facilities under the jurisdiction of the National Cemetery Administration, <del>$480,000,000,</del> <ins>$480,000,000 (increased by $2,000,000),</ins> of which not to exceed 10 percent shall remain available until September 30, 2025.</div>
+</div>
+<div class="change-card modified" id="change-9">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GENERAL ADMINISTRATION</h3>
+</div>
+<div class="change-body diff-inline">For necessary operating expenses of the Department of Veterans Affairs, not otherwise provided for, including administrative expenses in support of Department-wide capital planning, management and policy activities, uniforms, or allowances therefor; not to exceed $25,000 for official reception and representation expenses; hire of passenger motor vehicles; and reimbursement of the General Services Administration for security guard services, <del>$475,000,000,</del> <ins>$475,000,000 (reduced by $5,500,000) (reduced by $3,500,000) (reduced by $3,500,000) (reduced by $3,500,000) (reduced by $3,500,000) (reduced by $1,000,000) (increased by $1,000,000) (reduced by $5,000,000),</ins> of which not to exceed 10 percent shall remain available until September 30, 2025: Provided, That funds provided under this heading may be transferred to General Operating Expenses, Veterans Benefits Administration.</div>
+</div>
+<div class="change-card modified" id="change-10">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; BOARD OF VETERANS APPEALS</h3>
+</div>
+<div class="change-body diff-inline">For necessary operating expenses of the Board of Veterans Appeals, $287,000,000 <ins>(increased by $2,000,000)</ins> of which not to exceed 10 percent shall remain available until September 30, 2025.</div>
+</div>
+<div class="change-card modified" id="change-11">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; INFORMATION TECHNOLOGY SYSTEMS</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses for information technology systems and telecommunications support, including developmental information systems and operational information systems; for pay and associated costs; and for the capital asset acquisition of information technology systems, including management and related contractual costs of said acquisitions, including contractual costs associated with operations authorized by section 3109 of title 5, United States Code, <del>$6,401,000,000,</del> <ins>$6,401,000,000 (reduced by $5,000,000),</ins> plus reimbursements: Provided, That $1,606,977,000 <ins>(reduced by $5,000,000)</ins> shall be for pay and associated costs, of which not to exceed 3 percent shall remain available until September 30, 2025: Provided further, That $4,668,373,000 shall be for operations and maintenance, of which not to exceed 5 percent shall remain available until September 30, 2025: Provided further, That $125,650,000 shall be for information technology systems development, and shall remain available until September 30, 2025: Provided further, That amounts made available for salaries and expenses, operations and maintenance, and information technology systems development may be transferred among the three subaccounts after the Secretary of Veterans Affairs requests from the Committees on Appropriations of both Houses of Congress the authority to make the transfer and an approval is issued: Provided further, That amounts made available for the Information Technology Systems account for development may be transferred among projects or to newly defined projects: Provided further, That no project may be increased or decreased by more than $3,000,000 of cost prior to submitting a request to the Committees on Appropriations of both Houses of Congress to make the transfer and an approval is issued, or absent a response, a period of 30 days has elapsed: Provided further, That the funds made available under this heading for information technology systems development shall be for the projects, and in the amounts, specified in the table entitled Information Technology Development Projects under this heading in the report accompanying this Act.</div>
+</div>
+<div class="change-card modified" id="change-12">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; VETERANS ELECTRONIC HEALTH RECORD</h3>
+</div>
+<div class="change-body diff-inline">For activities related to implementation, preparation, development, interface, management, rollout, and maintenance of a Veterans Electronic Health Record system, including contractual costs associated with operations authorized by section 3109 of title 5, United States Code, and salaries and expenses of employees hired under titles 5 and 38, United States Code, <del>$1,863,000,000,</del> <ins>$1,863,000,000 (reduced by $1,000,000) (increased by $1,000,000),</ins> to remain available until September 30, 2026: Provided, That the Secretary of Veterans Affairs shall submit to the Committees on Appropriations of both Houses of Congress quarterly reports detailing obligations, expenditures, and deployment implementation by facility, including any changes from the deployment plan or schedule: Provided further, That the funds provided in this account shall only be available to the Office of the Deputy Secretary, to be administered by that Office: Provided further, That 25 percent of the funds made available under this heading shall not be available until July 1, 2024, and are contingent upon the Secretary of Veterans Affairs— (1)providing the Committees on Appropriations a report detailing the status of outstanding issues impacting the stability and usability of the new electronic health record system, including those that contributed to the October 13, 2022, deployment delay, along with a timeline and measurable metrics to resolve issues, no later than 60 days after enactment of this Act; (2)certifying and detailing any changes to the full deployment schedule, no later than 60 days prior to July 1, 2024; and (3)certifying in writing no later than 30 days prior to July 1, 2024, the following—(A)the status of issues included in the report referenced in paragraph(1), including issues that have not been closed but have been suitably resolved or mitigated in a manner that will enhance provider productivity and minimize the potential for patient harm; and(B)whether the system is stable, ready, and optimized for further deployment at VA sites.</div>
+</div>
+<div class="change-card modified" id="change-13">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GRANTS FOR CONSTRUCTION OF STATE EXTENDED CARE FACILITIES</h3>
+</div>
+<div class="change-body diff-inline">For grants to assist States to acquire or construct State nursing home and domiciliary facilities and to remodel, modify, or alter existing hospital, nursing home, and domiciliary facilities in State homes, for furnishing care to veterans as authorized by sections 8131 through 8137 of title 38, United States Code, <del>$164,000,000,</del> <ins>$164,000,000 (increased by $2,000,000) (increased by $5,000,000) (increased by $5,000,000),</ins> to remain available until expended.</div>
+</div>
+<div class="change-card modified" id="change-14">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENT OF VETERANS AFFAIRS &gt; Departmental administration &gt; GRANTS FOR CONSTRUCTION OF VETERANS CEMETERIES</h3>
+</div>
+<div class="change-body diff-inline">For grants to assist States and tribal organizations in establishing, expanding, or improving veterans cemeteries as authorized by section 2408 of title 38, United States Code, <del>$60,000,000,</del> <ins>$60,000,000 (increased by $2,000,000),</ins> to remain available until expended.</div>
+</div>
+<div class="change-card modified" id="change-15">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>GENERAL PROVISIONS &gt; sec. 414</h3>
+<span class="section-number">Sec. 414</span>
+</div>
+<div class="change-body diff-inline">None of the funds appropriated or otherwise made available by this Act may be made available to implement, administer, apply, enforce, or carry out Executive Order <ins>No.</ins> 13985 of January 20, 2021 (86 Fed. Reg. 7009), Executive Order <ins>No.</ins> 14035 of June 25, 2021 (86 Fed. Reg. 34593), or Executive Order <ins>No.</ins> 14091 of February 16, 2023 (88 Fed. Reg. 10825).</div>
+</div>
+<div class="change-card added" id="change-16">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 418</h3>
+<span class="section-number">Sec. 418</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to enforce any COVID–19 mask mandates.</div>
+</div>
+<div class="change-card added" id="change-17">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 419</h3>
+<span class="section-number">Sec. 419</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to administer, implement, or enforce Executive Order No. 14057 (dated December 8, 2021).</div>
+</div>
+<div class="change-card added" id="change-18">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 421</h3>
+<span class="section-number">Sec. 421</span>
+</div>
+<div class="change-body added-text">None of the funds appropriated or otherwise made available to the Department of Veterans Affairs in this Act may be used to enforce Veterans Health Directive 1315 as it relates to—</div>
+</div>
+<div class="change-card added" id="change-19">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 422</h3>
+<span class="section-number">Sec. 422</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used by the Secretary of Veterans Affairs to report a determination under section 5502 of title 38, United States Code, and section 3.353 of title 38 of the Code of Federal Regulations, to the Department of Justice National Instant Criminal Background Check System established pursuant to section 103 of the Brady Handgun Violence Prevention Act (34 U.S.C. 40901).</div>
+</div>
+<div class="change-card added" id="change-20">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 423</h3>
+<span class="section-number">Sec. 423</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to carry out VHA Directive 1193.01, Coronavirus Disease 2019 Vaccination Program for Veterans Health Administration Health Care Personnel.</div>
+</div>
+<div class="change-card added" id="change-21">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 424</h3>
+<span class="section-number">Sec. 424</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to modify or remove any display of the Department of Veterans Affairs that bears the mission statement To fulfill President Lincoln’s promise to care for him who shall have borne the battle, and for his widow, and his orphan’ by serving and honoring the men and women who are America’s veterans.</div>
+</div>
+<div class="change-card added" id="change-22">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; sec. 425</h3>
+<span class="section-number">Sec. 425</span>
+</div>
+<div class="change-body added-text">None of the funds appropriated by this Act may be used to implement any of the following executive orders:</div>
+</div>
+<div class="change-card moved" id="change-23">
+<div class="change-header">
+<span class="badge badge-moved">moved</span>
+<h3>GENERAL PROVISIONS &gt; sec. 420</h3>
+<span class="section-number">Sec. 420</span>
+</div>
+<div class="move-info">Moved: GENERAL PROVISIONS &gt; sec. 418 &rarr; GENERAL PROVISIONS &gt; sec. 420</div>
+<div class="change-body">$0.</div>
+</div>
+</div>
+</div>
+<div class="nav-buttons">
+<button id="btn-prev">&larr; Prev</button>
+<button id="btn-next">Next &rarr;</button>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Sidebar filter
+  var filter = document.getElementById('sidebar-filter');
+  if (filter) {
+    filter.addEventListener('input', function() {
+      var q = this.value.toLowerCase();
+      document.querySelectorAll('.sidebar li').forEach(function(li) {
+        li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  // Prev/next navigation
+  var cards = document.querySelectorAll('.change-card');
+  var current = -1;
+  function goTo(idx) {
+    if (idx >= 0 && idx < cards.length) {
+      current = idx;
+      cards[idx].scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }
+  var prev = document.getElementById('btn-prev');
+  var next = document.getElementById('btn-next');
+  if (prev) prev.addEventListener('click', function() { goTo(current - 1); });
+  if (next) next.addEventListener('click', function() { goTo(current + 1); });
+
+  // Financial table sort (groups rowspan rows together)
+  document.querySelectorAll('.financial-table th').forEach(function(th, colIdx) {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', function() {
+      var table = th.closest('table');
+      var tbody = table.querySelector('tbody');
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      // Group rows by data-group attribute
+      var groups = [];
+      var groupMap = {};
+      rows.forEach(function(row) {
+        var g = row.dataset.group;
+        if (!(g in groupMap)) {
+          groupMap[g] = groups.length;
+          groups.push([]);
+        }
+        groups[groupMap[g]].push(row);
+      });
+      var asc = th.dataset.sort !== 'asc';
+      th.dataset.sort = asc ? 'asc' : 'desc';
+      // Sort groups by the first row's cell value
+      groups.sort(function(a, b) {
+        var aVal = a[0].cells[colIdx] ? a[0].cells[colIdx].textContent.replace(/[^\d.-]/g, '') : '';
+        var bVal = b[0].cells[colIdx] ? b[0].cells[colIdx].textContent.replace(/[^\d.-]/g, '') : '';
+        var aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      });
+      groups.forEach(function(group) {
+        group.forEach(function(row) { tbody.appendChild(row); });
+      });
+    });
+  });
+});
+
+</script>
+</body>
+</html>

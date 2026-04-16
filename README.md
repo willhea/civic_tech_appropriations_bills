@@ -80,7 +80,7 @@ uv run python diff_bill.py compare old.xml new.xml --format html -o reports/repo
 
 ### HTML report
 
-`--format html` produces a self-contained HTML file that can be opened in any browser with no install or server required. The report includes:
+`--format html` produces a self-contained HTML file that can be opened in any browser with no install or server required. See [examples/](examples/) for sample reports you can open immediately. The report includes:
 
 - **Header** with bill number, congress, and version numbers (e.g., "v1: reported-in-house → v2: engrossed-in-house")
 - **Sidebar** listing all changed sections with color-coded change type badges. Type in the filter box to narrow the list. Click any item to jump to that section.
