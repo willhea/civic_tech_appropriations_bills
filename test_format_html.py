@@ -267,6 +267,17 @@ class TestBuildChangeCard:
         assert "New Section" in html
         assert "moved" in html.lower()
 
+    def test_moved_card_shows_body_when_text_identical(self):
+        """Moved cards should show body text even when old and new text are identical."""
+        change = _change(change_type="moved", index=0)
+        change["display_path_old"] = ["Title I", "Sec. 5"]
+        change["display_path_new"] = ["Title II", "Sec. 10"]
+        change["old_text"] = "For acquisition and construction, $2,022,775,000, to remain available."
+        change["new_text"] = "For acquisition and construction, $2,022,775,000, to remain available."
+        html = build_change_card(change, 0)
+        assert "$2,022,775,000" in html
+        assert "change-body" in html
+
     def test_financial_callout(self):
         change = _change(
             change_type="modified",

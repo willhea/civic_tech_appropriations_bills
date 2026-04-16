@@ -235,6 +235,8 @@ def build_change_card(change: dict, index: int) -> str:
                 parts.append(f'<div class="old-text">{escape(old_text)}</div>')
                 parts.append(f'<div class="new-text">{escape(new_text)}</div>')
                 parts.append('</div>')
+        elif new_text:
+            parts.append(f'<div class="change-body">{escape(new_text)}</div>')
 
     # Financial callout
     fin = change.get("financial")
