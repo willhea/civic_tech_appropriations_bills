@@ -618,6 +618,36 @@ class TestWalkTitle:
         # After section: context reverts to Senate (not House)
         assert nodes[3].match_path == ("leg branch", "senate", "senate office")
 
+    def test_subtitle_with_sections(self):
+        """Subtitles containing sections should be walked, with subtitle header in path."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>POLICY PROVISIONS</header>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Tax Relief</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<header>Extension of credits</header>"
+            "<text>The tax credit under section 45 is extended through 2025.</text>"
+            "</section>"
+            '<section id="S102">'
+            "<enum>102.</enum>"
+            "<header>Deduction increase</header>"
+            "<text>The standard deduction is increased to $15,000.</text>"
+            "</section>"
+            "</subtitle>"
+            "</title>"
+        )
+        nodes = walk_title(title, "POLICY PROVISIONS", "")
+        assert len(nodes) == 2
+        assert nodes[0].section_number == "Sec. 101"
+        assert nodes[0].match_path == ("policy provisions", "tax relief", "sec. 101")
+        assert "extended" in nodes[0].body_text
+        assert nodes[1].section_number == "Sec. 102"
+        assert nodes[1].match_path == ("policy provisions", "tax relief", "sec. 102")
+
 
 class TestWalkBodySections:
     """Test walk_body_sections for bills with no titles (e.g., HR 2882 v1-3)."""
