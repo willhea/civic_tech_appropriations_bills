@@ -72,9 +72,7 @@ class TestLegBranchValidation:
             found = any(n.match_path == path for n in tree.nodes)
             if not found:
                 missing.append(f"{account['fy']} {account['chamber']}: {account['excel_name']} -> {path}")
-        assert missing == [], (
-            f"{len(missing)} nodes not found:\n" + "\n".join(f"  {m}" for m in missing[:10])
-        )
+        assert missing == [], f"{len(missing)} nodes not found:\n" + "\n".join(f"  {m}" for m in missing[:10])
 
     def test_all_amounts_match(self, fixture_data, bill_trees):
         """Every fixture amount should appear in the node's extracted amounts."""
@@ -94,9 +92,7 @@ class TestLegBranchValidation:
                     f"{account['fy']} {account['chamber']}: {account['excel_name']} "
                     f"expected ${expected:,}, got {['${:,}'.format(a) for a in extracted]}"
                 )
-        assert mismatches == [], (
-            f"{len(mismatches)} mismatches:\n" + "\n".join(f"  {m}" for m in mismatches[:10])
-        )
+        assert mismatches == [], f"{len(mismatches)} mismatches:\n" + "\n".join(f"  {m}" for m in mismatches[:10])
 
     def test_covers_multiple_bills(self, fixture_data):
         """Fixture should cover multiple bills for meaningful validation."""

@@ -80,16 +80,17 @@ def build_financial_table(changes: list[dict]) -> str:
             new_amounts = fin.get("new_amounts", [])
             max_len = max(len(old_amounts), len(new_amounts))
             amount_pairs = [
-                (old_amounts[j] if j < len(old_amounts) else None,
-                 new_amounts[j] if j < len(new_amounts) else None)
+                (old_amounts[j] if j < len(old_amounts) else None, new_amounts[j] if j < len(new_amounts) else None)
                 for j in range(max_len)
             ]
-        rows.append({
-            "index": i,
-            "path": path,
-            "section": section,
-            "amount_pairs": amount_pairs,
-        })
+        rows.append(
+            {
+                "index": i,
+                "path": path,
+                "section": section,
+                "amount_pairs": amount_pairs,
+            }
+        )
 
     if not rows:
         return ""
@@ -136,12 +137,12 @@ def build_financial_table(changes: list[dict]) -> str:
 
             lines.append(
                 f'<tr class="{css}" data-group="{group_idx}">'
-                f'{path_cell}'
+                f"{path_cell}"
                 f'<td class="amount">{old_str}</td>'
                 f'<td class="amount">{new_str}</td>'
                 f'<td class="amount change-amount">{change_dollar}</td>'
                 f'<td class="amount change-amount">{change_pct}</td>'
-                f'</tr>'
+                f"</tr>"
             )
 
     lines.append("</tbody></table>")
@@ -165,8 +166,7 @@ def _financial_callout(financial: dict) -> str:
         new_amounts = financial.get("new_amounts", [])
         max_len = max(len(old_amounts), len(new_amounts), 1)
         amount_pairs = [
-            (old_amounts[i] if i < len(old_amounts) else None,
-             new_amounts[i] if i < len(new_amounts) else None)
+            (old_amounts[i] if i < len(old_amounts) else None, new_amounts[i] if i < len(new_amounts) else None)
             for i in range(max_len)
         ]
 
@@ -188,7 +188,7 @@ def _financial_callout(financial: dict) -> str:
     callout = f'<div class="financial-callout">{"".join(rows)}'
     if financial.get("has_amendment_annotations"):
         callout += '<div class="amendment-note">Includes floor amendment annotations (increased/reduced by)</div>'
-    callout += '</div>'
+    callout += "</div>"
     return callout
 
 
@@ -203,12 +203,12 @@ def build_change_card(change: dict, index: int) -> str:
     parts = [f'<div class="change-card {change_type}" id="change-{index}">']
 
     # Header
-    parts.append(f'<div class="change-header">')
+    parts.append('<div class="change-header">')
     parts.append(f'<span class="badge badge-{change_type}">{escape(change_type)}</span>')
-    parts.append(f'<h3>{path}</h3>')
+    parts.append(f"<h3>{path}</h3>")
     if section:
         parts.append(f'<span class="section-number">{section}</span>')
-    parts.append('</div>')
+    parts.append("</div>")
 
     # Body
     if change_type == "modified":
@@ -216,10 +216,10 @@ def build_change_card(change: dict, index: int) -> str:
         if diff_html is not None:
             parts.append(f'<div class="change-body diff-inline">{diff_html}</div>')
         else:
-            parts.append(f'<div class="change-body">')
+            parts.append('<div class="change-body">')
             parts.append(f'<div class="old-text">{escape(old_text)}</div>')
             parts.append(f'<div class="new-text">{escape(new_text)}</div>')
-            parts.append('</div>')
+            parts.append("</div>")
     elif change_type == "added":
         parts.append(f'<div class="change-body added-text">{escape(new_text)}</div>')
     elif change_type == "removed":
@@ -235,10 +235,10 @@ def build_change_card(change: dict, index: int) -> str:
             if diff_html is not None:
                 parts.append(f'<div class="change-body diff-inline">{diff_html}</div>')
             else:
-                parts.append(f'<div class="change-body">')
+                parts.append('<div class="change-body">')
                 parts.append(f'<div class="old-text">{escape(old_text)}</div>')
                 parts.append(f'<div class="new-text">{escape(new_text)}</div>')
-                parts.append('</div>')
+                parts.append("</div>")
         elif new_text:
             parts.append(f'<div class="change-body">{escape(new_text)}</div>')
 
@@ -247,7 +247,7 @@ def build_change_card(change: dict, index: int) -> str:
     if fin and fin.get("amounts_changed"):
         parts.append(_financial_callout(fin))
 
-    parts.append('</div>')
+    parts.append("</div>")
     return "\n".join(parts)
 
 
@@ -266,15 +266,15 @@ def build_sidebar(changes: list[dict]) -> str:
             f'<li class="nav-item" data-type="{change_type}">'
             f'<a href="#change-{i}">'
             f'<span class="badge badge-{change_type}">{change_type}</span> '
-            f'{label}'
-            f'</a></li>'
+            f"{label}"
+            f"</a></li>"
         )
 
     return (
         '<nav class="sidebar">\n'
         '<input type="text" id="sidebar-filter" placeholder="Filter sections...">\n'
-        f'<ul>{"".join(items)}</ul>\n'
-        '</nav>'
+        f"<ul>{''.join(items)}</ul>\n"
+        "</nav>"
     )
 
 
@@ -452,16 +452,13 @@ def format_html(diff_dict: dict) -> str:
             summary_items.append(
                 f'<span class="summary-item">'
                 f'<span class="badge badge-{key}">{key}</span> '
-                f'<strong>{count}</strong>'
-                f'</span>'
+                f"<strong>{count}</strong>"
+                f"</span>"
             )
 
     financial_section = ""
     if financial_table:
-        financial_section = (
-            '<h2>Financial Summary</h2>\n'
-            f'{financial_table}\n'
-        )
+        financial_section = f"<h2>Financial Summary</h2>\n{financial_table}\n"
 
     return f"""\
 <!DOCTYPE html>
@@ -480,7 +477,8 @@ def format_html(diff_dict: dict) -> str:
 <div class="main">
 <div class="report-header">
 <h1>{bill_type} {bill_number} &mdash; Bill Comparison</h1>
-<div class="versions">{_version_label(old_version, old_version_num)} &rarr; {_version_label(new_version, new_version_num)} &middot; {congress}th Congress</div>
+<div class="versions">{_version_label(old_version, old_version_num)} &rarr;\
+ {_version_label(new_version, new_version_num)} &middot; {congress}th Congress</div>
 <div class="summary-bar">{"".join(summary_items)}</div>
 </div>
 {financial_section}

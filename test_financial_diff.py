@@ -33,8 +33,7 @@ class TestExtractAmounts:
 
     def test_two_amounts_in_order(self):
         text = (
-            "For expenses, $64,560,558,000: Provided, That not to exceed "
-            "$7,000,000 shall be available for emergencies."
+            "For expenses, $64,560,558,000: Provided, That not to exceed $7,000,000 shall be available for emergencies."
         )
         assert extract_amounts(text) == (64560558000, 7000000)
 
@@ -156,8 +155,12 @@ class TestComputeFinancialChange:
     def test_text_changed_amounts_same(self):
         """Text modified but dollar amounts identical -- not a financial change."""
         result = compute_financial_change(
-            old_text="For acquisition and construction, $2,022,775,000, to remain available until September 30, 2025.",
-            new_text="For acquisition, construction, and improvement, $2,022,775,000, to remain available until expended.",
+            old_text=(
+                "For acquisition and construction, $2,022,775,000, to remain available until September 30, 2025."
+            ),
+            new_text=(
+                "For acquisition, construction, and improvement, $2,022,775,000, to remain available until expended."
+            ),
         )
         assert result is not None
         assert result.amounts_changed is False
@@ -298,12 +301,19 @@ class TestCliFinancial:
 
         result = subprocess.run(
             [
-                "uv", "run", "python", "diff_bill.py", "compare",
+                "uv",
+                "run",
+                "python",
+                "diff_bill.py",
+                "compare",
                 "bills/118-hr-8774/1_reported-in-house.xml",
                 "bills/118-hr-8774/2_engrossed-in-house.xml",
-                "--format", "json", "--financial",
+                "--format",
+                "json",
+                "--financial",
             ],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0
         data = json.loads(result.stdout)
@@ -322,12 +332,18 @@ class TestCliFinancial:
 
         result = subprocess.run(
             [
-                "uv", "run", "python", "diff_bill.py", "compare",
+                "uv",
+                "run",
+                "python",
+                "diff_bill.py",
+                "compare",
                 "bills/118-hr-8774/1_reported-in-house.xml",
                 "bills/118-hr-8774/2_engrossed-in-house.xml",
-                "--format", "json",
+                "--format",
+                "json",
             ],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0
         data = json.loads(result.stdout)
@@ -348,16 +364,12 @@ class TestAmountSanityChecks:
     def test_all_amounts_in_valid_range(self, hr4366_v6):
         for node in hr4366_v6.nodes:
             for amount in extract_amounts(node.body_text):
-                assert 1 <= amount <= 999_999_999_999, (
-                    f"Amount ${amount:,} out of range at {node.match_path}"
-                )
+                assert 1 <= amount <= 999_999_999_999, f"Amount ${amount:,} out of range at {node.match_path}"
 
     def test_no_node_exceeds_max_amounts(self, hr4366_v6):
         for node in hr4366_v6.nodes:
             amounts = extract_amounts(node.body_text)
-            assert len(amounts) <= 70, (
-                f"Node {node.match_path} has {len(amounts)} amounts (max 70)"
-            )
+            assert len(amounts) <= 70, f"Node {node.match_path} has {len(amounts)} amounts (max 70)"
 
 
 @pytest.mark.slow
@@ -389,10 +401,9 @@ class TestIntegrationFinancial:
         financial_only = bill_diff_to_dict(result, financial=True)
 
         total = len(all_changes["changes"])
-        with_amounts = len([
-            c for c in financial_only["changes"]
-            if "financial" in c and c["financial"]["amounts_changed"]
-        ])
+        with_amounts = len(
+            [c for c in financial_only["changes"] if "financial" in c and c["financial"]["amounts_changed"]]
+        )
         assert with_amounts < total
         assert with_amounts > 0
 
@@ -400,19 +411,13 @@ class TestIntegrationFinancial:
 class TestMatchAmounts:
     def test_identical_texts(self):
         """All amounts pair with themselves when text is identical."""
-        text = (
-            "For expenses, $5,000,000: Provided, That $1,000,000 "
-            "shall be for operations."
-        )
+        text = "For expenses, $5,000,000: Provided, That $1,000,000 shall be for operations."
         pairs = match_amounts(text, text)
         assert pairs == [(5000000, 5000000), (1000000, 1000000)]
 
     def test_inserted_amount(self):
         """New proviso inserted mid-text: appears as (None, new), others pair correctly."""
-        old = (
-            "For expenses, $5,000,000: Provided, That $3,000,000 "
-            "shall be for operations."
-        )
+        old = "For expenses, $5,000,000: Provided, That $3,000,000 shall be for operations."
         new = (
             "For expenses, $5,000,000: Provided, That $2,000,000 "
             "shall remain available until September 30, 2028: "
@@ -428,10 +433,7 @@ class TestMatchAmounts:
             "shall remain available: Provided further, That "
             "$3,000,000 shall be for operations."
         )
-        new = (
-            "For expenses, $5,000,000: Provided, That "
-            "$3,000,000 shall be for operations."
-        )
+        new = "For expenses, $5,000,000: Provided, That $3,000,000 shall be for operations."
         pairs = match_amounts(old, new)
         assert pairs == [(5000000, 5000000), (2000000, None), (3000000, 3000000)]
 

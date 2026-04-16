@@ -38,7 +38,11 @@ class TestReconcileMoves:
     def test_below_threshold_unchanged(self):
         changes = [
             _node("removed", old_path=("sec. 1",), old_text="Short title of the act."),
-            _node("added", new_path=("sec. 1",), new_text="Completely different content about sanctions and enforcement."),
+            _node(
+                "added",
+                new_path=("sec. 1",),
+                new_text="Completely different content about sanctions and enforcement.",
+            ),
         ]
 
         result = reconcile_moves(changes)
@@ -49,9 +53,17 @@ class TestReconcileMoves:
 
     def test_dead_zone_pair_becomes_moved(self):
         """Pairs with ~0.67 similarity (in the old 0.4-0.7 dead zone) should now reconcile as moved."""
-        old_text = "For the Maritime Administration, including necessary expenses for ship disposal and related maritime operations and maintenance, $287,000,000, to remain available until expended."
+        old_text = (
+            "For the Maritime Administration, including necessary expenses for ship disposal"
+            " and related maritime operations and maintenance, $287,000,000,"
+            " to remain available until expended."
+        )
         # Modified version: ~0.67 similarity (below old 0.7 threshold, above new 0.6)
-        new_text = "For the Maritime Administration, including necessary expenses for ship disposal, environmental remediation, and related maritime operations, $312,000,000, to remain available."
+        new_text = (
+            "For the Maritime Administration, including necessary expenses for ship disposal,"
+            " environmental remediation, and related maritime operations,"
+            " $312,000,000, to remain available."
+        )
 
         changes = [
             _node("removed", old_path=("maritime administration",), old_text=old_text),
@@ -67,8 +79,16 @@ class TestReconcileMoves:
     def test_low_similarity_stays_separate(self):
         """Pairs below the threshold should not be reconciled as moved."""
         changes = [
-            _node("removed", old_path=("sec. 501",), old_text="Counting Veterans Cancer Act provisions for data collection."),
-            _node("added", new_path=("sec. 201",), new_text="Amending Compacts of Free Association with Pacific Island nations."),
+            _node(
+                "removed",
+                old_path=("sec. 501",),
+                old_text="Counting Veterans Cancer Act provisions for data collection.",
+            ),
+            _node(
+                "added",
+                new_path=("sec. 201",),
+                new_text="Amending Compacts of Free Association with Pacific Island nations.",
+            ),
         ]
 
         result = reconcile_moves(changes)
@@ -128,13 +148,16 @@ class TestReconcileIntegration:
     @staticmethod
     def _skip_if_missing(*paths):
         import os
+
         for p in paths:
             if not os.path.exists(p):
                 import pytest
+
                 pytest.skip(f"Test XML not found: {p}")
 
     def test_udall_sections_moved(self):
         from pathlib import Path
+
         from bill_tree import normalize_bill
         from diff_bill import diff_bills
 

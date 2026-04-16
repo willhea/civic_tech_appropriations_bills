@@ -7,7 +7,6 @@ import pytest
 import respx
 
 from fetch_bills import (
-    BILL_TYPES,
     api_get,
     congress_for_year,
     download_version_xml,
@@ -34,9 +33,7 @@ def no_sleep(monkeypatch):
 class TestApiGet:
     @respx.mock
     def test_successful_request(self):
-        respx.get("https://api.congress.gov/v3/bill/119/hr/1").respond(
-            200, json={"bill": {"title": "Test"}}
-        )
+        respx.get("https://api.congress.gov/v3/bill/119/hr/1").respond(200, json={"bill": {"title": "Test"}})
         with httpx.Client() as client:
             result = api_get(client, "/bill/119/hr/1", api_key=TEST_API_KEY)
         assert result == {"bill": {"title": "Test"}}
@@ -89,9 +86,12 @@ class TestFetchAllCommitteeBills:
     def test_paginates_multiple_pages(self):
         """Fetches all pages when total exceeds page size."""
         route = respx.get("https://api.congress.gov/v3/committee/house/hsap00/bills")
-        route.mock(side_effect=lambda request: httpx.Response(
-            200, json=self._paginated_response(request),
-        ))
+        route.mock(
+            side_effect=lambda request: httpx.Response(
+                200,
+                json=self._paginated_response(request),
+            )
+        )
         with httpx.Client() as client:
             bills = fetch_all_committee_bills(client, "house", "hsap00", api_key=TEST_API_KEY, page_size=3)
         assert len(bills) == 5
@@ -102,22 +102,12 @@ class TestFetchAllCommitteeBills:
         if offset == 0:
             return {
                 "pagination": {"count": 5},
-                "committee-bills": {
-                    "bills": [
-                        {"congress": 118, "type": "HR", "number": str(i)}
-                        for i in range(1, 4)
-                    ]
-                },
+                "committee-bills": {"bills": [{"congress": 118, "type": "HR", "number": str(i)} for i in range(1, 4)]},
             }
         else:
             return {
                 "pagination": {"count": 5},
-                "committee-bills": {
-                    "bills": [
-                        {"congress": 118, "type": "HR", "number": str(i)}
-                        for i in range(4, 6)
-                    ]
-                },
+                "committee-bills": {"bills": [{"congress": 118, "type": "HR", "number": str(i)} for i in range(4, 6)]},
             }
 
 
@@ -212,7 +202,8 @@ class TestFetchTextVersions:
             },
         ]
         respx.get("https://api.congress.gov/v3/bill/118/hr/4366/text").respond(
-            200, json={"textVersions": api_response, "pagination": {"count": 2}},
+            200,
+            json={"textVersions": api_response, "pagination": {"count": 2}},
         )
         with httpx.Client() as client:
             result = fetch_text_versions(client, 118, "hr", 4366, api_key=TEST_API_KEY)
@@ -228,7 +219,8 @@ class TestFetchTextVersions:
             {"date": "2023-06-27T04:00:00Z", "type": "Reported in House", "formats": []},
         ]
         respx.get("https://api.congress.gov/v3/bill/118/hr/1/text").respond(
-            200, json={"textVersions": api_response, "pagination": {"count": 3}},
+            200,
+            json={"textVersions": api_response, "pagination": {"count": 3}},
         )
         with httpx.Client() as client:
             result = fetch_text_versions(client, 118, "hr", 1, api_key=TEST_API_KEY)
@@ -239,7 +231,8 @@ class TestFetchTextVersions:
     @respx.mock
     def test_returns_empty_list_when_no_versions(self):
         respx.get("https://api.congress.gov/v3/bill/118/hr/9999/text").respond(
-            200, json={"textVersions": [], "pagination": {"count": 0}},
+            200,
+            json={"textVersions": [], "pagination": {"count": 0}},
         )
         with httpx.Client() as client:
             result = fetch_text_versions(client, 118, "hr", 9999, api_key=TEST_API_KEY)
@@ -287,7 +280,9 @@ class TestDownloadVersionXml:
     def test_returns_xml_bytes(self):
         xml_content = b"<bill><title>Test</title></bill>"
         respx.get("https://www.congress.gov/118/bills/hr4366/rh.xml").respond(
-            200, content=xml_content, headers={"content-type": "application/xml"},
+            200,
+            content=xml_content,
+            headers={"content-type": "application/xml"},
         )
         with httpx.Client() as client:
             result = download_version_xml(client, "https://www.congress.gov/118/bills/hr4366/rh.xml")
@@ -329,5 +324,3 @@ class TestDownloadVersionXml:
         with httpx.Client() as client:
             with pytest.raises(httpx.HTTPStatusError):
                 download_version_xml(client, "https://www.congress.gov/missing.xml")
-
-

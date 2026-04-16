@@ -20,6 +20,7 @@ HR4366_V6_PATH = BILLS_DIR / "118-hr-4366" / "6_enrolled-bill.xml"
 # These avoid re-parsing the same large XML files across test classes.
 # Safe because BillTree and BillNode are frozen dataclasses.
 
+
 @pytest.fixture(scope="session")
 def hr4366_v1():
     """Parsed 118-hr-4366 reported-in-house (v1)."""

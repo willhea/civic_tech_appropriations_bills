@@ -28,6 +28,7 @@ BILL_TYPES = {
     "sconres": ("S.Con.Res.", "senate-concurrent-resolution"),
 }
 
+
 def sanitize_version_name(name: str) -> str:
     """Convert a version type like 'Reported in House' to 'reported-in-house'."""
     if not name:
@@ -57,8 +58,7 @@ def get_api_key() -> str:
     key = os.environ.get("CONGRESS_API_KEY", "DEMO_KEY")
     if key == "DEMO_KEY":
         print(
-            "WARNING: Using DEMO_KEY (30 req/hr). "
-            "Get a key at https://api.congress.gov/sign-up/",
+            "WARNING: Using DEMO_KEY (30 req/hr). Get a key at https://api.congress.gov/sign-up/",
             file=sys.stderr,
         )
     return key
@@ -77,7 +77,7 @@ def api_get(client: httpx.Client, path: str, params: dict | None = None, *, api_
             time.sleep(60)
             continue
         if last_resp.status_code >= 500:
-            time.sleep(2 ** attempt)
+            time.sleep(2**attempt)
             continue
         last_resp.raise_for_status()
         return last_resp.json()
@@ -174,7 +174,7 @@ def download_version_xml(client: httpx.Client, url: str) -> bytes:
             time.sleep(60)
             continue
         if last_resp.status_code >= 500:
-            time.sleep(2 ** attempt)
+            time.sleep(2**attempt)
             continue
         last_resp.raise_for_status()
         return last_resp.content
