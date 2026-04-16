@@ -1,5 +1,9 @@
 """Tests for financial change extraction in diff_bill."""
 
+from pathlib import Path
+
+import pytest
+
 from diff_bill import (
     FinancialChange,
     compute_financial_change,
@@ -278,6 +282,15 @@ class TestBillDiffToDictFinancial:
         assert "financial_summary" not in result
 
 
+_HR8774_V1 = Path("bills/118-hr-8774/1_reported-in-house.xml")
+_HR8774_V2 = Path("bills/118-hr-8774/2_engrossed-in-house.xml")
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(
+    not _HR8774_V1.exists() or not _HR8774_V2.exists(),
+    reason="Real XML not present",
+)
 class TestCliFinancial:
     def test_financial_flag_filters_output(self):
         import json
@@ -324,80 +337,35 @@ class TestCliFinancial:
             assert "financial" not in change
 
 
+@pytest.mark.slow
 class TestAmountSanityChecks:
     """Sanity checks on extracted amounts from real bill XML."""
 
-    ENROLLED_PATH = "bills/118-hr-4366/6_enrolled-bill.xml"
-
-    @staticmethod
-    def _skip_if_missing(*paths):
-        import os
-        for p in paths:
-            if not os.path.exists(p):
-                import pytest
-                pytest.skip(f"Test XML not found: {p}")
-
-    def test_nodes_with_amounts_count(self):
-        from pathlib import Path
-        from bill_tree import normalize_bill
-
-        self._skip_if_missing(self.ENROLLED_PATH)
-        tree = normalize_bill(Path(self.ENROLLED_PATH))
-
-        count = sum(1 for n in tree.nodes if extract_amounts(n.body_text))
+    def test_nodes_with_amounts_count(self, hr4366_v6):
+        count = sum(1 for n in hr4366_v6.nodes if extract_amounts(n.body_text))
         assert count == 567
 
-    def test_all_amounts_in_valid_range(self):
-        from pathlib import Path
-        from bill_tree import normalize_bill
-
-        self._skip_if_missing(self.ENROLLED_PATH)
-        tree = normalize_bill(Path(self.ENROLLED_PATH))
-
-        for node in tree.nodes:
+    def test_all_amounts_in_valid_range(self, hr4366_v6):
+        for node in hr4366_v6.nodes:
             for amount in extract_amounts(node.body_text):
                 assert 1 <= amount <= 999_999_999_999, (
                     f"Amount ${amount:,} out of range at {node.match_path}"
                 )
 
-    def test_no_node_exceeds_max_amounts(self):
-        from pathlib import Path
-        from bill_tree import normalize_bill
-
-        self._skip_if_missing(self.ENROLLED_PATH)
-        tree = normalize_bill(Path(self.ENROLLED_PATH))
-
-        for node in tree.nodes:
+    def test_no_node_exceeds_max_amounts(self, hr4366_v6):
+        for node in hr4366_v6.nodes:
             amounts = extract_amounts(node.body_text)
             assert len(amounts) <= 70, (
                 f"Node {node.match_path} has {len(amounts)} amounts (max 70)"
             )
 
 
+@pytest.mark.slow
 class TestIntegrationFinancial:
     """Integration tests against real bill XML files."""
 
-    HR4366_V1 = "bills/118-hr-4366/1_reported-in-house.xml"
-    HR4366_V6 = "bills/118-hr-4366/6_enrolled-bill.xml"
-
-    @staticmethod
-    def _skip_if_missing(*paths):
-        import os
-        for p in paths:
-            if not os.path.exists(p):
-                import pytest
-                pytest.skip(f"Test XML not found: {p}")
-
-    def test_milcon_army_amounts_changed(self):
-        from pathlib import Path
-        from bill_tree import normalize_bill
-        from diff_bill import diff_bills
-
-        self._skip_if_missing(self.HR4366_V1, self.HR4366_V6)
-
-        old = normalize_bill(Path(self.HR4366_V1))
-        new = normalize_bill(Path(self.HR4366_V6))
-        result = diff_bills(old, new)
+    def test_milcon_army_amounts_changed(self, hr4366_v1_v6_diff):
+        result = hr4366_v1_v6_diff
 
         milcon = None
         for c in result.changes:
@@ -412,16 +380,10 @@ class TestIntegrationFinancial:
         assert 2022775000 in fc.new_amounts
         assert any(v > 1_000_000_000 for v in fc.old_amounts)
 
-    def test_financial_filter_reduces_output(self):
-        from pathlib import Path
-        from bill_tree import normalize_bill
-        from diff_bill import diff_bills, bill_diff_to_dict
+    def test_financial_filter_reduces_output(self, hr4366_v1_v6_diff):
+        from diff_bill import bill_diff_to_dict
 
-        self._skip_if_missing(self.HR4366_V1, self.HR4366_V6)
-
-        old = normalize_bill(Path(self.HR4366_V1))
-        new = normalize_bill(Path(self.HR4366_V6))
-        result = diff_bills(old, new)
+        result = hr4366_v1_v6_diff
 
         all_changes = bill_diff_to_dict(result)
         financial_only = bill_diff_to_dict(result, financial=True)

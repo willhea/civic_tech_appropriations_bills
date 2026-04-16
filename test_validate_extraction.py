@@ -16,6 +16,8 @@ import pytest
 from bill_tree import normalize_bill
 from diff_bill import extract_amounts
 
+pytestmark = pytest.mark.slow
+
 FIXTURE_PATH = Path("test_data/validation_leg_branch.json")
 
 

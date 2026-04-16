@@ -6,7 +6,8 @@ Guidelines for AI coding agents working on this repository.
 
 ```bash
 uv sync                          # Install dependencies
-uv run pytest                    # Run all tests
+uv run pytest -m "not slow"     # Fast tests only (~1s)
+uv run pytest                    # All tests (needs bills/ XML files)
 uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 ```
 
@@ -30,3 +31,5 @@ uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 - Dollar amounts are embedded in prose `<text>` elements, extracted via regex
 - `formatters/html.py` tests use `_change()` and `_sample_diff_dict()` helpers to build fixtures
 - HTML formatter functions (`word_diff`, `build_financial_table`, etc.) are individually testable
+- Tests requiring real bill XML files are marked `@pytest.mark.slow`; CI runs only fast tests
+- Shared test helpers live in `conftest.py`: `make_bill_node()`, `make_bill_tree()`, `make_node_diff()`, `make_change_dict()`

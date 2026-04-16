@@ -5,26 +5,8 @@ from pathlib import Path
 import pytest
 
 from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
+from conftest import HR4366_V1_PATH, HR4366_V4_PATH, HR4366_V5_PATH, HR4366_V6_PATH, make_bill_node as _node, make_bill_tree as _tree
 from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
-
-
-def _node(match_path, body_text="text", element_id="", header_text="", tag="appropriations-intermediate", division_label=""):
-    """Helper to build a BillNode with defaults for testing."""
-    return BillNode(
-        match_path=match_path,
-        display_path=match_path,  # use match_path as display_path for simplicity
-        tag=tag,
-        element_id=element_id,
-        header_text=header_text,
-        body_text=body_text,
-        section_number="",
-        division_label=division_label,
-    )
-
-
-def _tree(nodes):
-    """Helper to build a BillTree with defaults."""
-    return BillTree(congress=118, bill_type="hr", bill_number=4366, version="test", nodes=nodes)
 
 
 class TestMatchNodes:
@@ -111,22 +93,13 @@ class TestMatchNodes:
         assert len(added) == 1
 
 
-REPORTED_BILL_PATH = Path("bills/118-hr-4366/1_reported-in-house.xml")
-ENROLLED_BILL_PATH = Path("bills/118-hr-4366/6_enrolled-bill.xml")
-
-
-@pytest.mark.skipif(
-    not REPORTED_BILL_PATH.exists() or not ENROLLED_BILL_PATH.exists(),
-    reason="Real XML not present",
-)
+@pytest.mark.slow
 class TestMatchNodesIntegration:
     """Integration: match nodes across structurally different versions."""
 
-    def test_cross_structural_matching(self):
+    def test_cross_structural_matching(self, hr4366_v1, hr4366_v6):
         """v1 (no divisions) and v6 (with divisions) share 'military construction, army'."""
-        old = normalize_bill(REPORTED_BILL_PATH)
-        new = normalize_bill(ENROLLED_BILL_PATH)
-        pairs = match_nodes(old, new)
+        pairs = match_nodes(hr4366_v1, hr4366_v6)
 
         army_path = ("department of defense", "military construction, army")
         army_pairs = [
@@ -135,11 +108,9 @@ class TestMatchNodesIntegration:
         ]
         assert len(army_pairs) == 1
 
-    def test_new_divisions_show_as_added(self):
+    def test_new_divisions_show_as_added(self, hr4366_v1, hr4366_v6):
         """Divisions in v6 that don't exist in v1 produce added nodes."""
-        old = normalize_bill(REPORTED_BILL_PATH)
-        new = normalize_bill(ENROLLED_BILL_PATH)
-        pairs = match_nodes(old, new)
+        pairs = match_nodes(hr4366_v1, hr4366_v6)
 
         added = [(o, n) for o, n in pairs if o is None and n is not None]
         added_paths = {n.match_path for _, n in added}
@@ -445,15 +416,16 @@ class TestFilterDiff:
         assert filtered.summary["unchanged"] == 0
 
 
+@pytest.mark.slow
 @pytest.mark.skipif(
-    not REPORTED_BILL_PATH.exists() or not ENROLLED_BILL_PATH.exists(),
+    not HR4366_V1_PATH.exists() or not HR4366_V6_PATH.exists(),
     reason="Real XML not present",
 )
 class TestCli:
     def test_compare_to_stdout(self):
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
-             str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
+             str(HR4366_V1_PATH), str(HR4366_V6_PATH),
              "--format", "json"],
             capture_output=True, text=True,
         )
@@ -467,7 +439,7 @@ class TestCli:
         out = tmp_path / "diff.json"
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
-             str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
+             str(HR4366_V1_PATH), str(HR4366_V6_PATH),
              "--format", "json", "-o", str(out)],
             capture_output=True, text=True,
         )
@@ -479,7 +451,7 @@ class TestCli:
     def test_filter_flag(self):
         result = subprocess.run(
             ["uv", "run", "python", "diff_bill.py", "compare",
-             str(REPORTED_BILL_PATH), str(ENROLLED_BILL_PATH),
+             str(HR4366_V1_PATH), str(HR4366_V6_PATH),
              "--format", "json", "--filter", "military construction, army"],
             capture_output=True, text=True,
         )
@@ -491,17 +463,12 @@ class TestCli:
             assert "military construction, army" in path_str
 
 
-@pytest.mark.skipif(
-    not REPORTED_BILL_PATH.exists() or not ENROLLED_BILL_PATH.exists(),
-    reason="Real XML not present",
-)
+@pytest.mark.slow
 class TestEndToEnd:
     """Full pipeline: normalize both versions, diff, verify results."""
 
-    def test_v1_to_v6_diff(self):
-        old = normalize_bill(REPORTED_BILL_PATH)
-        new = normalize_bill(ENROLLED_BILL_PATH)
-        result = diff_bills(old, new)
+    def test_v1_to_v6_diff(self, hr4366_v1_v6_diff):
+        result = hr4366_v1_v6_diff
 
         # Should have all four change types
         assert result.summary["added"] > 0
@@ -523,10 +490,8 @@ class TestEndToEnd:
         added_paths_str = [" ".join(c.match_path) for c in added_changes]
         assert any("agriculture" in p for p in added_paths_str)
 
-    def test_v1_to_v6_json_roundtrip(self):
-        old = normalize_bill(REPORTED_BILL_PATH)
-        new = normalize_bill(ENROLLED_BILL_PATH)
-        result = diff_bills(old, new)
+    def test_v1_to_v6_json_roundtrip(self, hr4366_v1_v6_diff):
+        result = hr4366_v1_v6_diff
         d = bill_diff_to_dict(result)
         # Verify it's JSON-serializable
         json_str = json.dumps(d)
@@ -535,22 +500,13 @@ class TestEndToEnd:
         assert len(parsed["changes"]) == len(result.changes)
 
 
-V4_PATH = Path("bills/118-hr-4366/4_engrossed-amendment-senate.xml")
-V5_PATH = Path("bills/118-hr-4366/5_engrossed-amendment-house.xml")
-
-
-@pytest.mark.skipif(
-    not V4_PATH.exists() or not V5_PATH.exists(),
-    reason="Real XML not present",
-)
+@pytest.mark.slow
 class TestCrossDivisionIntegration:
     """Validate that division-aware matching reduces cross-division mismatches."""
 
-    def test_cross_division_mismatches_below_target(self):
+    def test_cross_division_mismatches_below_target(self, hr4366_v4_v5_diff):
         """Issue #1/#9: cross-division mismatches reduced from 226 to <50."""
-        old = normalize_bill(V4_PATH)
-        new = normalize_bill(V5_PATH)
-        result = diff_bills(old, new)
+        result = hr4366_v4_v5_diff
 
         cross_div = 0
         for c in result.changes:

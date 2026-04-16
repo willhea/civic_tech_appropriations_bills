@@ -1,22 +1,9 @@
 """Tests for section renumbering reconciliation."""
 
-from diff_bill import NodeDiff, reconcile_moves
+import pytest
 
-
-def _node(change_type, old_path=None, new_path=None, old_text=None, new_text=None):
-    """Helper to build NodeDiff for tests."""
-    return NodeDiff(
-        display_path_old=old_path,
-        display_path_new=new_path,
-        match_path=old_path or new_path or (),
-        change_type=change_type,
-        old_text=old_text,
-        new_text=new_text,
-        text_diff=None,
-        section_number="",
-        element_id_old="old_id" if old_text else "",
-        element_id_new="new_id" if new_text else "",
-    )
+from conftest import make_node_diff as _node
+from diff_bill import reconcile_moves
 
 
 class TestReconcileMoves:
@@ -133,6 +120,7 @@ class TestReconcileMoves:
         assert removed[0].display_path_old == ("sec. 3",)  # text_c had no match
 
 
+@pytest.mark.slow
 class TestReconcileIntegration:
     HR2882_V4 = "bills/118-hr-2882/4_engrossed-amendment-senate.xml"
     HR2882_V5 = "bills/118-hr-2882/5_engrossed-amendment-house.xml"

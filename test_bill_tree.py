@@ -4,6 +4,8 @@ import pytest
 
 from pathlib import Path
 
+from conftest import HR4366_V1_PATH, HR4366_V6_PATH
+
 from bill_tree import (
     BillNode,
     BillTree,
@@ -1038,46 +1040,34 @@ class TestNormalizeBill:
         assert tree.nodes[1].match_path == ("department of defense", "military construction, army")
 
 
-REPORTED_BILL_PATH = Path("bills/118-hr-4366/1_reported-in-house.xml")
-ENROLLED_BILL_PATH = Path("bills/118-hr-4366/6_enrolled-bill.xml")
-
-
-@pytest.mark.skipif(not REPORTED_BILL_PATH.exists(), reason="Real XML not present")
+@pytest.mark.slow
 class TestNormalizeBillIntegration:
     """Integration tests against real bill XML files."""
 
-    def test_reported_in_house_produces_nodes(self):
-        tree = normalize_bill(REPORTED_BILL_PATH)
-        assert tree.congress == 118
-        assert tree.bill_type == "hr"
-        assert tree.bill_number == 4366
-        assert tree.version == "reported-in-house"
-        assert len(tree.nodes) == 165
+    def test_reported_in_house_produces_nodes(self, hr4366_v1):
+        assert hr4366_v1.congress == 118
+        assert hr4366_v1.bill_type == "hr"
+        assert hr4366_v1.bill_number == 4366
+        assert hr4366_v1.version == "reported-in-house"
+        assert len(hr4366_v1.nodes) == 165
 
-    def test_reported_in_house_has_expected_paths(self):
-        tree = normalize_bill(REPORTED_BILL_PATH)
-        match_paths = [n.match_path for n in tree.nodes]
+    def test_reported_in_house_has_expected_paths(self, hr4366_v1):
+        match_paths = [n.match_path for n in hr4366_v1.nodes]
         assert ("department of defense", "military construction, army") in match_paths
         assert ("department of defense", "military construction, navy and marine corps") in match_paths
         assert ("department of veterans affairs", "veterans health administration", "medical services") in match_paths
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_bill_node_count(self):
-        tree = normalize_bill(ENROLLED_BILL_PATH)
-        assert tree.congress == 118
-        assert len(tree.nodes) == 1095
+    def test_enrolled_bill_node_count(self, hr4366_v6):
+        assert hr4366_v6.congress == 118
+        assert len(hr4366_v6.nodes) == 1095
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_no_empty_body_text(self):
-        tree = normalize_bill(ENROLLED_BILL_PATH)
-        empty = [n for n in tree.nodes if not n.body_text]
+    def test_enrolled_no_empty_body_text(self, hr4366_v6):
+        empty = [n for n in hr4366_v6.nodes if not n.body_text]
         assert empty == [], f"Nodes with empty body_text: {[n.display_path for n in empty[:5]]}"
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_has_all_seven_divisions(self):
-        tree = normalize_bill(ENROLLED_BILL_PATH)
+    def test_enrolled_has_all_seven_divisions(self, hr4366_v6):
         div_labels = sorted(set(
-            n.display_path[0] for n in tree.nodes
+            n.display_path[0] for n in hr4366_v6.nodes
             if n.display_path and n.display_path[0].startswith("Division")
         ))
         assert len(div_labels) == 7
@@ -1088,24 +1078,19 @@ class TestNormalizeBillIntegration:
         for prefix in expected_prefixes:
             assert any(d.startswith(prefix) for d in div_labels), f"Missing {prefix}"
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_has_preamble_sections(self):
+    def test_enrolled_has_preamble_sections(self, hr4366_v6):
         """Preamble sections (Short Title, etc.) should be captured alongside divisions."""
-        tree = normalize_bill(ENROLLED_BILL_PATH)
-        sec1 = [n for n in tree.nodes if n.section_number == "Sec. 1"]
+        sec1 = [n for n in hr4366_v6.nodes if n.section_number == "Sec. 1"]
         assert len(sec1) == 1
         assert "cited as" in sec1[0].body_text.lower()
         assert sec1[0].division_label == ""
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_division_node_counts(self):
+    def test_enrolled_division_node_counts(self, hr4366_v6):
         """Each division has an expected number of nodes."""
-        tree = normalize_bill(ENROLLED_BILL_PATH)
         counts = {}
-        for n in tree.nodes:
+        for n in hr4366_v6.nodes:
             div = n.display_path[0] if n.display_path else "unknown"
             counts[div] = counts.get(div, 0) + 1
-        # Verify by division letter prefix
         by_letter = {}
         for div, count in counts.items():
             letter = div.split(":")[0].replace("Division ", "") if "Division" in div else div
@@ -1118,17 +1103,13 @@ class TestNormalizeBillIntegration:
         assert by_letter["F"] == 239
         assert by_letter["G"] == 44
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_enrolled_content_matches_path(self):
+    def test_enrolled_content_matches_path(self, hr4366_v6):
         """Spot-check that node body_text contains content appropriate to its path."""
-        tree = normalize_bill(ENROLLED_BILL_PATH)
-        nodes_by_path = {n.match_path: n for n in tree.nodes}
+        nodes_by_path = {n.match_path: n for n in hr4366_v6.nodes}
 
-        # MilCon Army should mention construction/public works
         army = nodes_by_path[("department of defense", "military construction, army")]
         assert "public works" in army.body_text.lower() or "construction" in army.body_text.lower()
 
-        # VA Medical Services should mention inpatient/outpatient care
         med = nodes_by_path[("department of veterans affairs", "veterans health administration", "medical services")]
         assert "inpatient" in med.body_text.lower() or "outpatient" in med.body_text.lower()
 
@@ -1148,11 +1129,10 @@ class TestBillNodeDivisionLabel:
         )
         assert node.division_label == "Division A: Military Construction, Veterans Affairs, and Related Agencies Appropriations Act, 2024"
 
-    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
-    def test_normalize_bill_populates_division_label(self):
+    @pytest.mark.slow
+    def test_normalize_bill_populates_division_label(self, hr4366_v6):
         """normalize_bill should set division_label on nodes from multi-division bills."""
-        tree = normalize_bill(ENROLLED_BILL_PATH)
-        div_a_nodes = [n for n in tree.nodes if n.division_label.startswith("Division A:")]
+        div_a_nodes = [n for n in hr4366_v6.nodes if n.division_label.startswith("Division A:")]
         assert len(div_a_nodes) > 0
         assert "Military Construction" in div_a_nodes[0].division_label
 

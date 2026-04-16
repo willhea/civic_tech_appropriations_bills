@@ -14,6 +14,8 @@ import pytest
 
 from bill_tree import _extract_appropriations_text, find_bill_body, normalize_bill
 
+pytestmark = pytest.mark.slow
+
 BILLS_DIR = Path(__file__).parent / "bills"
 ALL_XML_FILES = sorted(BILLS_DIR.glob("**/*.xml"))
 DOLLAR_RE = re.compile(r"\$[\d,]+")
