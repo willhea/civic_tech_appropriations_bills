@@ -325,8 +325,10 @@ class TestDeadZoneBaseline:
     def test_cross_division_mismatches(self, hr5895_v4_v5_diff):
         """Baseline for cross-division mismatches using normalized titles.
 
-        Current: 51. This is a multi-division omnibus where some sections
-        move between divisions during reconciliation.
+        Current: 1 (a single moved section). Uses normalize_division_title
+        to compare division content, not letter, so division relabeling
+        (e.g., Division C -> Division F for the same subcommittee) is not
+        counted as a mismatch.
         """
         cross_div = 0
         for c in hr5895_v4_v5_diff.changes:
@@ -339,8 +341,9 @@ class TestDeadZoneBaseline:
                     if old_title and new_title and old_title != new_title:
                         cross_div += 1
 
-        # Baseline: 51. Should decrease with matching improvements.
-        assert cross_div <= 75, f"Cross-division mismatches increased: {cross_div} (baseline: 51)"
+        # Baseline: 1. Only 3 true cross-division mismatches exist across
+        # the entire corpus (all are "moved" pairings).
+        assert cross_div <= 5, f"Cross-division mismatches increased: {cross_div} (baseline: 1)"
 
     def test_summary_baseline(self, hr5895_v4_v5_diff):
         """Regression baseline.
