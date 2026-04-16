@@ -224,7 +224,23 @@ class TestFinancialChangeToDict:
             "amounts_changed": True,
             "paired_amounts": [[1876875000, 2022775000]],
             "has_amendment_annotations": False,
+            "old_amounts_effective": [],
+            "new_amounts_effective": [],
         }
+
+    def test_serialize_includes_effective_amounts(self):
+        fc = FinancialChange(
+            old_amounts=(287_000_000,),
+            new_amounts=(287_000_000,),
+            amounts_changed=True,
+            paired_amounts=((287_000_000, 287_000_000),),
+            has_amendment_annotations=True,
+            old_amounts_effective=(287_000_000,),
+            new_amounts_effective=(289_000_000,),
+        )
+        result = financial_change_to_dict(fc)
+        assert result["old_amounts_effective"] == [287_000_000]
+        assert result["new_amounts_effective"] == [289_000_000]
 
     def test_serialize_empty_amounts(self):
         fc = FinancialChange(

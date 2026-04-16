@@ -197,6 +197,8 @@ def financial_change_to_dict(fc: FinancialChange) -> dict:
         "amounts_changed": fc.amounts_changed,
         "paired_amounts": [list(pair) for pair in fc.paired_amounts],
         "has_amendment_annotations": fc.has_amendment_annotations,
+        "old_amounts_effective": list(fc.old_amounts_effective),
+        "new_amounts_effective": list(fc.new_amounts_effective),
     }
 
 
