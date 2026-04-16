@@ -15,6 +15,11 @@ HR4366_V4_PATH = BILLS_DIR / "118-hr-4366" / "4_engrossed-amendment-senate.xml"
 HR4366_V5_PATH = BILLS_DIR / "118-hr-4366" / "5_engrossed-amendment-house.xml"
 HR4366_V6_PATH = BILLS_DIR / "118-hr-4366" / "6_enrolled-bill.xml"
 
+HR4366_V2_PATH = BILLS_DIR / "118-hr-4366" / "2_engrossed-in-house.xml"
+
+HR5895_V4_PATH = BILLS_DIR / "115-hr-5895" / "4_engrossed-amendment-senate.xml"
+HR5895_V5_PATH = BILLS_DIR / "115-hr-5895" / "5_enrolled-bill.xml"
+
 
 # --- Session-scoped cached bill trees ---
 # These avoid re-parsing the same large XML files across test classes.
@@ -35,6 +40,14 @@ def hr4366_v6():
     if not HR4366_V6_PATH.exists():
         pytest.skip("Real XML not present")
     return normalize_bill(HR4366_V6_PATH)
+
+
+@pytest.fixture(scope="session")
+def hr4366_v2():
+    """Parsed 118-hr-4366 engrossed-in-house (v2)."""
+    if not HR4366_V2_PATH.exists():
+        pytest.skip("Real XML not present")
+    return normalize_bill(HR4366_V2_PATH)
 
 
 @pytest.fixture(scope="session")
@@ -60,9 +73,37 @@ def hr4366_v1_v6_diff(hr4366_v1, hr4366_v6):
 
 
 @pytest.fixture(scope="session")
+def hr4366_v1_v2_diff(hr4366_v1, hr4366_v2):
+    """Cached diff of v1 (reported) vs v2 (engrossed-in-house) for 118-hr-4366."""
+    return diff_bills(hr4366_v1, hr4366_v2)
+
+
+@pytest.fixture(scope="session")
 def hr4366_v4_v5_diff(hr4366_v4, hr4366_v5):
     """Cached diff of v4 vs v5 for 118-hr-4366."""
     return diff_bills(hr4366_v4, hr4366_v5)
+
+
+@pytest.fixture(scope="session")
+def hr5895_v4():
+    """Parsed 115-hr-5895 engrossed-amendment-senate (v4)."""
+    if not HR5895_V4_PATH.exists():
+        pytest.skip("Real XML not present")
+    return normalize_bill(HR5895_V4_PATH)
+
+
+@pytest.fixture(scope="session")
+def hr5895_v5():
+    """Parsed 115-hr-5895 enrolled-bill (v5)."""
+    if not HR5895_V5_PATH.exists():
+        pytest.skip("Real XML not present")
+    return normalize_bill(HR5895_V5_PATH)
+
+
+@pytest.fixture(scope="session")
+def hr5895_v4_v5_diff(hr5895_v4, hr5895_v5):
+    """Cached diff of v4 vs v5 for 115-hr-5895."""
+    return diff_bills(hr5895_v4, hr5895_v5)
 
 
 def has_bill_xml() -> bool:
