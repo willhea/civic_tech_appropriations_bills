@@ -306,6 +306,74 @@ def _process_section_element(
             ))
 
 
+_STRUCTURAL_TAGS = {"subtitle", "part", "chapter", "subchapter"}
+
+
+def _walk_structural_children(
+    parent: ET.Element,
+    title_header: str,
+    division_label: str,
+    current_major: str | None,
+    current_intermediate: str | None,
+    prev_name: str | None,
+    nodes: list[BillNode],
+    *,
+    _in_structural_container: bool = False,
+) -> tuple[str | None, str | None, str | None]:
+    """Walk children of a structural element, dispatching by tag.
+
+    Handles appropriations-*, section, and structural containers
+    (subtitle, part, chapter, subchapter). Structural containers
+    recurse with scoped context and their header mapped into the path:
+    - First container level: header -> current_major
+    - Deeper levels: header -> current_intermediate
+    """
+    for child in parent:
+        tag = child.tag
+
+        if tag.startswith("appropriations-"):
+            current_major, current_intermediate, prev_name = _process_appro_element(
+                child, title_header, division_label,
+                current_major, current_intermediate, prev_name, nodes,
+            )
+
+        elif tag == "section":
+            _process_section_element(
+                child, title_header, division_label,
+                current_major, current_intermediate, prev_name, nodes,
+            )
+
+        elif tag in _STRUCTURAL_TAGS:
+            container_header = get_header_text(child)
+            # Scope context: container changes don't leak to parent siblings
+            saved_major = current_major
+            saved_intermediate = current_intermediate
+            saved_prev = prev_name
+            # Container header always becomes new major for its children.
+            # If we're already inside a container (major was set by parent
+            # container), push the existing major to intermediate.
+            if _in_structural_container and current_major is not None:
+                sub_major = current_major
+                if current_intermediate is not None:
+                    # Third+ level: concatenate into intermediate
+                    sub_intermediate: str | None = f"{current_intermediate} - {container_header}" if container_header else current_intermediate
+                else:
+                    sub_intermediate = container_header
+            else:
+                sub_major = container_header
+                sub_intermediate = None
+            _walk_structural_children(
+                child, title_header, division_label,
+                sub_major, sub_intermediate, None, nodes,
+                _in_structural_container=True,
+            )
+            current_major = saved_major
+            current_intermediate = saved_intermediate
+            prev_name = saved_prev
+
+    return current_major, current_intermediate, prev_name
+
+
 def walk_title(
     title_element: ET.Element,
     title_header: str,
@@ -321,51 +389,11 @@ def walk_title(
         title_header: The title's header text (may be empty for headerless titles).
         division_label: Division label for display_path (empty if no division).
     """
-    current_major: str | None = None
-    current_intermediate: str | None = None
-    prev_name: str | None = None
     nodes: list[BillNode] = []
-
-    for child in title_element:
-        tag = child.tag
-
-        if tag.startswith("appropriations-"):
-            current_major, current_intermediate, prev_name = _process_appro_element(
-                child, title_header, division_label,
-                current_major, current_intermediate, prev_name, nodes,
-            )
-
-        elif tag == "section":
-            _process_section_element(
-                child, title_header, division_label,
-                current_major, current_intermediate, prev_name, nodes,
-            )
-
-        elif tag == "subtitle":
-            subtitle_header = get_header_text(child)
-            # Scope context: subtitle changes don't leak to title siblings
-            saved_major = current_major
-            saved_intermediate = current_intermediate
-            saved_prev = prev_name
-            sub_major = subtitle_header
-            sub_intermediate: str | None = None
-            sub_prev: str | None = None
-            for sub_child in child:
-                sub_tag = sub_child.tag
-                if sub_tag.startswith("appropriations-"):
-                    sub_major, sub_intermediate, sub_prev = _process_appro_element(
-                        sub_child, title_header, division_label,
-                        sub_major, sub_intermediate, sub_prev, nodes,
-                    )
-                elif sub_tag == "section":
-                    _process_section_element(
-                        sub_child, title_header, division_label,
-                        sub_major, sub_intermediate, sub_prev, nodes,
-                    )
-            current_major = saved_major
-            current_intermediate = saved_intermediate
-            prev_name = saved_prev
-
+    _walk_structural_children(
+        title_element, title_header, division_label,
+        None, None, None, nodes,
+    )
     return nodes
 
 
