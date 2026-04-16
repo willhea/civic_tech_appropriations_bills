@@ -460,6 +460,7 @@ def normalize_bill(xml_path: Path) -> BillTree:
     # Check for divisions first
     divisions = body.findall("division")
     if divisions:
+        all_nodes.extend(walk_body_sections(body))
         for div in divisions:
             div_enum = div.find("enum")
             div_header = div.find("header")
@@ -478,6 +479,7 @@ def normalize_bill(xml_path: Path) -> BillTree:
     # Check for titles directly under body
     titles = body.findall("title")
     if titles:
+        all_nodes.extend(walk_body_sections(body))
         for title in titles:
             title_header = get_header_text(title)
             all_nodes.extend(walk_title(title, title_header, ""))

@@ -955,7 +955,7 @@ class TestNormalizeBillIntegration:
         assert tree.bill_type == "hr"
         assert tree.bill_number == 4366
         assert tree.version == "reported-in-house"
-        assert len(tree.nodes) == 164
+        assert len(tree.nodes) == 165
 
     def test_reported_in_house_has_expected_paths(self):
         tree = normalize_bill(REPORTED_BILL_PATH)
@@ -968,7 +968,7 @@ class TestNormalizeBillIntegration:
     def test_enrolled_bill_node_count(self):
         tree = normalize_bill(ENROLLED_BILL_PATH)
         assert tree.congress == 118
-        assert len(tree.nodes) == 1060
+        assert len(tree.nodes) == 1066
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_no_empty_body_text(self):
