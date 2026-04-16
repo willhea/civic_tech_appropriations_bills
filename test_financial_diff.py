@@ -194,6 +194,20 @@ class TestComputeFinancialChange:
         assert result.has_amendment_annotations is True
         assert result.amounts_changed is True
 
+    def test_effective_amounts_stored(self):
+        """compute_financial_change should store effective amounts separately."""
+        result = compute_financial_change(
+            old_text="For expenses, $287,000,000.",
+            new_text="For expenses, $287,000,000 (increased by $2,000,000).",
+        )
+        assert result is not None
+        # Base amounts are identical
+        assert result.old_amounts == (287_000_000,)
+        assert result.new_amounts == (287_000_000,)
+        # Effective amounts reflect the annotation
+        assert result.old_amounts_effective == (287_000_000,)
+        assert result.new_amounts_effective == (289_000_000,)
+
 
 class TestFinancialChangeToDict:
     def test_serialize(self):

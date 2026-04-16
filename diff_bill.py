@@ -150,6 +150,8 @@ class FinancialChange:
     amounts_changed: bool
     paired_amounts: tuple[tuple[int | None, int | None], ...]
     has_amendment_annotations: bool = False
+    old_amounts_effective: tuple[int, ...] = ()
+    new_amounts_effective: tuple[int, ...] = ()
 
 
 def compute_financial_change(
@@ -182,6 +184,8 @@ def compute_financial_change(
         amounts_changed=Counter(old_effective) != Counter(new_effective),
         paired_amounts=tuple(paired),
         has_amendment_annotations=has_annotations,
+        old_amounts_effective=old_effective,
+        new_amounts_effective=new_effective,
     )
 
 
