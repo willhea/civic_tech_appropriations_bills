@@ -10,11 +10,22 @@ uv run pytest                    # Run all tests
 uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 ```
 
-## Conventions
+## Key architecture concepts
+
+- Bill XML has structural containers nested inside titles: `subtitle`, `part`, `chapter`, `subchapter`. These are handled by `_walk_structural_children()` in `bill_tree.py`, which recurses through them to reach sections and appropriations elements.
+- `_process_section_element()` is the shared helper for section handling, called from both the main title walk and structural containers.
+- `BillNode.division_label` stores the division context (e.g., "Division A: Military Construction"). `normalize_division_title()` strips the letter prefix for matching.
+- `match_nodes()` in `diff_bill.py` uses division-aware matching: unique paths pair directly, collision groups (same `match_path` in multiple divisions) are resolved by normalized division title, then text similarity.
+- Floor amendment annotations like "(increased by $2,000,000)" are detected by `extract_effective_amounts()` in `diff_bill.py`. The `has_amendment_annotations` field on `FinancialChange` flags their presence.
+- Preamble sections (Short Title, References, etc.) sit alongside divisions/titles at the body level and are captured by `walk_body_sections()`.
+
+## Test conventions
 
 - `fetch_bills.py` tests use `respx.mock` decorator and monkeypatch `time.sleep`
 - `bill_tree.py` tests use inline XML snippets; integration tests skip if real XML files are absent
-- `diff_bill.py` tests use helper functions `_node()` and `_tree()` to build fixtures
+- `diff_bill.py` tests use helper functions `_node()` and `_tree()` to build fixtures; `_node()` accepts `division_label` kwarg
+- `test_reconcile.py` tests use a local `_node()` helper that builds `NodeDiff` objects
+- `test_corpus_properties.py` parametrizes over all XML files in `bills/`; uses `_KNOWN_DUPLICATE_COUNTS` and `_KNOWN_MISSING_APPRO` dicts for per-file baselines
 - Bill DTD XML uses flat-sibling `appropriations-major/intermediate/small` tags (not nested)
 - Dollar amounts are embedded in prose `<text>` elements, extracted via regex
 - `formatters/html.py` tests use `_change()` and `_sample_diff_dict()` helpers to build fixtures

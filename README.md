@@ -84,8 +84,8 @@ uv run python diff_bill.py compare old.xml new.xml --format html -o reports/repo
 
 - **Header** with bill number, congress, and version numbers (e.g., "v1: reported-in-house → v2: engrossed-in-house")
 - **Sidebar** listing all changed sections with color-coded change type badges. Type in the filter box to narrow the list. Click any item to jump to that section.
-- **Financial summary table** showing dollar amounts before and after, with change amounts and percentages. Click column headers to sort. Click a row to jump to that section's detail.
-- **Change cards** for each modified, added, removed, or moved section. Modified sections show word-level inline diffs: additions highlighted in green, deletions in red strikethrough. This highlights exactly which words changed (typically dollar amounts) rather than showing the entire paragraph as changed.
+- **Financial summary table** showing dollar amounts before and after, with change amounts and percentages. Click column headers to sort. Click a row to jump to that section's detail. Sections with floor amendment annotations show a warning badge.
+- **Change cards** for each modified, added, removed, or moved section. Modified sections show word-level inline diffs: additions highlighted in green, deletions in red strikethrough. Moved sections show both the old and new location, plus body text.
 - **Prev/next buttons** in the bottom right corner to step through changes one at a time.
 
 When no changes are detected between versions, the report displays "No changes found" rather than a blank page.
@@ -112,7 +112,8 @@ The tool focuses on substantive changes and ignores formatting differences betwe
 
 - Spacing and line break differences between versions
 - Differences in spacing around numbered list markers like (1), (A), or (iv), which vary between House and Senate formatting conventions
-- Procedural amendment annotations like "(increased by $103,000,000) (reduced by $103,000,000)" that appear in engrossed versions after floor votes. These are bookkeeping notations, not actual funding changes. The dollar amounts shown in the report reflect the final figures.
+
+Floor amendment annotations like "(increased by $2,000,000)" that appear in engrossed versions after floor votes are not ignored. The tool computes effective amounts: "$287,000,000 (increased by $2,000,000)" is treated as $289,000,000. The HTML report shows a warning badge when these annotations are present.
 
 ## Output Structure
 
@@ -148,8 +149,8 @@ A bill goes through several versions as it moves through the legislative process
 Four modules:
 
 - **`fetch_bills.py`** - Downloads bill XML from Congress.gov API v3. CLI commands: `versions`, `download`, `download-all`.
-- **`bill_tree.py`** - Normalizes bill XML into a `BillTree` of `BillNode` objects. Handles three structural shapes: with divisions, with titles only, and flat sections.
-- **`diff_bill.py`** - Compares two `BillTree`s. Matches sections by normalized header path, detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts for financial filtering.
+- **`bill_tree.py`** - Normalizes bill XML into a `BillTree` of `BillNode` objects. Handles divisions, titles, and flat sections, plus structural containers within titles (subtitle, part, chapter, subchapter). Captures preamble sections that sit alongside divisions or titles.
+- **`diff_bill.py`** - Compares two `BillTree`s. Uses division-aware matching for omnibus bills (resolves cross-division path collisions by normalized division title). Detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts with effective amount computation for floor amendment annotations.
 - **`formatters/html.py`** - Generates standalone HTML reports from diff output with sidebar navigation, financial summary table, and word-level inline diffs.
 
 ## Testing
@@ -161,6 +162,7 @@ uv run pytest test_diff_bill.py            # Diff/matching tests
 uv run pytest test_financial_diff.py       # Financial filtering tests
 uv run pytest test_reconcile.py            # Section move detection tests
 uv run pytest test_format_html.py          # HTML report formatter tests
+uv run pytest test_corpus_properties.py    # Corpus-wide property tests
 uv run pytest test_validate_extraction.py  # External validation tests
 ```
 
@@ -169,7 +171,16 @@ Integration tests use real XML files from `bills/` and skip if not present. To r
 ```bash
 source .env  # load API key
 uv run python fetch_bills.py download 118 hr 4366
+uv run python fetch_bills.py download 118 hr 2882
+uv run python fetch_bills.py download 118 hr 8282
+uv run python fetch_bills.py download 118 hr 8752
+uv run python fetch_bills.py download 118 hr 8774
+uv run python fetch_bills.py download 118 hr 4820
+uv run python fetch_bills.py download 117 hr 2471
+uv run python fetch_bills.py download 117 hr 4432
+uv run python fetch_bills.py download 117 hr 4502
 uv run python fetch_bills.py download 116 hr 1865
+uv run python fetch_bills.py download 116 hr 133
 uv run python fetch_bills.py download 115 hr 5895
 uv run python fetch_bills.py download 115 hr 1625
 uv run python fetch_bills.py download 115 hr 244
@@ -178,4 +189,4 @@ uv run python fetch_bills.py download 113 hr 83
 uv run python fetch_bills.py download 113 hr 3547
 ```
 
-The validation tests compare 404 extracted line items across 7 Legislative Branch bills (FY2014-FY2020) against amounts from a curated appropriations spreadsheet.
+The validation tests compare 414 extracted line items across 7 Legislative Branch bills (FY2014-FY2020) against amounts from a curated appropriations spreadsheet. The corpus property tests (`test_corpus_properties.py`) check dollar coverage, path uniqueness, and character coverage across all downloaded bills.
