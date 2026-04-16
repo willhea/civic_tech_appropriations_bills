@@ -1,0 +1,64 @@
+name: Update examples
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: update-examples
+  cancel-in-progress: true
+
+jobs:
+  update-examples:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Download bill XML
+        run: uv run python fetch_bills.py download 118 hr 4366
+
+      - name: Generate examples
+        run: |
+          uv run python diff_bill.py compare \
+            bills/118-hr-4366/1_reported-in-house.xml \
+            bills/118-hr-4366/2_engrossed-in-house.xml \
+            --format html -o examples/hr4366_committee_vs_floor.html
+          uv run python diff_bill.py compare \
+            bills/118-hr-4366/2_engrossed-in-house.xml \
+            bills/118-hr-4366/4_engrossed-amendment-senate.xml \
+            --format html -o examples/hr4366_house_vs_senate.html
+
+      - name: Commit updated examples
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add examples/
+          git diff --cached --quiet || git commit -m "Update example HTML reports" && git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: examples/
+
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
