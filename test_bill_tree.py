@@ -857,6 +857,89 @@ class TestNormalizeBill:
         tree = normalize_bill(xml_path)
         assert tree.version == "engrossed-in-house"
 
+    def test_divisions_with_sibling_sections(self, tmp_path):
+        """Preamble sections alongside divisions should be captured."""
+        xml = (
+            '<bill bill-stage="Enrolled-Bill">'
+            "<form>"
+            "<congress>One Hundred Eighteenth Congress</congress>"
+            "<legis-num>H. R. 4366</legis-num>"
+            "</form>"
+            '<legis-body style="OLC">'
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Short title</header>"
+            "<text>This Act may be cited as the Example Act.</text>"
+            "</section>"
+            '<section id="S2">'
+            "<enum>2.</enum>"
+            "<header>References</header>"
+            "<text>Except as stated, this Act refers to title 42.</text>"
+            "</section>"
+            '<division id="D1">'
+            "<enum>A</enum>"
+            "<header>Military Construction</header>"
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPARTMENT OF DEFENSE</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Military construction, army</header>"
+            "<text>For acquisition, $1,000,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+            "</division>"
+            "</legis-body>"
+            "</bill>"
+        )
+        xml_path = tmp_path / "6_enrolled-bill.xml"
+        xml_path.write_text(xml)
+
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) == 3
+        # Preamble sections come first
+        assert tree.nodes[0].tag == "section"
+        assert tree.nodes[0].match_path == ("sec. 1",)
+        assert tree.nodes[0].division_label == ""
+        assert tree.nodes[1].tag == "section"
+        assert tree.nodes[1].match_path == ("sec. 2",)
+        # Division node follows
+        assert tree.nodes[2].match_path == ("department of defense", "military construction, army")
+        assert tree.nodes[2].division_label.startswith("Division A")
+
+    def test_titles_with_sibling_sections(self, tmp_path):
+        """Preamble sections alongside titles should be captured."""
+        xml = (
+            '<bill bill-stage="Reported-in-House">'
+            "<form>"
+            "<congress>118th CONGRESS</congress>"
+            "<legis-num>H. R. 4366</legis-num>"
+            "</form>"
+            '<legis-body style="appropriations">'
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Short title</header>"
+            "<text>This Act may be cited as the Example Act.</text>"
+            "</section>"
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPARTMENT OF DEFENSE</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Military construction, army</header>"
+            "<text>For acquisition, $1,876,875,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+            "</legis-body>"
+            "</bill>"
+        )
+        xml_path = tmp_path / "1_reported-in-house.xml"
+        xml_path.write_text(xml)
+
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) == 2
+        assert tree.nodes[0].tag == "section"
+        assert tree.nodes[0].match_path == ("sec. 1",)
+        assert tree.nodes[1].match_path == ("department of defense", "military construction, army")
+
 
 REPORTED_BILL_PATH = Path("bills/118-hr-4366/1_reported-in-house.xml")
 ENROLLED_BILL_PATH = Path("bills/118-hr-4366/6_enrolled-bill.xml")
