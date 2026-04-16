@@ -139,8 +139,8 @@ def build_financial_table(changes: list[dict]) -> str:
                 f'{path_cell}'
                 f'<td class="amount">{old_str}</td>'
                 f'<td class="amount">{new_str}</td>'
-                f'<td class="amount">{change_dollar}</td>'
-                f'<td class="amount">{change_pct}</td>'
+                f'<td class="amount change-amount">{change_dollar}</td>'
+                f'<td class="amount change-amount">{change_pct}</td>'
                 f'</tr>'
             )
 
@@ -315,8 +315,8 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height:
 .financial-table .amount { text-align: right; font-variant-numeric: tabular-nums; }
 .financial-table a { color: #0056b3; text-decoration: none; }
 .financial-table a:hover { text-decoration: underline; }
-tr.increase .amount:nth-child(4), tr.increase .amount:nth-child(5) { color: #155724; }
-tr.decrease .amount:nth-child(4), tr.decrease .amount:nth-child(5) { color: #721c24; }
+tr.increase .change-amount { color: #155724; }
+tr.decrease .change-amount { color: #721c24; }
 
 /* Change cards */
 .change-card { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 16px;

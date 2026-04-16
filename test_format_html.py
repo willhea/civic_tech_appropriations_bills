@@ -308,6 +308,28 @@ class TestBuildChangeCard:
         assert "&amp;" in html
 
 
+    def test_sub_row_amounts_have_css_class(self):
+        """Sub-rows (no path cell due to rowspan) should still have colored amounts."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000, 2000],
+                "new_amounts": [1500, 2500],
+                "amounts_changed": True,
+                "paired_amounts": [[1000, 1500], [2000, 2500]],
+            },
+        )
+        html = build_financial_table([change])
+        # Sub-row (second <tr>) has no path cell, only 4 <td>s.
+        # nth-child(4) would hit wrong cell. CSS classes should work instead.
+        trs = [line for line in html.split("\n") if line.strip().startswith("<tr")]
+        assert len(trs) >= 2
+        # Both rows should have the increase class on their amount cells
+        for tr in trs:
+            assert 'class="increase"' in tr or 'class="decrease"' in tr or 'class="unchanged"' in tr
+            # Amount cells should have a class that CSS can target for coloring
+            assert 'class="amount change-amount"' in tr
+
 class TestBuildSidebar:
     def test_nav_items_present(self):
         changes = [
