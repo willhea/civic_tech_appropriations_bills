@@ -104,7 +104,7 @@ Fix: combine direct `<text>` with subsection content instead of preferring one.
 
 **Test coverage gap**: No unit test covers text+subsection. Affected sections don't contain fixture amounts.
 
-### 4. Dollar amount gap (~5% raw, ~1-2% real) (medium priority)
+### 4. Dollar amount gap (~5% raw, ~1-2% real) (informational)
 
 116-hr-1865: 2,286 raw vs 2,156 parsed (130 gap, 5.7%). 118-hr-4366: 1,724 vs 1,645 (79 gap, 4.6%).
 
@@ -112,25 +112,25 @@ Breakdown (116-hr-1865): 80 in `<quote>` elements (correct to skip), 22 in deepl
 
 **Test coverage gap**: No test measures amount coverage ratio.
 
-### 5. 72 nodes have repeated dollar amounts (medium priority)
+### 5. 72 nodes have repeated dollar amounts (informational)
 
 In 116-hr-1865, 72 nodes have the same amount appearing more than once. 77 legitimate (different contexts), 3 suspicious (identical surrounding text, likely extraction overlap).
 
 **Test coverage gap**: No test checks for extraction duplication.
 
-### 6. `<subtitle>` elements silently skipped (low priority)
+### 6. `<subtitle>` elements silently skipped (done)
 
 42 occurrences across corpus. `walk_title()` ignores `<subtitle>` tags. Unknown whether subtitles contain appropriations data.
 
 **Key files**: `bill_tree.py` (`walk_title`, line 218)
 
-### 7. Mixed body-level structures (low priority)
+### 7. Mixed body-level structures (done)
 
 Some bills have sections AND divisions AND titles as siblings under `legis-body`. Parser's three-shape detection means preamble sections lost when divisions also exist. Affects opening enacting clause, typically not dollar amounts.
 
 **Key files**: `bill_tree.py` (`normalize_bill`, line 422)
 
-### 8. Empty header clobbers `prev_name` (low priority)
+### 8. Empty header clobbers `prev_name` (done)
 
 Empty header on intermediate/small sets `prev_name = ""`. Subsequent parenthetical sibling inherits "" instead of last real name. Confirmed in synthetic XML, 0 empty headers in real enrolled bills.
 

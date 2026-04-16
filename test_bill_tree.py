@@ -347,6 +347,32 @@ class TestWalkTitle:
         assert nodes[1].match_path == ("dept", "regular account")
         assert nodes[1].header_text == "(INCLUDING TRANSFER OF FUNDS)"
 
+    def test_empty_intermediate_header_does_not_clobber_prev_name(self):
+        """Empty header on intermediate should not clobber prev_name for parenthetical siblings."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPT</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Real Account</header>"
+            "<text>For expenses, $100,000.</text>"
+            "</appropriations-intermediate>"
+            '<appropriations-intermediate id="AI2">'
+            "<header></header>"
+            "<text>Additional amount, $200,000.</text>"
+            "</appropriations-intermediate>"
+            '<appropriations-intermediate id="AI3">'
+            "<header>(INCLUDING TRANSFER OF FUNDS)</header>"
+            "<text>Of the funds, not more than $50,000 may transfer.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 3
+        # Third node is parenthetical; should inherit "Real Account" from first,
+        # not empty string from second
+        assert nodes[2].match_path == ("dept", "real account")
+
     def test_section_with_enum(self):
         """A section produces a node with section_number in the path."""
         title = ET.fromstring(
@@ -592,6 +618,103 @@ class TestWalkTitle:
         # After section: context reverts to Senate (not House)
         assert nodes[3].match_path == ("leg branch", "senate", "senate office")
 
+    def test_subtitle_with_sections(self):
+        """Subtitles containing sections should be walked, with subtitle header in path."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>POLICY PROVISIONS</header>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Tax Relief</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<header>Extension of credits</header>"
+            "<text>The tax credit under section 45 is extended through 2025.</text>"
+            "</section>"
+            '<section id="S102">'
+            "<enum>102.</enum>"
+            "<header>Deduction increase</header>"
+            "<text>The standard deduction is increased to $15,000.</text>"
+            "</section>"
+            "</subtitle>"
+            "</title>"
+        )
+        nodes = walk_title(title, "POLICY PROVISIONS", "")
+        assert len(nodes) == 2
+        assert nodes[0].section_number == "Sec. 101"
+        assert nodes[0].match_path == ("policy provisions", "tax relief", "sec. 101")
+        assert "extended" in nodes[0].body_text
+        assert nodes[1].section_number == "Sec. 102"
+        assert nodes[1].match_path == ("policy provisions", "tax relief", "sec. 102")
+
+
+    def test_subtitle_with_nested_part(self):
+        """Sections inside a part inside a subtitle should include both headers in path."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>EXTENSIONS</header>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Health Programs</header>"
+            '<part id="P1">'
+            "<enum>I</enum>"
+            "<header>Medicare</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>The Medicare program is extended through 2025.</text>"
+            "</section>"
+            '<section id="S102">'
+            "<enum>102.</enum>"
+            "<text>Reimbursement rates are adjusted.</text>"
+            "</section>"
+            "</part>"
+            "</subtitle>"
+            "</title>"
+        )
+        nodes = walk_title(title, "EXTENSIONS", "")
+        assert len(nodes) == 2
+        # Path should include both subtitle and part headers
+        assert nodes[0].match_path == ("extensions", "health programs", "medicare", "sec. 101")
+        assert nodes[1].match_path == ("extensions", "health programs", "medicare", "sec. 102")
+
+    def test_subtitle_context_does_not_leak(self):
+        """Subtitle context should not leak back to title-level siblings."""
+        title = ET.fromstring(
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPT</header>"
+            '<appropriations-major id="AM1">'
+            "<header>Agency A</header>"
+            "</appropriations-major>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Sub Agency</header>"
+            "<text>For expenses, $100,000.</text>"
+            "</appropriations-intermediate>"
+            '<subtitle id="ST1">'
+            "<enum>A</enum>"
+            "<header>Tax Provisions</header>"
+            '<section id="S101">'
+            "<enum>101.</enum>"
+            "<text>The tax credit is extended.</text>"
+            "</section>"
+            "</subtitle>"
+            '<appropriations-intermediate id="AI2">'
+            "<header>Another Sub Agency</header>"
+            "<text>For operations, $200,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+        )
+        nodes = walk_title(title, "DEPT", "")
+        assert len(nodes) == 3
+        # First node: Sub Agency under Agency A
+        assert nodes[0].match_path == ("dept", "agency a", "sub agency")
+        # Second node: section inside subtitle
+        assert nodes[1].match_path == ("dept", "tax provisions", "sec. 101")
+        # Third node: should be back under Agency A, not Tax Provisions
+        assert nodes[2].match_path == ("dept", "agency a", "another sub agency")
+
 
 class TestWalkBodySections:
     """Test walk_body_sections for bills with no titles (e.g., HR 2882 v1-3)."""
@@ -831,6 +954,89 @@ class TestNormalizeBill:
         tree = normalize_bill(xml_path)
         assert tree.version == "engrossed-in-house"
 
+    def test_divisions_with_sibling_sections(self, tmp_path):
+        """Preamble sections alongside divisions should be captured."""
+        xml = (
+            '<bill bill-stage="Enrolled-Bill">'
+            "<form>"
+            "<congress>One Hundred Eighteenth Congress</congress>"
+            "<legis-num>H. R. 4366</legis-num>"
+            "</form>"
+            '<legis-body style="OLC">'
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Short title</header>"
+            "<text>This Act may be cited as the Example Act.</text>"
+            "</section>"
+            '<section id="S2">'
+            "<enum>2.</enum>"
+            "<header>References</header>"
+            "<text>Except as stated, this Act refers to title 42.</text>"
+            "</section>"
+            '<division id="D1">'
+            "<enum>A</enum>"
+            "<header>Military Construction</header>"
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPARTMENT OF DEFENSE</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Military construction, army</header>"
+            "<text>For acquisition, $1,000,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+            "</division>"
+            "</legis-body>"
+            "</bill>"
+        )
+        xml_path = tmp_path / "6_enrolled-bill.xml"
+        xml_path.write_text(xml)
+
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) == 3
+        # Preamble sections come first
+        assert tree.nodes[0].tag == "section"
+        assert tree.nodes[0].match_path == ("sec. 1",)
+        assert tree.nodes[0].division_label == ""
+        assert tree.nodes[1].tag == "section"
+        assert tree.nodes[1].match_path == ("sec. 2",)
+        # Division node follows
+        assert tree.nodes[2].match_path == ("department of defense", "military construction, army")
+        assert tree.nodes[2].division_label.startswith("Division A")
+
+    def test_titles_with_sibling_sections(self, tmp_path):
+        """Preamble sections alongside titles should be captured."""
+        xml = (
+            '<bill bill-stage="Reported-in-House">'
+            "<form>"
+            "<congress>118th CONGRESS</congress>"
+            "<legis-num>H. R. 4366</legis-num>"
+            "</form>"
+            '<legis-body style="appropriations">'
+            '<section id="S1">'
+            "<enum>1.</enum>"
+            "<header>Short title</header>"
+            "<text>This Act may be cited as the Example Act.</text>"
+            "</section>"
+            '<title id="T1">'
+            "<enum>I</enum>"
+            "<header>DEPARTMENT OF DEFENSE</header>"
+            '<appropriations-intermediate id="AI1">'
+            "<header>Military construction, army</header>"
+            "<text>For acquisition, $1,876,875,000.</text>"
+            "</appropriations-intermediate>"
+            "</title>"
+            "</legis-body>"
+            "</bill>"
+        )
+        xml_path = tmp_path / "1_reported-in-house.xml"
+        xml_path.write_text(xml)
+
+        tree = normalize_bill(xml_path)
+        assert len(tree.nodes) == 2
+        assert tree.nodes[0].tag == "section"
+        assert tree.nodes[0].match_path == ("sec. 1",)
+        assert tree.nodes[1].match_path == ("department of defense", "military construction, army")
+
 
 REPORTED_BILL_PATH = Path("bills/118-hr-4366/1_reported-in-house.xml")
 ENROLLED_BILL_PATH = Path("bills/118-hr-4366/6_enrolled-bill.xml")
@@ -846,7 +1052,7 @@ class TestNormalizeBillIntegration:
         assert tree.bill_type == "hr"
         assert tree.bill_number == 4366
         assert tree.version == "reported-in-house"
-        assert len(tree.nodes) == 164
+        assert len(tree.nodes) == 165
 
     def test_reported_in_house_has_expected_paths(self):
         tree = normalize_bill(REPORTED_BILL_PATH)
@@ -859,7 +1065,7 @@ class TestNormalizeBillIntegration:
     def test_enrolled_bill_node_count(self):
         tree = normalize_bill(ENROLLED_BILL_PATH)
         assert tree.congress == 118
-        assert len(tree.nodes) == 1060
+        assert len(tree.nodes) == 1095
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_no_empty_body_text(self):
@@ -883,6 +1089,15 @@ class TestNormalizeBillIntegration:
             assert any(d.startswith(prefix) for d in div_labels), f"Missing {prefix}"
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
+    def test_enrolled_has_preamble_sections(self):
+        """Preamble sections (Short Title, etc.) should be captured alongside divisions."""
+        tree = normalize_bill(ENROLLED_BILL_PATH)
+        sec1 = [n for n in tree.nodes if n.section_number == "Sec. 1"]
+        assert len(sec1) == 1
+        assert "cited as" in sec1[0].body_text.lower()
+        assert sec1[0].division_label == ""
+
+    @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_division_node_counts(self):
         """Each division has an expected number of nodes."""
         tree = normalize_bill(ENROLLED_BILL_PATH)
@@ -901,7 +1116,7 @@ class TestNormalizeBillIntegration:
         assert by_letter["D"] == 107
         assert by_letter["E"] == 186
         assert by_letter["F"] == 239
-        assert by_letter["G"] == 15
+        assert by_letter["G"] == 44
 
     @pytest.mark.skipif(not ENROLLED_BILL_PATH.exists(), reason="Real XML not present")
     def test_enrolled_content_matches_path(self):

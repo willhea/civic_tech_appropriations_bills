@@ -185,7 +185,8 @@ def _process_appro_element(
         if header and _PARENTHETICAL_RE.match(header):
             effective_header = prev_name
         else:
-            prev_name = header
+            if header:
+                prev_name = header
             effective_header = header
 
         body_text = _extract_appropriations_text(child)
@@ -233,6 +234,146 @@ def _process_appro_element(
     return current_major, current_intermediate, prev_name
 
 
+def _process_section_element(
+    section: ET.Element,
+    title_header: str,
+    division_label: str,
+    current_major: str | None,
+    current_intermediate: str | None,
+    prev_name: str | None,
+    nodes: list[BillNode],
+) -> None:
+    """Process a <section> element, emitting BillNode(s).
+
+    Handles two cases:
+    - Sections with appropriations-* children: emit section text node,
+      then walk appropriations children with scoped context.
+    - Plain sections: emit a single node with all section text.
+    """
+    has_appro_children = any(
+        c.tag.startswith("appropriations-") for c in section
+    )
+
+    enum_el = section.find("enum")
+    section_num = ""
+    if enum_el is not None and enum_el.text:
+        section_num = f"Sec. {enum_el.text.strip().rstrip('.')}"
+
+    if has_appro_children:
+        text_el = section.find("text")
+        if text_el is not None:
+            sec_label = section_num.lower() if section_num else ""
+            match_path, display_path = _build_paths(
+                title_header, division_label, current_major, current_intermediate, sec_label,
+            )
+            nodes.append(BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag="section",
+                element_id=section.attrib.get("id", ""),
+                header_text=get_header_text(section),
+                body_text=extract_text_content(text_el),
+                section_number=section_num,
+                division_label=division_label,
+            ))
+
+        # Walk appropriations children with scoped context
+        sec_major = current_major
+        sec_intermediate = current_intermediate
+        sec_prev = prev_name
+        for sub in section:
+            if sub.tag.startswith("appropriations-"):
+                sec_major, sec_intermediate, sec_prev = _process_appro_element(
+                    sub, title_header, division_label,
+                    sec_major, sec_intermediate, sec_prev, nodes,
+                )
+    else:
+        body_text = _extract_section_text(section)
+        if body_text:
+            sec_label = section_num.lower() if section_num else ""
+            match_path, display_path = _build_paths(
+                title_header, division_label, current_major, current_intermediate, sec_label,
+            )
+            nodes.append(BillNode(
+                match_path=match_path,
+                display_path=display_path,
+                tag="section",
+                element_id=section.attrib.get("id", ""),
+                header_text=get_header_text(section),
+                body_text=body_text,
+                section_number=section_num,
+                division_label=division_label,
+            ))
+
+
+_STRUCTURAL_TAGS = {"subtitle", "part", "chapter", "subchapter"}
+
+
+def _walk_structural_children(
+    parent: ET.Element,
+    title_header: str,
+    division_label: str,
+    current_major: str | None,
+    current_intermediate: str | None,
+    prev_name: str | None,
+    nodes: list[BillNode],
+    *,
+    _in_structural_container: bool = False,
+) -> tuple[str | None, str | None, str | None]:
+    """Walk children of a structural element, dispatching by tag.
+
+    Handles appropriations-*, section, and structural containers
+    (subtitle, part, chapter, subchapter). Structural containers
+    recurse with scoped context and their header mapped into the path:
+    - First container level: header -> current_major
+    - Deeper levels: header -> current_intermediate
+    """
+    for child in parent:
+        tag = child.tag
+
+        if tag.startswith("appropriations-"):
+            current_major, current_intermediate, prev_name = _process_appro_element(
+                child, title_header, division_label,
+                current_major, current_intermediate, prev_name, nodes,
+            )
+
+        elif tag == "section":
+            _process_section_element(
+                child, title_header, division_label,
+                current_major, current_intermediate, prev_name, nodes,
+            )
+
+        elif tag in _STRUCTURAL_TAGS:
+            container_header = get_header_text(child)
+            # Scope context: container changes don't leak to parent siblings
+            saved_major = current_major
+            saved_intermediate = current_intermediate
+            saved_prev = prev_name
+            # Container header always becomes new major for its children.
+            # If we're already inside a container (major was set by parent
+            # container), push the existing major to intermediate.
+            if _in_structural_container and current_major is not None:
+                sub_major = current_major
+                if current_intermediate is not None:
+                    # Third+ level: concatenate into intermediate
+                    sub_intermediate: str | None = f"{current_intermediate} - {container_header}" if container_header else current_intermediate
+                else:
+                    sub_intermediate = container_header
+            else:
+                sub_major = container_header
+                sub_intermediate = None
+            _walk_structural_children(
+                child, title_header, division_label,
+                sub_major, sub_intermediate, None, nodes,
+                _in_structural_container=True,
+            )
+            current_major = saved_major
+            current_intermediate = saved_intermediate
+            prev_name = saved_prev
+
+    return current_major, current_intermediate, prev_name
+
+
 def walk_title(
     title_element: ET.Element,
     title_header: str,
@@ -248,78 +389,11 @@ def walk_title(
         title_header: The title's header text (may be empty for headerless titles).
         division_label: Division label for display_path (empty if no division).
     """
-    current_major: str | None = None
-    current_intermediate: str | None = None
-    prev_name: str | None = None
     nodes: list[BillNode] = []
-
-    for child in title_element:
-        tag = child.tag
-
-        if tag.startswith("appropriations-"):
-            current_major, current_intermediate, prev_name = _process_appro_element(
-                child, title_header, division_label,
-                current_major, current_intermediate, prev_name, nodes,
-            )
-
-        elif tag == "section":
-            has_appro_children = any(
-                c.tag.startswith("appropriations-") for c in child
-            )
-
-            enum_el = child.find("enum")
-            section_num = ""
-            if enum_el is not None and enum_el.text:
-                section_num = f"Sec. {enum_el.text.strip().rstrip('.')}"
-
-            if has_appro_children:
-                # Emit section's own text as a section node (if present)
-                text_el = child.find("text")
-                if text_el is not None:
-                    sec_label = section_num.lower() if section_num else ""
-                    match_path, display_path = _build_paths(
-                        title_header, division_label, current_major, current_intermediate, sec_label,
-                    )
-                    nodes.append(BillNode(
-                        match_path=match_path,
-                        display_path=display_path,
-                        tag=tag,
-                        element_id=child.attrib.get("id", ""),
-                        header_text=get_header_text(child),
-                        body_text=extract_text_content(text_el),
-                        section_number=section_num,
-                        division_label=division_label,
-                    ))
-
-                # Walk appropriations children with scoped context
-                # (changes inside the section should not leak to siblings)
-                sec_major = current_major
-                sec_intermediate = current_intermediate
-                sec_prev = prev_name
-                for sub in child:
-                    if sub.tag.startswith("appropriations-"):
-                        sec_major, sec_intermediate, sec_prev = _process_appro_element(
-                            sub, title_header, division_label,
-                            sec_major, sec_intermediate, sec_prev, nodes,
-                        )
-            else:
-                body_text = _extract_section_text(child)
-                if body_text:
-                    sec_label = section_num.lower() if section_num else ""
-                    match_path, display_path = _build_paths(
-                        title_header, division_label, current_major, current_intermediate, sec_label,
-                    )
-                    nodes.append(BillNode(
-                        match_path=match_path,
-                        display_path=display_path,
-                        tag=tag,
-                        element_id=child.attrib.get("id", ""),
-                        header_text=get_header_text(child),
-                        body_text=body_text,
-                        section_number=section_num,
-                        division_label=division_label,
-                    ))
-
+    _walk_structural_children(
+        title_element, title_header, division_label,
+        None, None, None, nodes,
+    )
     return nodes
 
 
@@ -459,6 +533,7 @@ def normalize_bill(xml_path: Path) -> BillTree:
     # Check for divisions first
     divisions = body.findall("division")
     if divisions:
+        all_nodes.extend(walk_body_sections(body))
         for div in divisions:
             div_enum = div.find("enum")
             div_header = div.find("header")
@@ -477,6 +552,7 @@ def normalize_bill(xml_path: Path) -> BillTree:
     # Check for titles directly under body
     titles = body.findall("title")
     if titles:
+        all_nodes.extend(walk_body_sections(body))
         for title in titles:
             title_header = get_header_text(title)
             all_nodes.extend(walk_title(title, title_header, ""))

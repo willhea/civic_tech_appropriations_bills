@@ -345,7 +345,7 @@ class TestAmountSanityChecks:
         tree = normalize_bill(Path(self.ENROLLED_PATH))
 
         count = sum(1 for n in tree.nodes if extract_amounts(n.body_text))
-        assert count == 561
+        assert count == 567
 
     def test_all_amounts_in_valid_range(self):
         from pathlib import Path
