@@ -308,6 +308,24 @@ class TestBuildChangeCard:
         assert "&amp;" in html
 
 
+    def test_rows_have_group_attribute_for_sort(self):
+        """Rows in a rowspan group should share a data-group attribute for JS sort."""
+        change = _change(
+            change_type="modified",
+            financial={
+                "old_amounts": [1000, 2000],
+                "new_amounts": [1500, 2500],
+                "amounts_changed": True,
+                "paired_amounts": [[1000, 1500], [2000, 2500]],
+            },
+        )
+        html = build_financial_table([change])
+        trs = [line for line in html.split("\n") if line.strip().startswith("<tr")]
+        assert len(trs) >= 2
+        # Both rows should share the same data-group value
+        assert 'data-group="0"' in trs[0]
+        assert 'data-group="0"' in trs[1]
+
     def test_sub_row_amounts_have_css_class(self):
         """Sub-rows (no path cell due to rowspan) should still have colored amounts."""
         change = _change(

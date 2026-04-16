@@ -106,7 +106,7 @@ def build_financial_table(changes: list[dict]) -> str:
         "<tbody>",
     ]
 
-    for row in rows:
+    for group_idx, row in enumerate(rows):
         amount_pairs = row["amount_pairs"]
         num_pairs = len(amount_pairs)
 
@@ -135,7 +135,7 @@ def build_financial_table(changes: list[dict]) -> str:
                 path_cell = ""
 
             lines.append(
-                f'<tr class="{css}">'
+                f'<tr class="{css}" data-group="{group_idx}">'
                 f'{path_cell}'
                 f'<td class="amount">{old_str}</td>'
                 f'<td class="amount">{new_str}</td>'
@@ -384,23 +384,37 @@ document.addEventListener('DOMContentLoaded', function() {
   if (prev) prev.addEventListener('click', function() { goTo(current - 1); });
   if (next) next.addEventListener('click', function() { goTo(current + 1); });
 
-  // Financial table sort
+  // Financial table sort (groups rowspan rows together)
   document.querySelectorAll('.financial-table th').forEach(function(th, colIdx) {
     th.style.cursor = 'pointer';
     th.addEventListener('click', function() {
       var table = th.closest('table');
       var tbody = table.querySelector('tbody');
       var rows = Array.from(tbody.querySelectorAll('tr'));
+      // Group rows by data-group attribute
+      var groups = [];
+      var groupMap = {};
+      rows.forEach(function(row) {
+        var g = row.dataset.group;
+        if (!(g in groupMap)) {
+          groupMap[g] = groups.length;
+          groups.push([]);
+        }
+        groups[groupMap[g]].push(row);
+      });
       var asc = th.dataset.sort !== 'asc';
       th.dataset.sort = asc ? 'asc' : 'desc';
-      rows.sort(function(a, b) {
-        var aVal = a.cells[colIdx] ? a.cells[colIdx].textContent.replace(/[^\\d.-]/g, '') : '';
-        var bVal = b.cells[colIdx] ? b.cells[colIdx].textContent.replace(/[^\\d.-]/g, '') : '';
+      // Sort groups by the first row's cell value
+      groups.sort(function(a, b) {
+        var aVal = a[0].cells[colIdx] ? a[0].cells[colIdx].textContent.replace(/[^\\d.-]/g, '') : '';
+        var bVal = b[0].cells[colIdx] ? b[0].cells[colIdx].textContent.replace(/[^\\d.-]/g, '') : '';
         var aNum = parseFloat(aVal), bNum = parseFloat(bVal);
         if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
         return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       });
-      rows.forEach(function(row) { tbody.appendChild(row); });
+      groups.forEach(function(group) {
+        group.forEach(function(row) { tbody.appendChild(row); });
+      });
     });
   });
 });
