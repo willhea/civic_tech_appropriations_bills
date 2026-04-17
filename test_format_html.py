@@ -5,6 +5,7 @@ import pytest
 from conftest import make_change_dict as _change
 from formatters.html import (
     build_change_card,
+    build_change_groups,
     build_financial_table,
     build_sidebar,
     format_html,
@@ -439,6 +440,37 @@ class TestBuildSidebar:
         html = build_sidebar([])
         assert "<nav" in html
 
+    def test_groups_divisions_dynamically(self):
+        changes = [
+            _change(path=["Division A: Military Construction", "Title I", "Army"], index=0),
+            _change(path=["Division B: Agriculture", "Title I", "Food Safety"], index=1),
+        ]
+        html = build_sidebar(changes)
+        assert "Division A: Military Construction" in html
+        assert "Division B: Agriculture" in html
+        assert 'class="nav-group-details"' in html
+        assert '<details class="nav-group-details" open' not in html
+
+
+class TestBuildChangeGroups:
+    def test_groups_changes_by_division(self):
+        changes = [
+            _change(path=["Division A: Military Construction", "Title I", "Army"], index=0),
+            _change(path=["Division A: Military Construction", "Title II", "Navy"], index=1),
+            _change(path=["Division B: Agriculture", "Title I", "Food Safety"], index=2),
+        ]
+        html = build_change_groups(changes)
+        assert "Division A: Military Construction" in html
+        assert "Division B: Agriculture" in html
+        assert html.count('class="change-group-details"') == 2
+        assert '<details class="change-group-details" open' not in html
+
+    def test_cards_trim_repeated_division_prefix_inside_group(self):
+        change = _change(path=["Division A: Military Construction", "Title I", "Army"], index=0)
+        html = build_change_groups([change])
+        assert "<h3>Title I &gt; Army</h3>" in html
+        assert "<h3>Division A: Military Construction &gt; Title I &gt; Army</h3>" not in html
+
 
 def _sample_diff_dict(**overrides):
     """Build a minimal diff dict for testing format_html."""
@@ -568,6 +600,48 @@ class TestFormatHtml:
         html = format_html(diff)
         assert "<!DOCTYPE html>" in html
         assert "No changes found" in html
+
+    def test_format_html_renders_collapsible_division_sections(self):
+        diff = _sample_diff_dict(
+            changes=[
+                {
+                    "display_path_old": ["Division A: Military Construction", "DEPT", "Army"],
+                    "display_path_new": ["Division A: Military Construction", "DEPT", "Army"],
+                    "match_path": ["dept", "army"],
+                    "change_type": "modified",
+                    "old_text": "old",
+                    "new_text": "new text with enough overlap",
+                    "text_diff": [],
+                    "section_number": "",
+                    "element_id_old": "old-1",
+                    "element_id_new": "new-1",
+                },
+                {
+                    "display_path_old": None,
+                    "display_path_new": ["Division B: Agriculture", "DEPT", "Food Safety"],
+                    "match_path": ["dept", "food safety"],
+                    "change_type": "added",
+                    "old_text": None,
+                    "new_text": "new section text",
+                    "text_diff": [],
+                    "section_number": "",
+                    "element_id_old": None,
+                    "element_id_new": "new-2",
+                },
+            ]
+        )
+        html = format_html(diff)
+        assert 'class="change-group-details"' in html
+        assert "Division A: Military Construction" in html
+        assert "Division B: Agriculture" in html
+        assert '<details class="nav-group-details" open' not in html
+        assert '<details class="change-group-details" open' not in html
+
+    def test_format_html_next_navigation_expands_collapsed_change_groups(self):
+        html = format_html(_sample_diff_dict())
+        assert "function expandAncestors(card)" in html
+        assert "card.closest('.change-group-details')" in html
+        assert "group.open = true;" in html
 
 
 class TestCliIntegration:
