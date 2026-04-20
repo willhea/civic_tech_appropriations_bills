@@ -33,40 +33,6 @@ def extract_amounts(text: str) -> tuple[int, ...]:
     return tuple(results)
 
 
-_EFFECTIVE_RE = re.compile(
-    r"(\$[\d,]+)"  # base amount
-    r"((?:\s*\((?:increased|reduced|decreased) by \$[\d,]+\))*)",  # zero or more annotations
-)
-_ANNOT_INNER_RE = re.compile(r"\((increased|reduced|decreased) by \$([\d,]+)\)")
-
-
-def extract_effective_amounts(text: str) -> tuple[int, ...]:
-    """Find all dollar amounts with amendment annotations applied.
-
-    For each base amount, consumes any immediately following annotations
-    like (increased by $X) or (reduced by $Y) and computes the effective
-    value. Returns base amounts unchanged when no annotations are present.
-    Filters $0 amounts.
-    """
-    results = []
-    for m in _EFFECTIVE_RE.finditer(text):
-        base_str = m.group(1)
-        base = int(base_str.replace("$", "").replace(",", ""))
-        if base == 0:
-            continue
-        annotations = m.group(2)
-        if annotations:
-            for am in _ANNOT_INNER_RE.finditer(annotations):
-                direction = am.group(1)
-                adj = int(am.group(2).replace(",", ""))
-                if direction == "increased":
-                    base += adj
-                else:
-                    base -= adj
-        results.append(base)
-    return tuple(results)
-
-
 def _extract_word_amounts(words: list[str]) -> list[tuple[int, int]]:
     """Find dollar amounts in a word list, returning (word_index, value) pairs.
 
