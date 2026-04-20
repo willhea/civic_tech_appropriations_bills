@@ -310,7 +310,7 @@ class TestBuildChangeCard:
         assert "$2,000,000" in html
 
     def test_amendment_annotation_badge_in_callout(self):
-        """Financial callout should show a warning badge when amendment annotations present."""
+        """Callout shows the amendment badge when annotations appear alongside a base amount change."""
         change = _change(
             change_type="modified",
             financial={
@@ -322,7 +322,7 @@ class TestBuildChangeCard:
             },
         )
         change["old_text"] = "$287,000,000"
-        change["new_text"] = "$287,000,000 (increased by $2,000,000)"
+        change["new_text"] = "$289,000,000 (increased by $2,000,000)"
         html = build_change_card(change, 0)
         assert "amendment" in html.lower()
 
@@ -631,9 +631,10 @@ class TestCliIntegration:
         )
         assert result.returncode == 0, result.stderr
         content = out.read_text()
-        # v1->v2 has floor amendment annotations that change effective amounts.
-        # These are now correctly detected as financial changes.
-        assert "Financial Summary" in content
+        # Floor amendment annotations reference the budget request baseline,
+        # not the previous bill version, so base amounts are unchanged v1->v2
+        # and no Financial Summary should appear.
+        assert "Financial Summary" not in content
 
     @pytest.mark.slow
     def test_format_html_v1_v6_has_financial_summary(self, tmp_path):

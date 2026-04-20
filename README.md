@@ -115,7 +115,7 @@ The tool focuses on substantive changes and ignores formatting differences betwe
 - Spacing and line break differences between versions
 - Differences in spacing around numbered list markers like (1), (A), or (iv), which vary between House and Senate formatting conventions
 
-Floor amendment annotations like "(increased by $2,000,000)" that appear in engrossed versions after floor votes are not ignored. The tool computes effective amounts: "$287,000,000 (increased by $2,000,000)" is treated as $289,000,000. The HTML report shows a warning badge when these annotations are present.
+Floor amendment annotations like "(increased by $2,000,000)" appear in engrossed versions after floor votes. These annotations reference the budget request baseline, not the previous bill version, so the base amount in the text is the authoritative appropriation. The tool strips the annotations before comparing amounts across versions, then flags their presence with an informational badge in the HTML report so readers can see where the floor acted.
 
 ## Output Structure
 
@@ -152,7 +152,7 @@ Four modules:
 
 - **`fetch_bills.py`** - Downloads bill XML from Congress.gov API v3. CLI commands: `versions`, `download`, `download-all`.
 - **`bill_tree.py`** - Normalizes bill XML into a `BillTree` of `BillNode` objects. Handles divisions, titles, and flat sections, plus structural containers within titles (subtitle, part, chapter, subchapter). Captures preamble sections that sit alongside divisions or titles.
-- **`diff_bill.py`** - Compares two `BillTree`s. Uses division-aware matching for omnibus bills (resolves cross-division path collisions by normalized division title). Detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts with effective amount computation for floor amendment annotations.
+- **`diff_bill.py`** - Compares two `BillTree`s. Uses division-aware matching for omnibus bills (resolves cross-division path collisions by normalized division title). Detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts (stripping floor amendment annotations before comparison, flagging their presence separately).
 - **`formatters/html.py`** - Generates standalone HTML reports from diff output with sidebar navigation, financial summary table, and word-level inline diffs.
 
 ## Testing
