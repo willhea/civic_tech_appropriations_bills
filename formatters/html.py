@@ -3,6 +3,8 @@
 import difflib
 from html import escape
 
+_UNGROUPED_LABEL = "Other Sections"
+
 
 def word_diff(old_text: str, new_text: str, threshold: float = 0.4) -> str | None:
     """Produce an inline HTML diff at the word level.
@@ -155,6 +157,35 @@ def _display_path(change: dict) -> str:
     return " &gt; ".join(escape(p) for p in parts)
 
 
+def _path_parts(change: dict) -> list[str]:
+    """Return the preferred display path parts for a change."""
+    return list(change.get("display_path_new") or change.get("display_path_old") or [])
+
+
+def _division_group_label(change: dict) -> str | None:
+    """Return a division label when the change belongs to a bill division."""
+    parts = _path_parts(change)
+    if parts and parts[0].startswith("Division "):
+        return parts[0]
+    return None
+
+
+def _trim_group_prefix(path_parts: list[str], group_label: str | None) -> list[str]:
+    """Remove the leading division label when rendering inside a division group."""
+    if group_label and path_parts and path_parts[0] == group_label:
+        return path_parts[1:]
+    return path_parts
+
+
+def _group_changes(changes: list[dict]) -> list[tuple[str, list[tuple[int, dict]]]]:
+    """Group changes by division label inferred from display paths."""
+    grouped: dict[str, list[tuple[int, dict]]] = {}
+    for index, change in enumerate(changes):
+        label = _division_group_label(change) or _UNGROUPED_LABEL
+        grouped.setdefault(label, []).append((index, change))
+    return list(grouped.items())
+
+
 def _financial_callout(financial: dict) -> str:
     """Render a financial callout box for a change card."""
     # Use paired_amounts if available, fall back to positional pairing
@@ -192,10 +223,11 @@ def _financial_callout(financial: dict) -> str:
     return callout
 
 
-def build_change_card(change: dict, index: int) -> str:
+def build_change_card(change: dict, index: int, group_label: str | None = None) -> str:
     """Render a single change as an HTML card."""
     change_type = change.get("change_type", "modified")
-    path = _display_path(change)
+    path_parts = _trim_group_prefix(_path_parts(change), group_label)
+    path = " &gt; ".join(escape(p) for p in path_parts) if path_parts else _display_path(change)
     section = escape(change.get("section_number", "") or "")
     old_text = change.get("old_text") or ""
     new_text = change.get("new_text") or ""
@@ -252,30 +284,63 @@ def build_change_card(change: dict, index: int) -> str:
 
 
 def build_sidebar(changes: list[dict]) -> str:
-    """Build a sidebar navigation listing all changes."""
-    items: list[str] = []
-    for i, change in enumerate(changes):
-        change_type = change.get("change_type", "modified")
-        path_parts = change.get("display_path_new") or change.get("display_path_old") or []
-        label = escape(" > ".join(path_parts)) if path_parts else "(unknown)"
-        section = escape(change.get("section_number", "") or "")
-        if section:
-            label = f"{section} — {label}"
+    """Build a sidebar navigation listing all changes, grouped by division."""
+    groups: list[str] = []
+    for group_label, entries in _group_changes(changes):
+        items: list[str] = []
+        for i, change in entries:
+            change_type = change.get("change_type", "modified")
+            path_parts = _trim_group_prefix(
+                _path_parts(change),
+                None if group_label == _UNGROUPED_LABEL else group_label
+            )
+            label = escape(" > ".join(path_parts)) if path_parts else "(unknown)"
+            section = escape(change.get("section_number", "") or "")
+            if section:
+                label = f"{section} — {label}"
 
-        items.append(
-            f'<li class="nav-item" data-type="{change_type}">'
-            f'<a href="#change-{i}">'
-            f'<span class="badge badge-{change_type}">{change_type}</span> '
-            f"{label}"
-            f"</a></li>"
+            items.append(
+                f'<li class="nav-item" data-type="{change_type}">'
+                f'<a href="#change-{i}">'
+                f'<span class="badge badge-{change_type}">{change_type}</span> '
+                f"{label}"
+                f"</a></li>"
+            )
+
+        groups.append(
+            '<li class="nav-group">'
+            f'<details class="nav-group-details" data-group-label="{escape(group_label)}">'
+            f'<summary>{escape(group_label)} <span class="group-count">{len(entries)}</span></summary>'
+            f"<ul>{''.join(items)}</ul>"
+            "</details>"
+            "</li>"
         )
 
     return (
         '<nav class="sidebar">\n'
         '<input type="text" id="sidebar-filter" placeholder="Filter sections...">\n'
-        f"<ul>{''.join(items)}</ul>\n"
+        f'<ul class="nav-groups">{"".join(groups)}</ul>\n'
         "</nav>"
     )
+
+
+def build_change_groups(changes: list[dict]) -> str:
+    """Build grouped change-card markup with collapsible division sections."""
+    groups: list[str] = []
+    for group_label, entries in _group_changes(changes):
+        cards = "\n".join(
+            build_change_card(change, index, None if group_label == _UNGROUPED_LABEL else group_label)
+            for index, change in entries
+        )
+        groups.append(
+            '<section class="change-group">'
+            f'<details class="change-group-details" data-group-label="{escape(group_label)}">'
+            f'<summary>{escape(group_label)} <span class="group-count">{len(entries)}</span></summary>'
+            f'<div class="change-group-body">{cards}</div>'
+            "</details>"
+            "</section>"
+        )
+    return "\n".join(groups)
 
 
 _CSS = """\
@@ -289,6 +354,16 @@ body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height:
 .sidebar input { width: 100%; padding: 6px 8px; margin-bottom: 8px;
   border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
 .sidebar ul { list-style: none; }
+.nav-groups { display: flex; flex-direction: column; gap: 8px; }
+.nav-group { margin: 0; }
+.nav-group-details { border: 1px solid #ddd; border-radius: 6px; background: #fff; }
+.nav-group-details summary { cursor: pointer; padding: 8px 10px; font-size: 13px;
+  font-weight: 600; list-style: none; }
+.nav-group-details summary::-webkit-details-marker { display: none; }
+.nav-group-details summary::before { content: "▸"; margin-right: 6px; color: #666; }
+.nav-group-details[open] summary::before { content: "▾"; }
+.nav-group-details ul { padding: 0 6px 6px; }
+.group-count { color: #666; font-weight: 400; }
 .sidebar li { margin-bottom: 2px; }
 .sidebar a { display: block; padding: 4px 6px; text-decoration: none;
   color: #333; font-size: 13px; border-radius: 3px; }
@@ -323,6 +398,14 @@ tr.increase .change-amount { color: #155724; }
 tr.decrease .change-amount { color: #721c24; }
 
 /* Change cards */
+.change-group { margin-bottom: 20px; }
+.change-group-details { border: 1px solid #d8d8d8; border-radius: 8px; background: #fafafa; }
+.change-group-details summary { cursor: pointer; padding: 12px 16px; font-size: 16px;
+  font-weight: 600; list-style: none; }
+.change-group-details summary::-webkit-details-marker { display: none; }
+.change-group-details summary::before { content: "▸"; margin-right: 8px; color: #666; }
+.change-group-details[open] summary::before { content: "▾"; }
+.change-group-body { padding: 0 12px 12px; }
 .change-card { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 16px;
   padding: 16px; background: #fff; }
 .change-card.added { border-left: 4px solid #28a745; }
@@ -373,15 +456,28 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.sidebar li').forEach(function(li) {
         li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
+      document.querySelectorAll('.nav-group-details').forEach(function(group) {
+        var visibleItems = Array.from(group.querySelectorAll('.nav-item')).some(function(item) {
+          return item.style.display !== 'none';
+        });
+        group.parentElement.style.display = visibleItems ? '' : 'none';
+      });
     });
   }
 
   // Prev/next navigation
   var cards = document.querySelectorAll('.change-card');
   var current = -1;
+  function expandAncestors(card) {
+    var group = card.closest('.change-group-details');
+    if (group) {
+      group.open = true;
+    }
+  }
   function goTo(idx) {
     if (idx >= 0 && idx < cards.length) {
       current = idx;
+      expandAncestors(cards[idx]);
       cards[idx].scrollIntoView({behavior: 'smooth', block: 'start'});
     }
   }
@@ -442,7 +538,7 @@ def format_html(diff_dict: dict) -> str:
     # Build components
     sidebar = build_sidebar(changes)
     financial_table = build_financial_table(changes)
-    cards = "\n".join(build_change_card(c, i) for i, c in enumerate(changes))
+    cards = build_change_groups(changes)
 
     # Summary bar
     summary_items = []
