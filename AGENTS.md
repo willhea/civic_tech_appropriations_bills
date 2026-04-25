@@ -19,6 +19,7 @@ uv run pytest test_diff_bill.py::TestMatchNodesIntegration  # Single test
 - `match_nodes()` in `diff_bill.py` uses division-aware matching: unique paths pair directly, collision groups (same `match_path` in multiple divisions) are resolved by normalized division title, then text similarity.
 - Floor amendment annotations like "(increased by $2,000,000)" reference the **budget request baseline**, not the previous bill version. The base amount in the text IS the correct appropriation. `amounts_changed` compares base amounts (annotations stripped). The `has_amendment_annotations` field on `FinancialChange` flags their presence for informational display.
 - Preamble sections (Short Title, References, etc.) sit alongside divisions/titles at the body level and are captured by `walk_body_sections()`.
+- **Synthetic-tree boundary for non-XML formats.** `parsers/` reconstructs a Congress.gov-shaped `ElementTree` from any input format and hands it to `bill_tree.normalize_bill_from_root`. This means the walkers, division-aware matching, financial summary, and HTML rendering work for any format once the synthetic tree is correct. Format-specific heuristics (PDF watermark filtering, line classification) live only in `parsers/pdf_parser.py` and `parsers/classifier.py`. The classifier exposes a `(text, StyleHints) -> Tag` interface designed for backend reuse — adding `.docx` later means writing `parsers/docx_parser.py` against the same classifier; no walker changes.
 
 ## Test conventions
 

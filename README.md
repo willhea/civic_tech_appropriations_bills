@@ -32,6 +32,14 @@ uv run python diff_bill.py compare \
   --format html -o reports/hr4366_v1_vs_v2.html
 ```
 
+PDF inputs work in any combination with XML, including PDFs carrying
+watermarks (`DRAFT`, `PRE-DECISIONAL`, etc. — the parser strips them):
+
+```bash
+uv run python diff_bill.py compare old.pdf new.xml --format html -o report.html
+uv run python diff_bill.py compare old.pdf new.pdf --format html -o report.html
+```
+
 Open the HTML file in any browser to view the comparison. No additional software needed. Reports are saved to the `reports/` folder.
 
 The tool works without an API key using a free demo key (limited to 30 requests per hour). For heavier use, get a free key at https://api.congress.gov/sign-up/ and save it in a file called `.env` in the project folder:
@@ -148,10 +156,11 @@ A bill goes through several versions as it moves through the legislative process
 
 ## Architecture
 
-Four modules:
+Five modules:
 
 - **`fetch_bills.py`** - Downloads bill XML from Congress.gov API v3. CLI commands: `versions`, `download`, `download-all`.
-- **`bill_tree.py`** - Normalizes bill XML into a `BillTree` of `BillNode` objects. Handles divisions, titles, and flat sections, plus structural containers within titles (subtitle, part, chapter, subchapter). Captures preamble sections that sit alongside divisions or titles.
+- **`bill_tree.py`** - Normalizes a Congress.gov-shaped XML tree into a `BillTree` of `BillNode` objects. Handles divisions, titles, and flat sections, plus structural containers within titles (subtitle, part, chapter, subchapter). Captures preamble sections that sit alongside divisions or titles. Exposes `normalize_bill(xml_path)` for XML files and `normalize_bill_from_root(root, ...)` for in-memory trees built by other parsers.
+- **`parsers/`** - Format dispatchers that all produce a `BillTree`. `parsers.load_bill_tree(path)` routes by extension. `parsers/pdf_parser.py` extracts characters via pdfplumber, strips watermarks (rotation + pale-fill + repeated-overlay filters), groups lines, classifies them via a shared `parsers/classifier.py`, and rebuilds a Congress.gov-shaped synthetic tree (`parsers/synthetic_xml.py`) for the bill_tree walkers to consume.
 - **`diff_bill.py`** - Compares two `BillTree`s. Uses division-aware matching for omnibus bills (resolves cross-division path collisions by normalized division title). Detects false matches via text similarity, reconciles moved sections, and extracts dollar amounts (stripping floor amendment annotations before comparison, flagging their presence separately).
 - **`formatters/html.py`** - Generates standalone HTML reports from diff output with sidebar navigation, financial summary table, and word-level inline diffs.
 

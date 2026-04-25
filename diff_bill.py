@@ -9,7 +9,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
+from bill_tree import BillNode, BillTree, normalize_division_title
 
 # --- Financial amount extraction ---
 
@@ -660,8 +660,10 @@ def filter_diff(
 
 
 def cmd_compare(args: argparse.Namespace) -> None:
-    old_tree = normalize_bill(Path(args.old_xml))
-    new_tree = normalize_bill(Path(args.new_xml))
+    from parsers import load_bill_tree
+
+    old_tree = load_bill_tree(Path(args.old_xml))
+    new_tree = load_bill_tree(Path(args.new_xml))
     result = diff_bills(old_tree, new_tree)
 
     result = filter_diff(
@@ -699,13 +701,21 @@ def cmd_compare(args: argparse.Namespace) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Compare two bill XML versions and produce a structured diff.",
+        description="Compare two bill versions (XML or PDF) and produce a structured diff.",
     )
     subparsers = parser.add_subparsers(dest="command")
 
     compare = subparsers.add_parser("compare", help="Compare two bill versions")
-    compare.add_argument("old_xml", help="Path to older bill XML")
-    compare.add_argument("new_xml", help="Path to newer bill XML")
+    compare.add_argument(
+        "old_xml",
+        metavar="old_bill",
+        help="Path to older bill (.xml or .pdf)",
+    )
+    compare.add_argument(
+        "new_xml",
+        metavar="new_bill",
+        help="Path to newer bill (.xml or .pdf)",
+    )
     compare.add_argument("-o", "--output", help="Output JSON file (default: stdout)")
     compare.add_argument(
         "--include-unchanged",
