@@ -597,12 +597,33 @@ def normalize_bill(xml_path: Path) -> BillTree:
     """
     tree = ET.parse(xml_path)
     root = tree.getroot()
-    body = find_bill_body(root)
     congress, bill_type, bill_number, version = _extract_metadata(root, xml_path)
+    return normalize_bill_from_root(
+        root,
+        congress=congress,
+        bill_type=bill_type,
+        bill_number=bill_number,
+        version=version,
+    )
 
+
+def normalize_bill_from_root(
+    root: ET.Element,
+    *,
+    congress: int,
+    bill_type: str,
+    bill_number: int,
+    version: str,
+) -> BillTree:
+    """Walk an in-memory XML tree (real or synthesized) into a BillTree.
+
+    Used directly by non-XML parsers that build a Congress.gov-shaped
+    ElementTree from another source (e.g., PDF) and want to reuse the
+    structural walker stack.
+    """
+    body = find_bill_body(root)
     all_nodes: list[BillNode] = []
 
-    # Check for divisions first
     divisions = body.findall("division")
     if divisions:
         all_nodes.extend(walk_body_sections(body))
@@ -621,7 +642,6 @@ def normalize_bill(xml_path: Path) -> BillTree:
                 all_nodes.extend(walk_title(title, title_header, division_label))
         return BillTree(congress, bill_type, bill_number, version, all_nodes)
 
-    # Check for titles directly under body
     titles = body.findall("title")
     if titles:
         all_nodes.extend(walk_body_sections(body))
@@ -630,6 +650,5 @@ def normalize_bill(xml_path: Path) -> BillTree:
             all_nodes.extend(walk_title(title, title_header, ""))
         return BillTree(congress, bill_type, bill_number, version, all_nodes)
 
-    # Fallback: sections directly under body
     all_nodes = walk_body_sections(body)
     return BillTree(congress, bill_type, bill_number, version, all_nodes)
