@@ -10,4 +10,5 @@ reports/*
 plans/
 test_data/*
 !test_data/validation_*.json
+!test_data/pdf/
 *.csv
