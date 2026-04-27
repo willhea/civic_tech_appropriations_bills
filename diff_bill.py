@@ -9,7 +9,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_title
+from bill_tree import BillNode, BillTree, normalize_division_title
 
 # --- Financial amount extraction ---
 
@@ -660,8 +660,10 @@ def filter_diff(
 
 
 def cmd_compare(args: argparse.Namespace) -> None:
-    old_tree = normalize_bill(Path(args.old_xml))
-    new_tree = normalize_bill(Path(args.new_xml))
+    from parsers import load_bill_tree
+
+    old_tree = load_bill_tree(Path(args.old_xml))
+    new_tree = load_bill_tree(Path(args.new_xml))
     result = diff_bills(old_tree, new_tree)
 
     result = filter_diff(
