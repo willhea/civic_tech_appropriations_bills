@@ -9,13 +9,15 @@ from __future__ import annotations
 
 import math
 import re
+import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from bill_tree import BillTree
+from bill_tree import BillTree, normalize_bill_from_root
 
 from . import classifier as cls
+from . import synthetic_xml as syx
 
 Char = dict[str, Any]
 Line = dict[str, Any]
@@ -543,22 +545,270 @@ def _strip_page_chrome(pages_lines: list[list[Line]], page_heights: list[float])
     return out
 
 
+def _line_to_style_hints(line: Line, page_width: float = 612.0) -> cls.StyleHints:
+    """Build :class:`classifier.StyleHints` from a Line dict.
+
+    ``indent_level`` is computed from ``x0`` past the body column floor
+    (90.0). ``centered`` checks that the line's center sits within 6%
+    of the page-width center.
+    """
+    chars = line.get("chars", []) or []
+    text = line.get("text", "")
+    x0 = float(line.get("x0", 0.0))
+    x1 = float(line.get("x1", x0))
+    indent = max(0, int((x0 - 90.0) // 18))
+    x_center = (x0 + x1) / 2
+    centered = abs(x_center - page_width / 2) < page_width * 0.06
+    return cls.StyleHints(
+        centered=centered,
+        all_caps=cls.is_all_caps(text),
+        indent_level=indent,
+        font_size=float(chars[0].get("size", 0.0)) if chars else None,
+        has_trailing_amount=cls.has_trailing_amount(text),
+    )
+
+
+def _flush_body_to_element(element: ET.Element, body_text: str) -> None:
+    """Append ``body_text`` to ``element``'s ``<text>`` child, creating
+    the child if absent."""
+    if not body_text or element is None:
+        return
+    text_el = element.find("text")
+    if text_el is None:
+        text_el = ET.SubElement(element, "text")
+        text_el.text = body_text
+    else:
+        existing = text_el.text or ""
+        text_el.text = (existing + " " + body_text).strip() if existing else body_text
+
+
+def _build_synthetic_root(
+    classified: list[tuple[cls.Tag, str]],
+    *,
+    congress: int,
+    bill_type: str,
+    bill_number: int,
+) -> ET.Element:
+    """Drive a state machine over classified lines into a Congress.gov-
+    shaped synthetic ElementTree the bill_tree walker can consume.
+
+    State tracks the deepest open structural container. When a structural
+    line opens a new element, the accumulated body buffer is flushed
+    into the previously-current leaf; lower-level state (intermediate,
+    leaf) resets where appropriate.
+
+    Orphan-appro handling: if the parser encounters an APPRO_MAJOR
+    before any TITLE has been seen, it synthesizes a ``<title>`` whose
+    ``<header>`` is that first appro-major's text. This keeps
+    ``match_path`` deterministic across the two PDF versions of the same
+    bill (both will synthesize from the same first major) and keeps the
+    walker happy (it requires appropriations-* to nest under a title).
+
+    SECTION lines without a TITLE attach directly under ``<legis-body>``
+    -- the walker's flat-section fallback handles that shape.
+    """
+    bill, legis_body = syx.make_root()
+    state: dict[str, ET.Element | None] = {
+        "division": None,
+        "title": None,
+        "major": None,
+        "intermediate": None,
+        "leaf": None,
+    }
+    counters: Counter[str] = Counter()
+    body_buffer: list[str] = []
+
+    def make_id(tag: str, key_parts: list[str]) -> str:
+        counters[tag] += 1
+        return syx.synth_id(
+            congress=congress,
+            bill_type=bill_type,
+            bill_number=bill_number,
+            tag=tag,
+            match_path_parts=key_parts,
+            ordinal=counters[tag],
+        )
+
+    def flush_body() -> None:
+        if not body_buffer:
+            return
+        text = _join_body_lines(body_buffer)
+        body_buffer.clear()
+        if state["leaf"] is not None and text:
+            _flush_body_to_element(state["leaf"], text)
+
+    def get_or_synthesize_title(seed_header: str | None = None) -> ET.Element:
+        """Return the current title, synthesizing one if absent.
+
+        ``seed_header`` is the appro-major header that triggered the
+        need. Using its text gives a deterministic match_path that two
+        PDF versions of the same bill will both reproduce.
+        """
+        if state["title"] is not None:
+            return state["title"]
+        parent = state["division"] if state["division"] is not None else legis_body
+        synth_header = (seed_header or "Untitled").strip()
+        title = syx.make_title(
+            parent,
+            header=synth_header,
+            element_id=make_id("title", [f"syn:{synth_header[:40]}"]),
+        )
+        state["title"] = title
+        return title
+
+    for tag, text in classified:
+        if tag is cls.Tag.DIVISION:
+            flush_body()
+            parsed = cls.parse_division(text)
+            if parsed is None:
+                body_buffer.append(text)
+                continue
+            enum, header = parsed
+            state["division"] = syx.make_division(
+                legis_body,
+                enum=enum,
+                header=header,
+                element_id=make_id("division", [f"div:{enum}"]),
+            )
+            state["title"] = state["major"] = state["intermediate"] = state["leaf"] = None
+        elif tag is cls.Tag.TITLE:
+            flush_body()
+            parsed = cls.parse_title(text)
+            if parsed is None:
+                body_buffer.append(text)
+                continue
+            enum, header = parsed
+            parent = state["division"] if state["division"] is not None else legis_body
+            state["title"] = syx.make_title(
+                parent,
+                enum=enum,
+                header=header,
+                element_id=make_id("title", [f"title:{enum}"]),
+            )
+            state["major"] = state["intermediate"] = state["leaf"] = None
+        elif tag is cls.Tag.APPRO_MAJOR:
+            flush_body()
+            parent = get_or_synthesize_title(seed_header=text.strip())
+            major = syx.make_appro_major(
+                parent,
+                header=text.strip(),
+                body_text="",
+                element_id=make_id("appropriations-major", [f"major:{text.strip()[:40]}"]),
+            )
+            state["major"] = major
+            state["intermediate"] = None
+            state["leaf"] = major
+        elif tag is cls.Tag.APPRO_INTERMEDIATE:
+            flush_body()
+            parent = state["major"] if state["major"] is not None else get_or_synthesize_title()
+            inter = syx.make_appro_intermediate(
+                parent,
+                header=text.strip(),
+                body_text="",
+                element_id=make_id("appropriations-intermediate", [f"intermediate:{text.strip()[:40]}"]),
+            )
+            state["intermediate"] = inter
+            state["leaf"] = inter
+        elif tag is cls.Tag.APPRO_SMALL:
+            flush_body()
+            parsed = cls.parse_run_in_header(text)
+            if parsed is None:
+                body_buffer.append(text)
+                continue
+            header, run_in_body = parsed
+            parent = (
+                state["intermediate"]
+                if state["intermediate"] is not None
+                else (state["major"] if state["major"] is not None else get_or_synthesize_title())
+            )
+            small = syx.make_appro_small(
+                parent,
+                header=header,
+                body_text=run_in_body,
+                element_id=make_id("appropriations-small", [f"small:{header[:40]}"]),
+            )
+            state["leaf"] = small
+        elif tag is cls.Tag.SECTION:
+            flush_body()
+            parsed = cls.parse_section(text)
+            if parsed is None:
+                body_buffer.append(text)
+                continue
+            enum, header = parsed
+            # If we're in a division but no title has been seen, synthesize
+            # one under the division -- otherwise the walker descends into
+            # divisions only via titles and would skip this section.
+            # Outside any division, sections sit directly under legis-body
+            # (the walker's flat-section fallback handles that shape).
+            if state["division"] is not None and state["title"] is None:
+                get_or_synthesize_title(seed_header=header or None)
+            parent = state["title"] if state["title"] is not None else legis_body
+            section = syx.make_section(
+                parent,
+                enum=enum,
+                header=header,
+                body_text="",
+                element_id=make_id("section", [f"sec:{enum}"]),
+            )
+            state["leaf"] = section
+        else:  # BODY
+            body_buffer.append(text)
+
+    flush_body()
+    return bill
+
+
 def parse_pdf(pdf_path: Path) -> BillTree:
     """Parse a PDF bill into a ``BillTree``.
 
-    Phase B0 only: extracts and sorts chars deterministically, derives
-    bill metadata from the path, and returns an empty tree. Subsequent
-    phases populate the nodes:
+    Pipeline (each step from a prior B-commit):
 
-    - B1: font-size-aware line reconstruction (small-caps reattach)
-    - B2: line-number stripping
-    - B3: cover-page / preamble guard
-    - B4: multi-line TITLE / DIVISION header join
-    - B5: body wrap and conservative dehyphenation
-    - B6: cross-page continuity
-    - B7: walker-compatible structural emission
-    - B8: orphan handling
+    - B0: extract chars per page, sort deterministically.
+    - B1: group chars into lines with font-size-aware tolerance and
+      reattach split-baseline small-caps.
+    - B2: strip glued line-number prefixes via the gap discriminator.
+    - B6: strip cross-page chrome (footers, page numbers, repeated
+      watermark fragments).
+    - Concatenate per-page line lists.
+    - B3: split off cover-page preamble at the enacting clause (or
+      structural fallback).
+    - B4: join multi-line TITLE / DIVISION headings into the
+      ``TITLE I -- NAME`` form the classifier recognizes.
+    - Classify each line into a ``Tag``.
+    - B7: drive the state machine to build a synthetic ElementTree.
+    - Hand to ``bill_tree.normalize_bill_from_root``.
     """
-    _pages, _heights = _extract_pages(pdf_path)
+    pages_chars, heights = _extract_pages(pdf_path)
     congress, bill_type, bill_number, version = _metadata_from_path(pdf_path)
-    return BillTree(congress, bill_type, bill_number, version, [])
+
+    pages_lines = []
+    for chars in pages_chars:
+        lines = _strip_line_numbers(_reattach_small_caps(_group_into_lines(chars)))
+        pages_lines.append(lines)
+
+    pages_lines = _strip_page_chrome(pages_lines, heights)
+
+    all_lines: list[Line] = [ln for page in pages_lines for ln in page]
+
+    _, body_lines = _split_preamble_and_body(all_lines)
+    body_lines = _join_multi_line_titles(body_lines)
+
+    classified: list[tuple[cls.Tag, str]] = []
+    for ln in body_lines:
+        hints = _line_to_style_hints(ln)
+        tag = cls.classify(ln.get("text", ""), hints)
+        classified.append((tag, ln.get("text", "")))
+
+    root = _build_synthetic_root(
+        classified,
+        congress=congress,
+        bill_type=bill_type,
+        bill_number=bill_number,
+    )
+    return normalize_bill_from_root(
+        root,
+        congress=congress,
+        bill_type=bill_type,
+        bill_number=bill_number,
+        version=version,
+    )

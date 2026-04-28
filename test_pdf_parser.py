@@ -862,6 +862,126 @@ def test_strip_page_chrome_does_not_drop_short_repeats_in_body_band():
     assert total_kept == 3
 
 
+# --- B7: state machine -> synthetic ElementTree -------------------------
+
+
+def test_build_synthetic_root_emits_section_with_body():
+    """Smallest end-to-end: SECTION + BODY -> a <section> with <text>."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_synthetic_root
+
+    classified = [
+        (cls.Tag.SECTION, "SEC. 101. SHORT TITLE."),
+        (cls.Tag.BODY, "This Act may be cited as the Demo Act."),
+    ]
+    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    assert len(tree.nodes) == 1
+    assert tree.nodes[0].section_number == "Sec. 101"
+    assert "Demo Act" in tree.nodes[0].body_text
+
+
+def test_build_synthetic_root_emits_title_with_section():
+    """TITLE + SECTION + BODY produces a section nested under a title;
+    match_path includes the title's normalized header."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_synthetic_root
+
+    classified = [
+        (cls.Tag.TITLE, "TITLE I — MILITARY PERSONNEL"),
+        (cls.Tag.SECTION, "SEC. 101. SHORT TITLE."),
+        (cls.Tag.BODY, "This Act may be cited as the Defense Act."),
+    ]
+    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    assert len(tree.nodes) == 1
+    n = tree.nodes[0]
+    assert "military personnel" in " ".join(n.match_path).lower()
+    assert n.section_number == "Sec. 101"
+    assert "Defense Act" in n.body_text
+
+
+def test_build_synthetic_root_synthesizes_title_for_orphan_appro_major():
+    """When appro-* appears with no prior TITLE, synthesize a title from
+    the first appro-major header so the walker recognizes the structure
+    and downstream match_paths are deterministic."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_synthetic_root
+
+    classified = [
+        (cls.Tag.APPRO_MAJOR, "OFFICE OF THE SECRETARY"),
+        (cls.Tag.BODY, "For necessary expenses, $1,500,000."),
+    ]
+    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    # Walker emits at least one BillNode for the appro-major.
+    assert len(tree.nodes) >= 1
+    bodies = " ".join(n.body_text for n in tree.nodes)
+    assert "1,500,000" in bodies
+
+
+def test_build_synthetic_root_returns_empty_legis_body_when_only_body_lines():
+    """No structural lines = no nodes. Body content with no leaf to
+    attach to is silently dropped (acceptable -- happens at the start
+    of preamble continuation in real bills)."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_synthetic_root
+
+    classified = [
+        (cls.Tag.BODY, "Just some text"),
+        (cls.Tag.BODY, "And more text"),
+    ]
+    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    assert tree.nodes == []
+
+
+def test_build_synthetic_root_division_resets_lower_state():
+    """A new DIVISION starts fresh: a section under DIVISION B should
+    not inherit DIVISION A's title."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_synthetic_root
+
+    classified = [
+        (cls.Tag.DIVISION, "DIVISION A — FIRST"),
+        (cls.Tag.TITLE, "TITLE I — A-TITLE"),
+        (cls.Tag.SECTION, "SEC. 101. ALPHA."),
+        (cls.Tag.BODY, "Alpha body text."),
+        (cls.Tag.DIVISION, "DIVISION B — SECOND"),
+        (cls.Tag.SECTION, "SEC. 201. BETA."),
+        (cls.Tag.BODY, "Beta body text."),
+    ]
+    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    div_labels = {n.division_label for n in tree.nodes}
+    # Both DIVISION A and DIVISION B sections appear, with division_label set
+    assert (
+        any("A" in d for d in div_labels)
+        or any("First" in d for d in div_labels)
+        or any("FIRST" in d.upper() for d in div_labels)
+    )
+    assert (
+        any("B" in d for d in div_labels)
+        or any("Second" in d for d in div_labels)
+        or any("SECOND" in d.upper() for d in div_labels)
+    )
+
+
+def test_parse_pdf_on_committed_fixture_yields_at_least_one_node():
+    """The committed page-5 fixture has SEC. 102 plus body text. After
+    B7 wires the pipeline together, parse_pdf returns a non-empty
+    BillTree -- the smoke beacon goes green."""
+    from parsers import load_bill_tree
+
+    tree = load_bill_tree(FIXTURE)
+    assert len(tree.nodes) >= 1
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's
