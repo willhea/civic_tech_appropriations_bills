@@ -1,28 +1,33 @@
-"""Parity test harness: PDF parser output vs XML ground truth.
+"""XML-parity diagnostic: PDF parser output vs XML parser output.
+
+DEMOTED in April 2026 from the product gate to a development-time
+diagnostic. The product gate now lives in
+``test_pdf_diff_consistency.py`` (PDF-PDF diff vs XML-XML diff
+agreement on the same bill versions), which matches the staffer's
+real use case: comparing two PDFs of the same bill, or two XMLs of
+the same bill, never PDF against XML.
+
+The metrics here are still useful for LOCALIZING a diff-agreement
+failure: ``match_path_recall`` flags structural drift, and
+``body_similarity_per_match`` flags text-recovery drift. Run with
+``-m diagnostic`` when investigating why a Phase C failure happened.
 
 For each matched ``bills/<bill>/<idx>_<slug>.{pdf,xml}`` pair, parse
-both and assert the PDF parse clears these PINNED baseline floors:
+both and assert the original baseline floors:
 
-- ``match_path_recall >= 0.50`` — at least half the XML sections
-  recovered.
-- ``body_similarity_mean >= 0.70`` — average per-section body text
-  similarity (whitespace-normalized SequenceMatcher ratio).
-- ``financial_recall >= 0.80`` — at least 80% of dollar amounts
-  recovered, multiset semantics.
+- ``match_path_recall >= 0.50``
+- ``body_similarity_mean >= 0.70``
+- ``financial_recall >= 0.80``
 
-These are the FLOOR the rebuild must clear, not the target. They
-are deliberately not ratcheted inside the Phase B commits so each
-commit's outcome is reproducible. A separate follow-up PR raises
-them once the rebuild is stable.
+Skipped automatically when no PDF/XML pairs are present locally.
 
-Skipped automatically when no PDF/XML pairs are present locally
-(populate via ``scripts/fetch_pdfs_for_existing_xmls.py --all``)
-or when the dispatcher doesn't yet support PDFs (during Phase B
-rebuild — once a PDF backend registers, the skips turn into real
-runs).
+Marker convention:
 
-Marked ``slow``; excluded from default ``pytest`` runs, run with
-``-m slow``.
+- ``slow`` keeps it out of the default ``pytest -m "not slow"`` fast
+  suite (same as before).
+- ``diagnostic`` lets CI exclude this from the product gate via
+  ``pytest -m "slow and not diagnostic"`` while still letting devs
+  run it on demand via ``pytest -m diagnostic``.
 """
 
 from __future__ import annotations
@@ -63,6 +68,7 @@ _IDS = [f"{x.parent.name}/{x.stem}" for x, _ in _PAIRS]
 
 
 @pytest.mark.slow
+@pytest.mark.diagnostic
 @pytest.mark.skipif(not _PAIRS, reason="No matched XML/PDF pairs in bills/")
 @pytest.mark.parametrize("xml_path,pdf_path", _PAIRS, ids=_IDS)
 def test_pdf_meets_parity_floor(xml_path: Path, pdf_path: Path):

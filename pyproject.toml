@@ -27,4 +27,5 @@ select = ["E", "F", "W", "I"]
 testpaths = ["."]
 markers = [
     "slow: tests that require real bill XML files (deselect with '-m not slow')",
+    "diagnostic: dev-time signal, not a product gate (run with '-m diagnostic')",
 ]
