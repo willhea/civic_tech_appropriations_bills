@@ -13,6 +13,7 @@ from typing import Any
 from bill_tree import BillTree
 
 Char = dict[str, Any]
+Line = dict[str, Any]
 
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
@@ -76,6 +77,111 @@ def _extract_pages(pdf_path: Path) -> tuple[list[list[Char]], list[float]]:
             pages.append(_sort_chars(list(page.chars)))
             heights.append(float(page.height))
     return pages, heights
+
+
+def _finalize_line(chars: list[Char]) -> Line:
+    """Build a line summary dict from a list of chars (re-sorted by ``x0``)."""
+    chars_sorted = sorted(chars, key=lambda c: float(c.get("x0", 0.0)))
+    text = "".join(c.get("text", "") for c in chars_sorted)
+    if not chars_sorted:
+        return {"text": "", "top": 0.0, "x0": 0.0, "x1": 0.0, "chars": []}
+    return {
+        "text": text,
+        "top": float(chars_sorted[0].get("top", 0.0)),
+        "x0": float(chars_sorted[0].get("x0", 0.0)),
+        "x1": max(float(c.get("x1", c.get("x0", 0.0))) for c in chars_sorted),
+        "chars": chars_sorted,
+    }
+
+
+def _group_into_lines(chars: list[Char]) -> list[Line]:
+    """Group chars into lines using a font-size-aware tolerance.
+
+    Tolerance per pair = ``max(2.0, 0.4 * max(line_max_size, char.size))``.
+    The ``0.4 * size`` term handles the common GPO case where small-caps
+    continuation chars have a ``top`` ~3px below their lead-cap baseline
+    (because pdfplumber's ``top`` is bounding-box top, not baseline, and
+    smaller chars have smaller bounding boxes).
+
+    Chars are sorted by ``top`` ascending, so each char's only join
+    candidate is the most-recently-opened line. Lines are returned in
+    y-order with their chars sorted by ``x0``.
+    """
+    pending: list[list[Char]] = []
+    sorted_chars = sorted(
+        chars,
+        key=lambda c: (round(float(c.get("top", 0.0)), 1), float(c.get("x0", 0.0))),
+    )
+    for ch in sorted_chars:
+        ch_top = float(ch.get("top", 0.0))
+        ch_size = float(ch.get("size", 0.0))
+        if pending:
+            cur = pending[-1]
+            cur_max_size = max(float(c.get("size", 0.0)) for c in cur)
+            tol = max(2.0, 0.4 * max(cur_max_size, ch_size))
+            cur_mean_top = sum(float(c["top"]) for c in cur) / len(cur)
+            if abs(ch_top - cur_mean_top) <= tol:
+                cur.append(ch)
+                continue
+        pending.append([ch])
+    return [_finalize_line(c_list) for c_list in pending]
+
+
+def _looks_like_small_caps_continuation(prev: Line, nxt: Line) -> bool:
+    """True if ``nxt`` is a small-caps continuation of ``prev``.
+
+    All four conditions must hold:
+
+    - ``prev`` ends with a single uppercase alpha letter (the lead cap).
+    - That lead char's ``size`` is strictly larger than every ``nxt`` char.
+    - Every ``nxt`` char is uppercase alpha at ``size <= 0.8 * lead_size``.
+    - ``nxt.x0`` sits within +/- 5px of ``prev.x1`` (continuation, not wrap).
+    """
+    prev_chars = prev.get("chars") or []
+    nxt_chars = nxt.get("chars") or []
+    if not prev_chars or not nxt_chars:
+        return False
+    last = prev_chars[-1]
+    last_text = last.get("text", "")
+    if not (len(last_text) == 1 and last_text.isalpha() and last_text.isupper()):
+        return False
+    lead_size = float(last.get("size", 0.0))
+    if lead_size <= 0.0:
+        return False
+    threshold = 0.8 * lead_size
+    for c in nxt_chars:
+        t = c.get("text", "")
+        if not (t.isalpha() and t.isupper()):
+            return False
+        if float(c.get("size", 0.0)) > threshold:
+            return False
+    return abs(float(nxt["x0"]) - float(prev["x1"])) <= 5.0
+
+
+def _reattach_small_caps(lines: list[Line]) -> list[Line]:
+    """Merge small-caps continuation lines into their lead-cap parent.
+
+    Defensive pass for cases where the baseline gap exceeds the dynamic
+    tolerance in :func:`_group_into_lines` (e.g., 18pt heading + 10pt
+    small caps yields a ~12-15px gap). For typical 12-14pt sizes the
+    grouping function bridges these splits and this pass is a no-op.
+
+    Cascades correctly: if line N+2 is also a continuation of the merged
+    N+(N+1), it gets folded in as well.
+    """
+    if len(lines) < 2:
+        return lines
+    out: list[Line] = []
+    i = 0
+    while i < len(lines):
+        cur = lines[i]
+        j = i + 1
+        while j < len(lines) and _looks_like_small_caps_continuation(cur, lines[j]):
+            cur = _finalize_line(cur["chars"] + lines[j]["chars"])
+            j += 1
+        out.append(cur)
+        i = j
+    return out
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:
