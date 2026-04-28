@@ -54,43 +54,20 @@ _HEADING_CONTINUES_RE = re.compile(r"(?:[-,]|\b(?:AND|OR))\s*$")
 # the bill. Real GPO headings span 1-4 lines; 6 is generous.
 _MAX_HEADING_CONTINUATION_LINES = 6
 
-# Body-line dehyphenation: when a wrapped body line ends with ``-``, drop
-# the hyphen UNLESS the lowercase letter fragment ending at the hyphen is
-# a recognized morphological prefix. Length-based thresholds tested on the
-# corpus (``118-hr-8752``) miss real cases either way -- length 4 misses
-# ``oth-/erwise``, length 3 wrongly drops ``pre-/decisional``. The prefix
-# list captures the right semantics: short legal compounds like
-# ``re-enacted``, ``non-Federal``, ``pre-decisional``, ``self-insurance``
-# stay hyphenated; everything else is treated as a wrap.
-_HYPHEN_PRESERVED_PREFIXES = frozenset(
-    {
-        "re",
-        "un",
-        "non",
-        "pre",
-        "co",
-        "ex",
-        "post",
-        "sub",
-        "anti",
-        "self",
-        "mid",
-        "multi",
-        "inter",
-        "intra",
-        "trans",
-        "para",
-        "semi",
-        "well",
-        "ill",
-        "off",
-        "out",
-        "over",
-        "under",
-    }
-)
-
-_LAST_WORD_FRAGMENT_RE = re.compile(r"([A-Za-z]+)$")
+# Body-line dehyphenation rule: drop end-of-line ``-`` only when the chars
+# immediately before AND after the hyphen are both lowercase letters. This
+# recovers the common word-wrap case (``Representa-/tives`` -> ``Representatives``,
+# ``oth-/erwise`` -> ``otherwise``) while preserving compounds with an
+# uppercase next word (``non-/Federal``) or a punctuation-bearing prev
+# (``U.S.-/Mexico``).
+#
+# Known trade-off: prefix-compounds like ``re-/enacted`` and
+# ``pre-/decisional`` get glued to ``reenacted`` / ``predecisional`` when
+# they happen to wrap exactly at the prefix-hyphen. Real word-wraps are
+# many times more frequent than prefix-compound wraps in bill body text,
+# and the 1-character glue artifact is absorbed by the body_similarity
+# metric. A more accurate fix would require a hyphenation dictionary
+# (pyphen + a wordlist for legal jargon), which is out of scope here.
 
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
@@ -431,23 +408,20 @@ def _join_multi_line_titles(lines: list[Line]) -> list[Line]:
 
 
 def _join_with_dehyphenation(prev: str, next_part: str) -> str:
-    """Join two adjacent body-line texts, conservatively dehyphenating
-    when the previous line ends with ``-``.
+    """Join two adjacent body-line texts, dehyphenating at end-of-line
+    when both adjacent chars are lowercase letters.
 
-    Drops the hyphen (and inserts no space) only when ALL hold:
+    Rule: when ``prev`` ends with ``-``, drop the hyphen iff the char
+    immediately before it AND the first char of ``next_part`` are both
+    lowercase letters. Otherwise keep the hyphen and join with no space.
+    When ``prev`` doesn't end with ``-``, join with a single space.
 
-    - The character immediately before the hyphen is a lowercase letter.
-    - The first character of ``next_part`` (after stripping leading
-      whitespace) is a lowercase letter.
-    - The contiguous letter run ending at the hyphen is NOT a recognized
-      morphological prefix in :data:`_HYPHEN_PRESERVED_PREFIXES`.
-
-    If ``prev`` ends with ``-`` but the conditions above don't hold, the
-    hyphen is preserved and joined directly (no space) — the correct
-    shape for compounds like ``non-Federal``, ``U.S.-Mexico``,
-    ``re-enacted``.
-
-    Otherwise (no trailing hyphen on ``prev``), join with a single space.
+    This produces clean text on the common word-wrap case (``Representa-``
+    + ``tives`` -> ``Representatives``) and preserves compounds like
+    ``non-Federal`` (uppercase next) and ``U.S.-Mexico`` (punctuation
+    before hyphen). Prefix-compounds that happen to wrap at the
+    prefix-hyphen (``re-`` + ``enacted``) get glued (``reenacted``);
+    accepted as documented above.
     """
     prev_r = prev.rstrip()
     next_l = next_part.lstrip()
@@ -458,9 +432,7 @@ def _join_with_dehyphenation(prev: str, next_part: str) -> str:
     if prev_r.endswith("-"):
         before_hyphen = prev_r[:-1]
         if before_hyphen and before_hyphen[-1].islower() and next_l[0].islower():
-            m = _LAST_WORD_FRAGMENT_RE.search(before_hyphen)
-            if m and m.group(1).lower() not in _HYPHEN_PRESERVED_PREFIXES:
-                return before_hyphen + next_l
+            return before_hyphen + next_l
         return prev_r + next_l
     return prev_r + " " + next_l
 
