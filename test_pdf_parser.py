@@ -356,6 +356,138 @@ def test_strip_line_numbers_applies_to_every_line_in_a_list():
     assert [ln["text"] for ln in out] == ["TI", "(a)"]
 
 
+# --- B3: cover-page / preamble guard ------------------------------------
+
+
+def _line(text: str) -> dict:
+    """Minimal Line dict for tests that only exercise text-level logic."""
+    return {"text": text, "top": 0.0, "x0": 0.0, "x1": 0.0, "chars": []}
+
+
+def test_split_preamble_finds_enacting_clause():
+    """Standard GPO bill: cover-page lines + enacting clause + body. The
+    enacting clause is the last line of the preamble; everything after
+    is body."""
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Calendar No. 456"),
+        _line("H. R. 8752"),
+        _line("A BILL"),
+        _line("Making appropriations for the Department of Homeland Security..."),
+        _line("Be it enacted by the Senate and House of Representa-"),
+        _line("tives of the United States of America..."),
+        _line("That the following sums..."),
+        _line("TITLE I"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert len(preamble) == 5
+    assert preamble[-1]["text"].startswith("Be it enacted")
+    assert [ln["text"] for ln in body] == [
+        "tives of the United States of America...",
+        "That the following sums...",
+        "TITLE I",
+    ]
+
+
+def test_split_preamble_is_case_insensitive():
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Cover stuff"),
+        _line("BE IT ENACTED BY THE SENATE AND HOUSE OF REPRESENTATIVES"),
+        _line("Body here"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert len(preamble) == 2
+    assert body[0]["text"] == "Body here"
+
+
+def test_split_preamble_falls_back_to_structural_marker_for_drafts():
+    """Committee prints / drafts may lack the standard enacting clause.
+    Fall back to the first DIVISION/TITLE/SEC. line within the scan
+    window — drop cover-page lines, keep the structural marker as the
+    body's first line."""
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("DRAFT - PRE-DECISIONAL"),
+        _line("Committee Print No. 47"),
+        _line("Various boilerplate"),
+        _line("TITLE I"),
+        _line("First body line"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert [ln["text"] for ln in preamble] == [
+        "DRAFT - PRE-DECISIONAL",
+        "Committee Print No. 47",
+        "Various boilerplate",
+    ]
+    assert body[0]["text"] == "TITLE I"
+
+
+def test_split_preamble_fallback_recognizes_section_marker():
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Cover line"),
+        _line("SEC. 101. SHORT TITLE."),
+        _line("Body"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert len(preamble) == 1
+    assert body[0]["text"] == "SEC. 101. SHORT TITLE."
+
+
+def test_split_preamble_fallback_recognizes_division_marker():
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Cover"),
+        _line("DIVISION A"),
+        _line("Body"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert len(preamble) == 1
+    assert body[0]["text"] == "DIVISION A"
+
+
+def test_split_preamble_returns_all_body_when_no_marker_found():
+    """Last-resort: if neither enacting clause nor structural marker is
+    visible in the scan window, return the full input as body. The state
+    machine's "no open leaf" logic handles the absorbed cover-page lines."""
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Just"),
+        _line("a few"),
+        _line("random lines"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert preamble == []
+    assert len(body) == 3
+
+
+def test_split_preamble_does_not_match_enacting_clause_in_body_text():
+    """Once we've passed the cover-page region, a stray mention of
+    'Be it enacted' deep in the body shouldn't re-anchor the split.
+    The scan stops at the first match by design — multiple matches are
+    just resolved to the first."""
+    from parsers.pdf_parser import _split_preamble_and_body
+
+    lines = [
+        _line("Cover"),
+        _line("Be it enacted by the Senate and House of Representatives"),
+        _line("Body section A"),
+        _line("Be it enacted by the Senate (quoted in another bill)"),
+        _line("Body section B"),
+    ]
+    preamble, body = _split_preamble_and_body(lines)
+    assert len(preamble) == 2
+    assert len(body) == 3
+    assert body[0]["text"] == "Body section A"
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's

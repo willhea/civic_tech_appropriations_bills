@@ -7,6 +7,7 @@ phases add line reconstruction, classification, and tree construction.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,20 @@ Line = dict[str, Any]
 # line-number gaps are ~10-45px (body column starts past the line-number
 # margin); kerned digit-letter pairs within a word like "21st" are ~0-2px.
 _LINE_NUMBER_GAP_THRESHOLD = 5.0
+
+# Standard GPO enacting clause -- always the last sentence of the
+# cover-page preamble. Match case-insensitively because some bills use
+# all-caps stylings.
+_ENACTING_CLAUSE_RE = re.compile(r"Be it enacted by the Senate", re.IGNORECASE)
+
+# Fallback structural markers for drafts / committee prints that lack
+# the standard enacting clause. We anchor the body at the first
+# DIVISION / TITLE / SEC. line within the scan window.
+_STRUCTURAL_MARKER_RE = re.compile(r"^(?:DIVISION|TITLE)\s+\S+|^SEC(?:TION|\.)\s")
+
+# How many lines from the start to scan for the enacting clause / fallback
+# marker. Real bills hit one or the other within the first 30-50 lines.
+_MAX_PREAMBLE_SCAN_LINES = 100
 
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
@@ -224,6 +239,37 @@ def _strip_line_number_prefix(line: Line) -> Line:
 def _strip_line_numbers(lines: list[Line]) -> list[Line]:
     """Apply :func:`_strip_line_number_prefix` to every line in ``lines``."""
     return [_strip_line_number_prefix(ln) for ln in lines]
+
+
+def _split_preamble_and_body(lines: list[Line]) -> tuple[list[Line], list[Line]]:
+    """Split ``lines`` into ``(preamble, body)`` at the bill's structural start.
+
+    Primary anchor: the enacting clause ``Be it enacted by the Senate ...``
+    (always the last sentence of a published bill's cover-page preamble).
+    Everything up to and including that line goes into the preamble;
+    everything after into the body. Only the FIRST occurrence anchors —
+    a stray reference deep in the body doesn't re-split.
+
+    Fallback (drafts, committee prints, anything missing the enacting
+    clause): scan the first ``_MAX_PREAMBLE_SCAN_LINES`` lines for a
+    structural marker (``DIVISION X``, ``TITLE I``, ``SEC. 101``, etc.).
+    Drop everything before the marker; the marker itself is the first
+    body line.
+
+    Last resort: neither anchor visible -> ``([], lines)``. The state
+    machine's no-open-leaf behavior absorbs cover-page leaks at that
+    point; we'd rather under-strip than throw away real content.
+    """
+    for i, ln in enumerate(lines):
+        if _ENACTING_CLAUSE_RE.search(ln.get("text", "")):
+            return lines[: i + 1], lines[i + 1 :]
+
+    scan_limit = min(_MAX_PREAMBLE_SCAN_LINES, len(lines))
+    for i in range(scan_limit):
+        if _STRUCTURAL_MARKER_RE.match(lines[i].get("text", "").strip()):
+            return lines[:i], lines[i:]
+
+    return [], list(lines)
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:
