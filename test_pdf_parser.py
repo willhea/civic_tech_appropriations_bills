@@ -201,6 +201,161 @@ def test_reattach_small_caps_does_not_merge_when_size_ratio_does_not_match():
     assert len(lines) == 2
 
 
+# --- B2: line-number stripping (gap-based) ------------------------------
+# Real GPO layout: line-number digit at x0 ~ 126-133, body column begins
+# at x0 ~ 150 -- so the gap between the digit's x1 and the next char's x0
+# is consistently >= 10px. A digit-prefix inside legitimate text like
+# "21st" has normal kerning (gap ~ 0-2px). The gap is the discriminator.
+
+
+def test_strip_line_number_prefix_strips_single_digit_before_uppercase():
+    """``7  TITLE I`` (line-number gap) -> ``TITLE I``."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("7", 133, 100),  # x1 = 139
+        _char("T", 150, 100),  # gap = 11
+        _char("I", 156, 100),
+        _char("T", 162, 100),
+        _char("L", 168, 100),
+        _char("E", 174, 100),
+        _char(" ", 180, 100),
+        _char("I", 186, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "TITLE I"
+
+
+def test_strip_line_number_prefix_strips_two_digits_glued_to_section():
+    """``21  SEC. 101.`` -> ``SEC. 101.``."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("2", 126, 100),  # x1 = 132
+        _char("1", 133, 100),  # x1 = 139, kerned to next digit
+        _char("S", 150, 100),  # gap = 11
+        _char("E", 156, 100),
+        _char("C", 162, 100),
+        _char(".", 168, 100),
+        _char(" ", 174, 100),
+        _char("1", 180, 100),
+        _char("0", 186, 100),
+        _char("1", 192, 100),
+        _char(".", 198, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "SEC. 101."
+
+
+def test_strip_line_number_prefix_strips_when_body_continues_lowercase():
+    """Body lines that wrap mid-sentence start with lowercase. The gap
+    discriminator catches these where the plan's regex (which required
+    uppercase follower) would not."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("4", 133, 100),  # x1 = 139
+        _char("e", 150, 100),  # gap = 11
+        _char("r", 156, 100),
+        _char("w", 162, 100),
+        _char("i", 168, 100),
+        _char("s", 174, 100),
+        _char("e", 180, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "erwise"
+
+
+def test_strip_line_number_prefix_strips_when_body_starts_with_punctuation():
+    """``10(b) The limitation`` -> ``(b) The limitation``."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("1", 126, 100),
+        _char("0", 133, 100),  # x1 = 139
+        _char("(", 150, 100),  # gap = 11
+        _char("b", 156, 100),
+        _char(")", 162, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "(b)"
+
+
+def test_strip_line_number_prefix_handles_be_it_enacted():
+    """``1Be it enacted`` -> ``Be it enacted``."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("1", 133, 100),  # x1 = 139
+        _char("B", 150, 100),  # gap = 11
+        _char("e", 156, 100),
+        _char(" ", 162, 100),
+        _char("i", 168, 100),
+        _char("t", 174, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "Be it"
+
+
+def test_strip_line_number_prefix_leaves_kerned_digit_run_untouched():
+    """``21st Century Cures Act``: digits kerned tight to the following
+    letter (gap ~ 0px), NOT a line number."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("2", 130, 100),  # x1 = 136
+        _char("1", 136, 100),  # x1 = 142, abuts next char
+        _char("s", 142, 100),  # gap = 0
+        _char("t", 148, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "21st"
+
+
+def test_strip_line_number_prefix_leaves_no_leading_digit_untouched():
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [_char("(", 100, 100), _char("a", 106, 100), _char(")", 112, 100)]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"] == "(a)"
+
+
+def test_strip_line_number_prefix_leaves_digit_with_narrow_gap_untouched():
+    """A digit followed by an inter-word space (~2-3px) is body text, not
+    a line number. Threshold is 5px so gap of 3 keeps the digit intact."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [
+        _char("4", 133, 100),  # x1 = 139
+        _char(" ", 142, 100),  # gap = 3 (narrow, intra-line space)
+        _char("s", 148, 100),
+    ]
+    out = _strip_line_number_prefix(_finalize_line(chars))
+    assert out["text"].startswith("4")
+
+
+def test_strip_line_number_prefix_advances_x0_past_digit():
+    """After stripping, the line's x0 reflects the first non-digit char."""
+    from parsers.pdf_parser import _finalize_line, _strip_line_number_prefix
+
+    chars = [_char("3", 133, 100), _char("S", 150, 100), _char("E", 156, 100)]
+    line = _finalize_line(chars)
+    assert line["x0"] == 133
+
+    out = _strip_line_number_prefix(line)
+    assert out["text"] == "SE"
+    assert out["x0"] == 150
+
+
+def test_strip_line_numbers_applies_to_every_line_in_a_list():
+    from parsers.pdf_parser import _finalize_line, _strip_line_numbers
+
+    line_a = _finalize_line([_char("7", 133, 100), _char("T", 150, 100), _char("I", 156, 100)])
+    line_b = _finalize_line([_char("(", 100, 120), _char("a", 106, 120), _char(")", 112, 120)])
+    out = _strip_line_numbers([line_a, line_b])
+    assert [ln["text"] for ln in out] == ["TI", "(a)"]
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's

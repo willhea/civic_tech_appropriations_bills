@@ -15,6 +15,12 @@ from bill_tree import BillTree
 Char = dict[str, Any]
 Line = dict[str, Any]
 
+# Horizontal gap (in pdfplumber px units) that distinguishes a margin
+# line-number from a digit that's part of legislative content. Real GPO
+# line-number gaps are ~10-45px (body column starts past the line-number
+# margin); kerned digit-letter pairs within a word like "21st" are ~0-2px.
+_LINE_NUMBER_GAP_THRESHOLD = 5.0
+
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
     """Derive ``(congress, bill_type, bill_number, version)`` from path layout.
@@ -182,6 +188,42 @@ def _reattach_small_caps(lines: list[Line]) -> list[Line]:
         out.append(cur)
         i = j
     return out
+
+
+def _strip_line_number_prefix(line: Line) -> Line:
+    """Strip a glued line-number digit run from the start of a line.
+
+    GPO bills typeset line numbers in the lower-left margin (x0 ~ 126-133)
+    on the same y-baseline as the body text, so pdfplumber merges them
+    into the line as e.g. ``7TITLE I``, ``21SEC. 101.``, ``4erwise made``,
+    or ``10(b)``. The robust discriminator is the HORIZONTAL GAP between
+    the last digit and the first non-digit char: line numbers always have
+    a gap of >= ~10px (body column begins past the margin), while a
+    digit-prefix that's part of legitimate content like ``21st Century
+    Cures Act`` is rendered with normal kerning (gap ~ 0-2px).
+
+    Returns the input line unchanged if it has no leading digits, or if
+    the digit run isn't followed by a wide-enough gap.
+    """
+    chars = line.get("chars", [])
+    digit_count = 0
+    for c in chars:
+        if c.get("text", "").isdigit():
+            digit_count += 1
+        else:
+            break
+    if digit_count == 0 or digit_count >= len(chars):
+        return line
+    last_digit_x1 = float(chars[digit_count - 1].get("x1", 0.0))
+    next_char_x0 = float(chars[digit_count].get("x0", 0.0))
+    if (next_char_x0 - last_digit_x1) < _LINE_NUMBER_GAP_THRESHOLD:
+        return line
+    return _finalize_line(chars[digit_count:])
+
+
+def _strip_line_numbers(lines: list[Line]) -> list[Line]:
+    """Apply :func:`_strip_line_number_prefix` to every line in ``lines``."""
+    return [_strip_line_number_prefix(ln) for ln in lines]
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:
