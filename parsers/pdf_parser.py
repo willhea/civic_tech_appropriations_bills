@@ -7,7 +7,9 @@ phases add line reconstruction, classification, and tree construction.
 
 from __future__ import annotations
 
+import math
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -53,6 +55,21 @@ _HEADING_CONTINUES_RE = re.compile(r"(?:[-,]|\b(?:AND|OR))\s*$")
 # Hard cap on continuation lines so a runaway scan can't eat the rest of
 # the bill. Real GPO headings span 1-4 lines; 6 is generous.
 _MAX_HEADING_CONTINUATION_LINES = 6
+
+# Page-chrome stripping (B6): the top and bottom bands (in pdfplumber px)
+# treated as candidates for headers / footers / page numbers. A line whose
+# ``top`` falls within either band gets evaluated for chrome-stripping;
+# lines in the body band are always preserved.
+_HEADER_BAND_PX = 60.0
+_FOOTER_BAND_PX = 60.0
+
+# Repetition threshold: a line whose normalized text appears in the same
+# band on >= this fraction of pages is treated as repeated chrome and
+# stripped from every page where it occurs. The minimum-2 floor prevents
+# a single page from misclassifying its only header/footer line.
+_CHROME_REPETITION_FRACTION = 0.5
+
+_PAGE_NUMBER_ONLY_RE = re.compile(r"^\s*\d+\s*$")
 
 # Body-line dehyphenation rule: drop end-of-line ``-`` only when the chars
 # immediately before AND after the hyphen are both lowercase letters. This
@@ -452,6 +469,78 @@ def _join_body_lines(parts: list[str]) -> str:
         else:
             result = _join_with_dehyphenation(result, p)
     return result
+
+
+def _band_for_line(line: Line, page_height: float) -> str | None:
+    """Classify a line's vertical position as ``"header"``, ``"footer"``,
+    or ``None`` (body band)."""
+    top = float(line.get("top", 0.0))
+    if top <= _HEADER_BAND_PX:
+        return "header"
+    if page_height > 0 and top >= page_height - _FOOTER_BAND_PX:
+        return "footer"
+    return None
+
+
+def _strip_page_chrome(pages_lines: list[list[Line]], page_heights: list[float]) -> list[list[Line]]:
+    """Strip page chrome (footers, running headers, page numbers) from
+    each page's line list.
+
+    Two filters applied in a single pass:
+
+    1. **Standalone numerics in the chrome band.** A line whose text is
+       just a digit run (``"1"``, ``"42"``, ...) and whose ``top`` falls
+       in the header or footer band is treated as a page number and
+       dropped. Fires regardless of repetition count.
+    2. **Lines repeating across pages within the same band.** A line
+       whose normalized (whitespace-collapsed, lower-cased) text appears
+       in the same band on at least
+       ``max(2, ceil(N * _CHROME_REPETITION_FRACTION))`` pages out of
+       ``N`` total is treated as repeated chrome (e.g. the GPO bill
+       footer ``•HR 8752 RH``) and dropped from every page where it
+       occurs. The minimum-2 floor prevents a single-page document from
+       misclassifying its only chrome line.
+
+    Body-band lines (between the two bands) are always preserved.
+    """
+    if not pages_lines:
+        return pages_lines
+
+    repetition: Counter[tuple[str, str]] = Counter()
+    for page_idx, lines in enumerate(pages_lines):
+        height = page_heights[page_idx] if page_idx < len(page_heights) else 0.0
+        seen_on_page: set[tuple[str, str]] = set()
+        for ln in lines:
+            band = _band_for_line(ln, height)
+            if band is None:
+                continue
+            text = " ".join(ln.get("text", "").split()).lower()
+            if not text:
+                continue
+            key = (band, text)
+            if key in seen_on_page:
+                continue
+            repetition[key] += 1
+            seen_on_page.add(key)
+
+    threshold = max(2, math.ceil(len(pages_lines) * _CHROME_REPETITION_FRACTION))
+    repeating: set[tuple[str, str]] = {k for k, c in repetition.items() if c >= threshold}
+
+    out: list[list[Line]] = []
+    for page_idx, lines in enumerate(pages_lines):
+        height = page_heights[page_idx] if page_idx < len(page_heights) else 0.0
+        kept: list[Line] = []
+        for ln in lines:
+            band = _band_for_line(ln, height)
+            if band is not None:
+                if _PAGE_NUMBER_ONLY_RE.match(ln.get("text", "")):
+                    continue
+                text = " ".join(ln.get("text", "").split()).lower()
+                if (band, text) in repeating:
+                    continue
+            kept.append(ln)
+        out.append(kept)
+    return out
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:

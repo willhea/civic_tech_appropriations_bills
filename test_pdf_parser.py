@@ -750,6 +750,118 @@ def test_join_body_lines_collapses_internal_whitespace_at_join_points():
     assert out == "alpha beta"
 
 
+# --- B6: cross-page chrome stripping (footers, running headers, page numbers) ---
+
+
+def _pos_line(text: str, *, top: float, x0: float = 100.0) -> dict:
+    """Line dict with explicit positioning, for tests that exercise the
+    top/bottom-band logic in :func:`_strip_page_chrome`."""
+    return {
+        "text": text,
+        "top": top,
+        "x0": x0,
+        "x1": x0 + max(1, len(text)) * 6,
+        "chars": [],
+    }
+
+
+def test_strip_page_chrome_drops_repeating_footer():
+    """``•HR 8752 RH`` at the bottom of every page is the GPO bill
+    footer; strip it across all pages."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [
+            _pos_line("Body content for page 1", top=100),
+            _pos_line("•HR 8752 RH", top=750),
+        ],
+        [
+            _pos_line("Body content for page 2", top=100),
+            _pos_line("•HR 8752 RH", top=750),
+        ],
+        [
+            _pos_line("Body content for page 3", top=100),
+            _pos_line("•HR 8752 RH", top=750),
+        ],
+    ]
+    heights = [792.0, 792.0, 792.0]
+    out = _strip_page_chrome(pages, heights)
+    assert all(not any("HR 8752" in ln["text"] for ln in page) for page in out)
+    assert all(any("Body content" in ln["text"] for ln in page) for page in out)
+
+
+def test_strip_page_chrome_drops_per_page_page_numbers_in_top_band():
+    """Page numbers vary per page so they don't trigger repetition; the
+    standalone-numeric-in-band rule catches them."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [_pos_line("1", top=30), _pos_line("Body line one", top=100)],
+        [_pos_line("2", top=30), _pos_line("Body line two", top=100)],
+        [_pos_line("3", top=30), _pos_line("Body line three", top=100)],
+    ]
+    out = _strip_page_chrome(pages, [792.0, 792.0, 792.0])
+    for page in out:
+        assert not any(ln["text"].strip().isdigit() for ln in page)
+        assert any("Body line" in ln["text"] for ln in page)
+
+
+def test_strip_page_chrome_keeps_body_lines_in_middle_of_page():
+    """A line in the body band (not top, not bottom) is never stripped
+    even if it happens to be short or repeats verbatim."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [_pos_line("SHORT", top=400)],
+        [_pos_line("SHORT", top=400)],
+    ]
+    out = _strip_page_chrome(pages, [792.0, 792.0])
+    assert all(any(ln["text"] == "SHORT" for ln in page) for page in out)
+
+
+def test_strip_page_chrome_single_page_does_not_strip_footer_via_repetition():
+    """Repetition can't be measured with one page. The footer survives
+    unless it matches the standalone-numeric pattern."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [
+            _pos_line("Some body text", top=100),
+            _pos_line("•HR 8752 RH", top=750),
+        ],
+    ]
+    out = _strip_page_chrome(pages, [792.0])
+    assert any("HR 8752" in ln["text"] for ln in out[0])
+
+
+def test_strip_page_chrome_drops_page_numbers_even_with_one_page():
+    """The standalone-numeric rule fires regardless of repetition count."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [_pos_line("42", top=30), _pos_line("Body", top=100)],
+    ]
+    out = _strip_page_chrome(pages, [792.0])
+    assert not any(ln["text"].strip() == "42" for ln in out[0])
+    assert any(ln["text"] == "Body" for ln in out[0])
+
+
+def test_strip_page_chrome_does_not_drop_short_repeats_in_body_band():
+    """A line repeated across pages but in the body band (not chrome
+    band) is preserved — it's content that happens to repeat (e.g., a
+    boilerplate clause), not page chrome."""
+    from parsers.pdf_parser import _strip_page_chrome
+
+    pages = [
+        [_pos_line("As provided in this Act,", top=400) for _ in range(3)][:1],
+        [_pos_line("As provided in this Act,", top=400)],
+        [_pos_line("As provided in this Act,", top=400)],
+    ]
+    out = _strip_page_chrome(pages, [792.0, 792.0, 792.0])
+    total_kept = sum(1 for page in out for ln in page if "As provided" in ln["text"])
+    assert total_kept == 3
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's
