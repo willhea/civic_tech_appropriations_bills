@@ -54,6 +54,44 @@ _HEADING_CONTINUES_RE = re.compile(r"(?:[-,]|\b(?:AND|OR))\s*$")
 # the bill. Real GPO headings span 1-4 lines; 6 is generous.
 _MAX_HEADING_CONTINUATION_LINES = 6
 
+# Body-line dehyphenation: when a wrapped body line ends with ``-``, drop
+# the hyphen UNLESS the lowercase letter fragment ending at the hyphen is
+# a recognized morphological prefix. Length-based thresholds tested on the
+# corpus (``118-hr-8752``) miss real cases either way -- length 4 misses
+# ``oth-/erwise``, length 3 wrongly drops ``pre-/decisional``. The prefix
+# list captures the right semantics: short legal compounds like
+# ``re-enacted``, ``non-Federal``, ``pre-decisional``, ``self-insurance``
+# stay hyphenated; everything else is treated as a wrap.
+_HYPHEN_PRESERVED_PREFIXES = frozenset(
+    {
+        "re",
+        "un",
+        "non",
+        "pre",
+        "co",
+        "ex",
+        "post",
+        "sub",
+        "anti",
+        "self",
+        "mid",
+        "multi",
+        "inter",
+        "intra",
+        "trans",
+        "para",
+        "semi",
+        "well",
+        "ill",
+        "off",
+        "out",
+        "over",
+        "under",
+    }
+)
+
+_LAST_WORD_FRAGMENT_RE = re.compile(r"([A-Za-z]+)$")
+
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
     """Derive ``(congress, bill_type, bill_number, version)`` from path layout.
@@ -390,6 +428,58 @@ def _join_multi_line_titles(lines: list[Line]) -> list[Line]:
             out.append(ln)
             i += 1
     return out
+
+
+def _join_with_dehyphenation(prev: str, next_part: str) -> str:
+    """Join two adjacent body-line texts, conservatively dehyphenating
+    when the previous line ends with ``-``.
+
+    Drops the hyphen (and inserts no space) only when ALL hold:
+
+    - The character immediately before the hyphen is a lowercase letter.
+    - The first character of ``next_part`` (after stripping leading
+      whitespace) is a lowercase letter.
+    - The contiguous letter run ending at the hyphen is NOT a recognized
+      morphological prefix in :data:`_HYPHEN_PRESERVED_PREFIXES`.
+
+    If ``prev`` ends with ``-`` but the conditions above don't hold, the
+    hyphen is preserved and joined directly (no space) — the correct
+    shape for compounds like ``non-Federal``, ``U.S.-Mexico``,
+    ``re-enacted``.
+
+    Otherwise (no trailing hyphen on ``prev``), join with a single space.
+    """
+    prev_r = prev.rstrip()
+    next_l = next_part.lstrip()
+    if not next_l:
+        return prev_r
+    if not prev_r:
+        return next_l
+    if prev_r.endswith("-"):
+        before_hyphen = prev_r[:-1]
+        if before_hyphen and before_hyphen[-1].islower() and next_l[0].islower():
+            m = _LAST_WORD_FRAGMENT_RE.search(before_hyphen)
+            if m and m.group(1).lower() not in _HYPHEN_PRESERVED_PREFIXES:
+                return before_hyphen + next_l
+        return prev_r + next_l
+    return prev_r + " " + next_l
+
+
+def _join_body_lines(parts: list[str]) -> str:
+    """Concatenate body-line texts into a single string with conservative
+    dehyphenation at line breaks. Empty / whitespace-only parts are skipped.
+    """
+    if not parts:
+        return ""
+    result = ""
+    for p in parts:
+        if not p.strip():
+            continue
+        if not result:
+            result = p.strip()
+        else:
+            result = _join_with_dehyphenation(result, p)
+    return result
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:

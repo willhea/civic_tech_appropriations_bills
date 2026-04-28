@@ -639,6 +639,116 @@ def test_join_multi_line_titles_skips_blank_continuation_lines():
     assert out[0]["text"] == "TITLE I — MILITARY PERSONNEL"
 
 
+# --- B5: body wrap and conservative dehyphenation ----------------------
+
+
+def test_join_body_lines_dehyphenates_long_word_wrap():
+    """Real wrap: ``Representa-`` + ``tives`` -> ``Representatives``."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(
+        [
+            "Be it enacted by the Senate and House of Representa-",
+            "tives of the United States",
+        ]
+    )
+    assert "Representatives" in out
+    assert "Representa-" not in out
+    assert "Representa- " not in out
+
+
+def test_join_body_lines_preserves_short_prefix_re():
+    """``re-`` is too short (2-char fragment) to be a wrap; keep hyphen."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["This act shall be re-", "enacted today"])
+    assert "re-enacted" in out
+    assert "reenacted" not in out
+
+
+def test_join_body_lines_preserves_short_prefix_pre():
+    """``pre-`` (3 chars) is too short; keep hyphen."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["the pre-", "decisional documents"])
+    assert "pre-decisional" in out
+
+
+def test_join_body_lines_preserves_compound_modifier_with_uppercase_next():
+    """``non-`` + ``Federal``: even if ``non`` were 4+ chars, the
+    uppercase first letter of the next part marks it as a proper-noun
+    compound, not a wrap. Keep the hyphen."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["non-", "Federal funds"])
+    assert "non-Federal" in out
+
+
+def test_join_body_lines_preserves_compound_modifier_with_dot_before_hyphen():
+    """``U.S.-`` + ``Mexico``: the char before the hyphen is ``.`` (not
+    a lowercase letter), so this is a hyphenated compound, not a wrap."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["the U.S.-", "Mexico border"])
+    assert "U.S.-Mexico" in out
+
+
+def test_join_body_lines_dehyphenates_non_prefix_fragment():
+    """``infor`` is not in the preserved-prefix list — drop the hyphen to
+    recover ``information``."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["under the infor-", "mation provided"])
+    assert "information" in out
+    assert "infor-mation" not in out
+
+
+def test_join_body_lines_dehyphenates_short_non_prefix_fragment():
+    """Regression from real corpus: ``oth-`` + ``erwise`` -> ``otherwise``.
+    A 3-character fragment that's not in the preserved-prefix list still
+    gets dehyphenated."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["the funds appropriated or oth-", "erwise made available"])
+    assert "otherwise" in out
+    assert "oth-erwise" not in out
+
+
+def test_join_body_lines_joins_normal_wrap_with_single_space():
+    """When the previous line doesn't end with ``-``, join with one space."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["The quick brown", "fox jumps"])
+    assert out == "The quick brown fox jumps"
+
+
+def test_join_body_lines_skips_blank_parts():
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["alpha", "", "beta", "   ", "gamma"])
+    assert out == "alpha beta gamma"
+
+
+def test_join_body_lines_handles_single_part():
+    from parsers.pdf_parser import _join_body_lines
+
+    assert _join_body_lines(["just one line"]) == "just one line"
+
+
+def test_join_body_lines_handles_empty_list():
+    from parsers.pdf_parser import _join_body_lines
+
+    assert _join_body_lines([]) == ""
+
+
+def test_join_body_lines_collapses_internal_whitespace_at_join_points():
+    """Trailing/leading whitespace on each part is normalized to one space."""
+    from parsers.pdf_parser import _join_body_lines
+
+    out = _join_body_lines(["alpha   ", "  beta"])
+    assert out == "alpha beta"
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's
