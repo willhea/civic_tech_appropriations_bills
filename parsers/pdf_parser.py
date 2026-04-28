@@ -13,6 +13,8 @@ from typing import Any
 
 from bill_tree import BillTree
 
+from . import classifier as cls
+
 Char = dict[str, Any]
 Line = dict[str, Any]
 
@@ -35,6 +37,22 @@ _STRUCTURAL_MARKER_RE = re.compile(r"^(?:DIVISION|TITLE)\s+\S+|^SEC(?:TION|\.)\s
 # How many lines from the start to scan for the enacting clause / fallback
 # marker. Real bills hit one or the other within the first 30-50 lines.
 _MAX_PREAMBLE_SCAN_LINES = 100
+
+# Enum-only TITLE / DIVISION line ("TITLE I", "DIVISION A", "TITLE 5").
+# When pdfplumber outputs the heading split across lines (enum on one,
+# name on subsequent), this matches the enum line; B4 scans forward for
+# the name continuation.
+_ENUM_ONLY_HEADING_RE = re.compile(r"^(TITLE|DIVISION)\s+([A-Z]+|\d+)\s*$")
+
+# A heading-name line "continues" onto the next line when it ends with a
+# trailing hyphen (word-wrap), comma (list continues), or " AND" / " OR"
+# (Oxford-comma list final item not yet seen). A line ending in any other
+# token terminates the heading.
+_HEADING_CONTINUES_RE = re.compile(r"(?:[-,]|\b(?:AND|OR))\s*$")
+
+# Hard cap on continuation lines so a runaway scan can't eat the rest of
+# the bill. Real GPO headings span 1-4 lines; 6 is generous.
+_MAX_HEADING_CONTINUATION_LINES = 6
 
 
 def _metadata_from_path(pdf_path: Path) -> tuple[int, str, int, str]:
@@ -270,6 +288,108 @@ def _split_preamble_and_body(lines: list[Line]) -> tuple[list[Line], list[Line]]
             return lines[:i], lines[i:]
 
     return [], list(lines)
+
+
+def _join_heading_continuation(parts: list[str]) -> str:
+    """Concatenate continuation lines into a single heading string.
+
+    Drops a trailing ``-`` at a line break (so ``INTEL-``/``LIGENCE``
+    rejoins as ``INTELLIGENCE``); otherwise inserts a single space.
+    """
+    if not parts:
+        return ""
+    result = parts[0].rstrip()
+    for raw in parts[1:]:
+        p = raw.strip()
+        if not p:
+            continue
+        if result.endswith("-"):
+            result = result[:-1] + p
+        else:
+            result = result + " " + p
+    return result
+
+
+def _heading_continues(text: str) -> bool:
+    """True if a heading-name line's last token suggests more text follows
+    on the next line: trailing hyphen (word-wrap), comma, or ``AND`` /
+    ``OR`` (list final item not yet seen)."""
+    return bool(_HEADING_CONTINUES_RE.search(text.rstrip()))
+
+
+def _join_multi_line_titles(lines: list[Line]) -> list[Line]:
+    """Reassemble TITLE / DIVISION headings whose name sits on separate
+    physical lines from the enum.
+
+    GPO renders::
+
+        TITLE I
+        DEPARTMENTAL MANAGEMENT, INTEL-
+        LIGENCE, SITUATIONAL AWARENESS, AND
+        OVERSIGHT
+        For necessary expenses...
+
+    The classifier needs ``TITLE I — DEPARTMENTAL MANAGEMENT, INTELLIGENCE,
+    SITUATIONAL AWARENESS, AND OVERSIGHT`` on a single line to emit the
+    title's match_path. This function walks forward from each enum-only
+    TITLE / DIVISION line, collecting all-uppercase continuation lines.
+
+    Stop conditions (whichever fires first):
+
+    - Next line is blank AND we've already collected at least one part
+      (paragraph break ends the heading).
+    - Next line matches a new structural marker (DIVISION, TITLE, SEC.).
+    - Next line is not all-uppercase (mixed-case body text follows).
+    - We've already collected a part AND that previous part doesn't end
+      with a continuation token (``-``, ``,``, ``AND``, ``OR``). This
+      catches the common case where one heading's name terminates and
+      the next line is the start of a *new* all-uppercase heading.
+    - Hard cap of ``_MAX_HEADING_CONTINUATION_LINES`` to bound runaway.
+
+    A trailing ``-`` at a line break is dehyphenated at the join.
+    """
+    out: list[Line] = []
+    i = 0
+    while i < len(lines):
+        ln = lines[i]
+        text = ln.get("text", "").strip()
+        m = _ENUM_ONLY_HEADING_RE.match(text)
+        if not m:
+            out.append(ln)
+            i += 1
+            continue
+        kind, enum = m.group(1), m.group(2)
+        name_parts: list[str] = []
+        j = i + 1
+        crossed_blank = False
+        while j < len(lines) and len(name_parts) < _MAX_HEADING_CONTINUATION_LINES:
+            next_text = lines[j].get("text", "").strip()
+            if not next_text:
+                crossed_blank = True
+                j += 1
+                continue
+            if _STRUCTURAL_MARKER_RE.match(next_text):
+                break
+            if not cls.is_all_caps(next_text):
+                break
+            if name_parts:
+                if crossed_blank:
+                    break
+                if not _heading_continues(name_parts[-1]):
+                    break
+            name_parts.append(next_text)
+            j += 1
+            crossed_blank = False
+        if name_parts:
+            joined_name = _join_heading_continuation(name_parts)
+            new_line = dict(ln)
+            new_line["text"] = f"{kind} {enum} — {joined_name}"
+            out.append(new_line)
+            i = j
+        else:
+            out.append(ln)
+            i += 1
+    return out
 
 
 def parse_pdf(pdf_path: Path) -> BillTree:

@@ -488,6 +488,157 @@ def test_split_preamble_does_not_match_enacting_clause_in_body_text():
     assert body[0]["text"] == "Body section A"
 
 
+# --- B4: multi-line TITLE / DIVISION header join ------------------------
+
+
+def test_join_multi_line_titles_assembles_simple_two_line_title():
+    """``TITLE I`` + ``MILITARY PERSONNEL`` -> ``TITLE I -- MILITARY PERSONNEL``."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("MILITARY PERSONNEL"),
+        _line("For the Department of Defense..."),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE I — MILITARY PERSONNEL"
+    assert out[1]["text"] == "For the Department of Defense..."
+
+
+def test_join_multi_line_titles_dehyphenates_at_line_break():
+    """When a continuation line ends with ``-``, drop the hyphen at the join.
+
+    Mirrors the real GPO pattern observed on
+    ``bills/118-hr-8752/1_reported-in-house.pdf``.
+    """
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("DEPARTMENTAL MANAGEMENT, INTEL-"),
+        _line("LIGENCE, SITUATIONAL AWARENESS, AND"),
+        _line("OVERSIGHT"),
+        _line("For necessary expenses..."),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == ("TITLE I — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT")
+    assert out[1]["text"] == "For necessary expenses..."
+
+
+def test_join_multi_line_divisions():
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("DIVISION A"),
+        _line("HOMELAND SECURITY"),
+        _line("Body line"),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "DIVISION A — HOMELAND SECURITY"
+    assert out[1]["text"] == "Body line"
+
+
+def test_join_multi_line_titles_stops_at_section_marker():
+    """If the next line is a SEC. start, the TITLE has no name to absorb."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("SEC. 101. Short title."),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE I"
+    assert out[1]["text"] == "SEC. 101. Short title."
+
+
+def test_join_multi_line_titles_stops_at_body_line():
+    """A mixed-case body line ends the heading collection."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("MILITARY PERSONNEL"),
+        _line("This is body text in mixed case"),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE I — MILITARY PERSONNEL"
+    assert out[1]["text"] == "This is body text in mixed case"
+
+
+def test_join_multi_line_titles_leaves_complete_titles_untouched():
+    """A TITLE line that already has its name on the same line is left alone."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE V—EXECUTIVE OFFICE OF THE PRESIDENT"),
+        _line("For necessary expenses..."),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE V—EXECUTIVE OFFICE OF THE PRESIDENT"
+
+
+def test_join_multi_line_titles_leaves_non_title_lines_alone():
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [_line("Some body text"), _line("More body")]
+    out = _join_multi_line_titles(lines)
+    assert [ln["text"] for ln in out] == ["Some body text", "More body"]
+
+
+def test_join_multi_line_titles_does_not_eat_following_heading():
+    """Regression: a heading whose name terminates without a continuation
+    marker (no trailing ``-``, ``,``, ``AND``, or ``OR``) must NOT absorb
+    the next all-uppercase heading. Caught on real corpus where TITLE I
+    was greedily joined with the appropriations-major heading below it
+    (``OFFICE OF THE SECRETARY...``)."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("DEPARTMENTAL MANAGEMENT, INTEL-"),
+        _line("LIGENCE, SITUATIONAL AWARENESS, AND"),
+        _line("OVERSIGHT"),
+        _line("OFFICE OF THE SECRETARY"),
+        _line("For necessary expenses..."),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == ("TITLE I — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT")
+    assert out[1]["text"] == "OFFICE OF THE SECRETARY"
+    assert out[2]["text"] == "For necessary expenses..."
+
+
+def test_join_multi_line_titles_stops_at_blank_after_partial_name():
+    """A blank line after a continuation-marker line still terminates the
+    heading — paragraph break wins over continuation token."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line("FIRST PART,"),  # continuation marker
+        _line(""),
+        _line("LATER HEADING"),
+        _line("Body"),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE I — FIRST PART,"
+    assert out[1]["text"] == "LATER HEADING"
+
+
+def test_join_multi_line_titles_skips_blank_continuation_lines():
+    """Empty continuation lines (e.g., spacer lines) are ignored when
+    looking for the heading name."""
+    from parsers.pdf_parser import _join_multi_line_titles
+
+    lines = [
+        _line("TITLE I"),
+        _line(""),
+        _line("MILITARY PERSONNEL"),
+        _line("Body"),
+    ]
+    out = _join_multi_line_titles(lines)
+    assert out[0]["text"] == "TITLE I — MILITARY PERSONNEL"
+
+
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
     """Two physically-printed lines with small-caps each — separate
     headings, not a cascade. After the first merge, the merged line's
