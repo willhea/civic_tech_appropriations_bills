@@ -153,11 +153,39 @@ def _extract_pages(pdf_path: Path) -> tuple[list[list[Char]], list[float]]:
 
 
 def _finalize_line(chars: list[Char]) -> Line:
-    """Build a line summary dict from a list of chars (re-sorted by ``x0``)."""
+    """Build a line summary dict from a list of chars (re-sorted by ``x0``).
+
+    Inserts a synthetic space between adjacent chars when the horizontal
+    gap exceeds ``max(2.0, 0.25 * font_size)``. This recovers inter-word
+    boundaries in GPO sub-headings rendered with letterspacing
+    (``ADMINISTRATIVE PROVISIONS``, ``COAST GUARD``) where pdfplumber
+    emits the chars without intervening space tokens. Body text already
+    has explicit space chars from pdfplumber so the synthetic insertion
+    rarely fires there (the existing space sits between word and next
+    word with small kerning gaps on either side).
+    """
     chars_sorted = sorted(chars, key=lambda c: float(c.get("x0", 0.0)))
-    text = "".join(c.get("text", "") for c in chars_sorted)
     if not chars_sorted:
         return {"text": "", "top": 0.0, "x0": 0.0, "x1": 0.0, "chars": []}
+
+    text_parts: list[str] = [chars_sorted[0].get("text", "")]
+    for i in range(1, len(chars_sorted)):
+        prev_c = chars_sorted[i - 1]
+        cur_c = chars_sorted[i]
+        prev_text = prev_c.get("text", "")
+        cur_text = cur_c.get("text", "")
+        # Don't double-insert if either side is already whitespace.
+        if prev_text.strip() and cur_text.strip():
+            prev_x1 = float(prev_c.get("x1", prev_c.get("x0", 0.0)))
+            cur_x0 = float(cur_c.get("x0", 0.0))
+            gap = cur_x0 - prev_x1
+            max_size = max(float(prev_c.get("size", 0.0)), float(cur_c.get("size", 0.0)))
+            threshold = max(2.0, 0.25 * max_size)
+            if gap > threshold:
+                text_parts.append(" ")
+        text_parts.append(cur_text)
+
+    text = "".join(text_parts)
     return {
         "text": text,
         "top": float(chars_sorted[0].get("top", 0.0)),

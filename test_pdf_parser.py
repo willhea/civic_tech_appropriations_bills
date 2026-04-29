@@ -92,7 +92,9 @@ def test_metadata_from_path_returns_empty_for_unrecognized_layout():
 def test_group_into_lines_collapses_chars_at_same_top():
     from parsers.pdf_parser import _group_into_lines
 
-    chars = [_char("H", 100, 100), _char("i", 110, 100)]
+    # Realistic intra-word kerning: x0-step ~6px so adjacent chars are
+    # ~1px apart (well below the letterspacing threshold).
+    chars = [_char("H", 100, 100), _char("i", 107, 100)]
     lines = _group_into_lines(chars)
     assert len(lines) == 1
     assert lines[0]["text"] == "Hi"
@@ -1027,6 +1029,89 @@ def test_parse_pdf_on_committed_fixture_yields_at_least_one_node():
 
     tree = load_bill_tree(FIXTURE)
     assert len(tree.nodes) >= 1
+
+
+# --- B7.5: letterspacing recovery in _finalize_line ---------------------
+
+
+def test_finalize_line_inserts_space_at_wide_inter_char_gap():
+    """When two adjacent chars have a horizontal gap exceeding the
+    letterspacing threshold, insert a synthetic space. Recovers
+    inter-word boundaries in GPO sub-headings rendered with letter-
+    spacing where pdfplumber emits no space char."""
+    from parsers.pdf_parser import _finalize_line
+
+    # A and D (gap 1, intra-word), then 5px gap before P (inter-word),
+    # then R (gap 1, intra-word). Threshold for 10pt = max(2, 2.5) = 2.5.
+    chars = [
+        {"text": "A", "x0": 100.0, "x1": 110.0, "top": 100.0, "size": 10.0},
+        {"text": "D", "x0": 111.0, "x1": 121.0, "top": 100.0, "size": 10.0},
+        {"text": "P", "x0": 126.0, "x1": 136.0, "top": 100.0, "size": 10.0},
+        {"text": "R", "x0": 137.0, "x1": 147.0, "top": 100.0, "size": 10.0},
+    ]
+    line = _finalize_line(chars)
+    assert line["text"] == "AD PR"
+
+
+def test_finalize_line_preserves_kerned_intra_word_chars():
+    """Chars within a word have small (0-2px) kerned gaps; no synthetic
+    space inserted."""
+    from parsers.pdf_parser import _finalize_line
+
+    chars = [
+        {"text": "h", "x0": 100.0, "x1": 105.0, "top": 100.0, "size": 10.0},
+        {"text": "i", "x0": 106.0, "x1": 109.0, "top": 100.0, "size": 10.0},
+    ]
+    line = _finalize_line(chars)
+    assert line["text"] == "hi"
+
+
+def test_finalize_line_does_not_double_insert_when_pdfplumber_emits_space():
+    """Body text already has explicit space chars from pdfplumber.
+    The new logic shouldn't add another space."""
+    from parsers.pdf_parser import _finalize_line
+
+    chars = [
+        {"text": "h", "x0": 100.0, "x1": 105.0, "top": 100.0, "size": 10.0},
+        {"text": "i", "x0": 106.0, "x1": 109.0, "top": 100.0, "size": 10.0},
+        {"text": " ", "x0": 110.0, "x1": 113.0, "top": 100.0, "size": 10.0},
+        {"text": "y", "x0": 114.0, "x1": 119.0, "top": 100.0, "size": 10.0},
+        {"text": "o", "x0": 120.0, "x1": 125.0, "top": 100.0, "size": 10.0},
+    ]
+    line = _finalize_line(chars)
+    assert line["text"] == "hi yo"
+
+
+def test_finalize_line_threshold_scales_with_font_size():
+    """A 14pt char-pair has threshold max(2, 0.25*14) = 3.5; a 3px gap
+    is below threshold so no space is inserted."""
+    from parsers.pdf_parser import _finalize_line
+
+    chars = [
+        {"text": "X", "x0": 100.0, "x1": 110.0, "top": 100.0, "size": 14.0},
+        {"text": "Y", "x0": 113.0, "x1": 123.0, "top": 100.0, "size": 14.0},
+    ]
+    line = _finalize_line(chars)
+    assert line["text"] == "XY"
+
+
+def test_finalize_line_recovers_real_gpo_letterspaced_subheading():
+    """End-to-end: chars positioned to mimic GPO ``ADMINISTRATIVE
+    PROVISIONS`` letterspacing -> recover the inter-word boundary."""
+    from parsers.pdf_parser import _finalize_line
+
+    chars = [
+        {"text": c, "x0": 100.0 + i * 11.0, "x1": 100.0 + i * 11.0 + 10.0, "top": 100.0, "size": 10.0}
+        for i, c in enumerate("ADMINISTRATIVE")
+    ]
+    # 5px inter-word gap (next char x0 = last char x1 + 5)
+    last_x1 = chars[-1]["x1"]
+    chars += [
+        {"text": c, "x0": last_x1 + 5.0 + i * 11.0, "x1": last_x1 + 5.0 + i * 11.0 + 10.0, "top": 100.0, "size": 10.0}
+        for i, c in enumerate("PROVISIONS")
+    ]
+    line = _finalize_line(chars)
+    assert line["text"] == "ADMINISTRATIVE PROVISIONS"
 
 
 def test_reattach_small_caps_does_not_chain_when_merged_lead_is_small():
