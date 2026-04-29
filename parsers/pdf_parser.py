@@ -582,38 +582,49 @@ def _flush_body_to_element(element: ET.Element, body_text: str) -> None:
         text_el.text = (existing + " " + body_text).strip() if existing else body_text
 
 
-def _build_synthetic_root(
+def _build_shallow_root(
     classified: list[tuple[cls.Tag, str]],
     *,
     congress: int,
     bill_type: str,
     bill_number: int,
 ) -> ET.Element:
-    """Drive a state machine over classified lines into a Congress.gov-
-    shaped synthetic ElementTree the bill_tree walker can consume.
+    """Drive a 2-state machine over classified lines into a shallow
+    ElementTree. The walker turns each leaf into a 2-level ``match_path``:
 
-    State tracks the deepest open structural container. When a structural
-    line opens a new element, the accumulated body buffer is flushed
-    into the previously-current leaf; lower-level state (intermediate,
-    leaf) resets where appropriate.
+    - SEC. lines pair under the current TITLE (the title_wrapper).
+    - APPRO_INTERMEDIATE / APPRO_SMALL lines pair under the current
+      APPRO_MAJOR (the major_wrapper). The agency level is the only one
+      that disambiguates the heading-collision class (multiple agencies
+      have an "Operations and Support" sub-heading).
 
-    Orphan-appro handling: if the parser encounters an APPRO_MAJOR
-    before any TITLE has been seen, it synthesizes a ``<title>`` whose
-    ``<header>`` is that first appro-major's text. This keeps
-    ``match_path`` deterministic across the two PDF versions of the same
-    bill (both will synthesize from the same first major) and keeps the
-    walker happy (it requires appropriations-* to nest under a title).
+    Orphan handling:
+    - SEC. with no TITLE seen yet: emit directly under ``<legis-body>``.
+      The walker's flat-section fallback path handles single-component
+      ``match_path`` keys.
+    - APPRO_INTERMEDIATE / APPRO_SMALL with no APPRO_MAJOR: synthesize a
+      major wrapper using the intermediate's own header so two PDFs of
+      the same bill produce identical synthesized labels (deterministic).
 
-    SECTION lines without a TITLE attach directly under ``<legis-body>``
-    -- the walker's flat-section fallback handles that shape.
+    No appropriations-major dollar-paragraph leaf is emitted; in real
+    GPO bills the dollar amounts live inside intermediates/smalls. Body
+    text encountered between an APPRO_MAJOR header and its first
+    intermediate has no leaf to attach to and is dropped (rare in
+    practice; lossless for the corpus we have).
+
+    Implementation note: both wrappers are emitted as ``<title>``
+    elements directly under ``<legis-body>``. The walker treats every
+    ``<title>`` independently, generating a 2-level ``match_path``
+    ``(title_header_normalized, leaf_label)`` for each section inside.
+    Multiple wrappers under one ``<legis-body>`` is exactly the shape
+    ``normalize_bill_from_root`` expects when ``divisions`` is empty
+    and ``titles`` is non-empty.
     """
     bill, legis_body = syx.make_root()
     state: dict[str, ET.Element | None] = {
-        "division": None,
-        "title": None,
-        "major": None,
-        "intermediate": None,
-        "leaf": None,
+        "title_wrapper": None,  # current TITLE / DIVISION wrapper (for SEC. leaves)
+        "major_wrapper": None,  # current APPRO_MAJOR wrapper (for INTER/SMALL leaves)
+        "leaf": None,  # most recent leaf (where body accumulates)
     }
     counters: Counter[str] = Counter()
     body_buffer: list[str] = []
@@ -637,78 +648,84 @@ def _build_synthetic_root(
         if state["leaf"] is not None and text:
             _flush_body_to_element(state["leaf"], text)
 
-    def get_or_synthesize_title(seed_header: str | None = None) -> ET.Element:
-        """Return the current title, synthesizing one if absent.
-
-        ``seed_header`` is the appro-major header that triggered the
-        need. Using its text gives a deterministic match_path that two
-        PDF versions of the same bill will both reproduce.
-        """
-        if state["title"] is not None:
-            return state["title"]
-        parent = state["division"] if state["division"] is not None else legis_body
-        synth_header = (seed_header or "Untitled").strip()
-        title = syx.make_title(
-            parent,
-            header=synth_header,
-            element_id=make_id("title", [f"syn:{synth_header[:40]}"]),
+    def open_title_wrapper(header: str) -> ET.Element:
+        wrapper = syx.make_title(
+            legis_body,
+            header=header,
+            element_id=make_id("title", [f"title:{header[:40]}"]),
         )
-        state["title"] = title
-        return title
+        state["title_wrapper"] = wrapper
+        # New title closes any open major (agencies are title-scoped).
+        state["major_wrapper"] = None
+        state["leaf"] = None
+        return wrapper
+
+    def open_major_wrapper(header: str) -> ET.Element:
+        wrapper = syx.make_title(
+            legis_body,
+            header=header,
+            element_id=make_id("title", [f"major:{header[:40]}"]),
+        )
+        state["major_wrapper"] = wrapper
+        state["leaf"] = None
+        return wrapper
 
     for tag, text in classified:
-        if tag is cls.Tag.DIVISION:
+        if tag is cls.Tag.TITLE:
+            flush_body()
+            parsed = cls.parse_title(text)
+            if parsed is None:
+                body_buffer.append(text)
+                continue
+            _enum, header = parsed
+            open_title_wrapper(header)
+        elif tag is cls.Tag.DIVISION:
             flush_body()
             parsed = cls.parse_division(text)
             if parsed is None:
                 body_buffer.append(text)
                 continue
             enum, header = parsed
-            state["division"] = syx.make_division(
-                legis_body,
-                enum=enum,
-                header=header,
-                element_id=make_id("division", [f"div:{enum}"]),
-            )
-            state["title"] = state["major"] = state["intermediate"] = state["leaf"] = None
-        elif tag is cls.Tag.TITLE:
-            flush_body()
-            parsed = cls.parse_title(text)
-            if parsed is None:
-                body_buffer.append(text)
-                continue
-            enum, header = parsed
-            parent = state["division"] if state["division"] is not None else legis_body
-            state["title"] = syx.make_title(
-                parent,
-                enum=enum,
-                header=header,
-                element_id=make_id("title", [f"title:{enum}"]),
-            )
-            state["major"] = state["intermediate"] = state["leaf"] = None
+            # Treat divisions like titles in the shallow model -- they're
+            # just another wrapper class. Prefix the header so omnibus bills
+            # with both DIVISION A's TITLE I and DIVISION B's TITLE I don't
+            # collide on the wrapper key.
+            open_title_wrapper(f"DIVISION {enum} — {header}")
         elif tag is cls.Tag.APPRO_MAJOR:
             flush_body()
-            parent = get_or_synthesize_title(seed_header=text.strip())
-            major = syx.make_appro_major(
-                parent,
-                header=text.strip(),
+            header = text.strip()
+            wrapper = open_major_wrapper(header)
+            # Emit a leaf for the major's own body (the dollar paragraph
+            # that immediately follows the agency heading -- e.g.
+            # "For necessary expenses of [agency], $X..."). Use
+            # ``<appropriations-intermediate>`` so the walker produces a
+            # 2-level ``match_path`` ``(major_header, major_header)``.
+            # The duplication is cosmetic; it pairs cleanly across
+            # versions because both PDFs produce the same self-pair.
+            # If an actual ``<appropriations-intermediate>`` follows, its
+            # body flows into a new leaf as expected.
+            leaf = syx.make_appro_intermediate(
+                wrapper,
+                header=header,
                 body_text="",
-                element_id=make_id("appropriations-major", [f"major:{text.strip()[:40]}"]),
+                element_id=make_id("appropriations-intermediate", [f"major-leaf:{header[:40]}"]),
             )
-            state["major"] = major
-            state["intermediate"] = None
-            state["leaf"] = major
+            state["leaf"] = leaf
         elif tag is cls.Tag.APPRO_INTERMEDIATE:
             flush_body()
-            parent = state["major"] if state["major"] is not None else get_or_synthesize_title()
-            inter = syx.make_appro_intermediate(
-                parent,
-                header=text.strip(),
+            header = text.strip()
+            wrapper = state["major_wrapper"] if state["major_wrapper"] is not None else open_major_wrapper(header)
+            # Use ``<appropriations-intermediate>`` (not ``<section>``) so the
+            # walker's ``_process_appro_element`` puts the leaf header into
+            # match_path. Plain ``<section>`` only uses its ``<enum>`` for
+            # the leaf component, which we don't have here.
+            leaf = syx.make_appro_intermediate(
+                wrapper,
+                header=header,
                 body_text="",
-                element_id=make_id("appropriations-intermediate", [f"intermediate:{text.strip()[:40]}"]),
+                element_id=make_id("appropriations-intermediate", [f"intermediate:{header[:40]}"]),
             )
-            state["intermediate"] = inter
-            state["leaf"] = inter
+            state["leaf"] = leaf
         elif tag is cls.Tag.APPRO_SMALL:
             flush_body()
             parsed = cls.parse_run_in_header(text)
@@ -716,18 +733,14 @@ def _build_synthetic_root(
                 body_buffer.append(text)
                 continue
             header, run_in_body = parsed
-            parent = (
-                state["intermediate"]
-                if state["intermediate"] is not None
-                else (state["major"] if state["major"] is not None else get_or_synthesize_title())
-            )
-            small = syx.make_appro_small(
-                parent,
+            wrapper = state["major_wrapper"] if state["major_wrapper"] is not None else open_major_wrapper(header)
+            leaf = syx.make_appro_small(
+                wrapper,
                 header=header,
                 body_text=run_in_body,
                 element_id=make_id("appropriations-small", [f"small:{header[:40]}"]),
             )
-            state["leaf"] = small
+            state["leaf"] = leaf
         elif tag is cls.Tag.SECTION:
             flush_body()
             parsed = cls.parse_section(text)
@@ -735,22 +748,15 @@ def _build_synthetic_root(
                 body_buffer.append(text)
                 continue
             enum, header = parsed
-            # If we're in a division but no title has been seen, synthesize
-            # one under the division -- otherwise the walker descends into
-            # divisions only via titles and would skip this section.
-            # Outside any division, sections sit directly under legis-body
-            # (the walker's flat-section fallback handles that shape).
-            if state["division"] is not None and state["title"] is None:
-                get_or_synthesize_title(seed_header=header or None)
-            parent = state["title"] if state["title"] is not None else legis_body
-            section = syx.make_section(
+            parent = state["title_wrapper"] if state["title_wrapper"] is not None else legis_body
+            leaf = syx.make_section(
                 parent,
                 enum=enum,
                 header=header,
                 body_text="",
                 element_id=make_id("section", [f"sec:{enum}"]),
             )
-            state["leaf"] = section
+            state["leaf"] = leaf
         else:  # BODY
             body_buffer.append(text)
 
@@ -799,7 +805,7 @@ def parse_pdf(pdf_path: Path) -> BillTree:
         tag = cls.classify(ln.get("text", ""), hints)
         classified.append((tag, ln.get("text", "")))
 
-    root = _build_synthetic_root(
+    root = _build_shallow_root(
         classified,
         congress=congress,
         bill_type=bill_type,

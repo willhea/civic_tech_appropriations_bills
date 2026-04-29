@@ -862,114 +862,161 @@ def test_strip_page_chrome_does_not_drop_short_repeats_in_body_band():
     assert total_kept == 3
 
 
-# --- B7: state machine -> synthetic ElementTree -------------------------
+# --- Pivot 2: shallow (2-level) section emitter --------------------------
 
 
-def test_build_synthetic_root_emits_section_with_body():
-    """Smallest end-to-end: SECTION + BODY -> a <section> with <text>."""
+def test_shallow_section_with_body_emits_one_flat_node():
+    """Smallest end-to-end: SECTION + BODY with no TITLE context -> one
+    section directly under <legis-body>. Walker's flat-section path
+    handles emission. ``match_path`` is single-component."""
     from bill_tree import normalize_bill_from_root
     from parsers import classifier as cls
-    from parsers.pdf_parser import _build_synthetic_root
+    from parsers.pdf_parser import _build_shallow_root
 
     classified = [
         (cls.Tag.SECTION, "SEC. 101. SHORT TITLE."),
         (cls.Tag.BODY, "This Act may be cited as the Demo Act."),
     ]
-    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
     tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
     assert len(tree.nodes) == 1
-    assert tree.nodes[0].section_number == "Sec. 101"
-    assert "Demo Act" in tree.nodes[0].body_text
+    n = tree.nodes[0]
+    assert n.section_number == "Sec. 101"
+    assert "Demo Act" in n.body_text
+    assert n.match_path == ("sec. 101",)
 
 
-def test_build_synthetic_root_emits_title_with_section():
-    """TITLE + SECTION + BODY produces a section nested under a title;
-    match_path includes the title's normalized header."""
+def test_shallow_section_under_title_uses_title_as_parent_context():
+    """TITLE + SEC + BODY -> 2-level match_path (title_header, sec_label)."""
     from bill_tree import normalize_bill_from_root
     from parsers import classifier as cls
-    from parsers.pdf_parser import _build_synthetic_root
+    from parsers.pdf_parser import _build_shallow_root
 
     classified = [
         (cls.Tag.TITLE, "TITLE I — MILITARY PERSONNEL"),
         (cls.Tag.SECTION, "SEC. 101. SHORT TITLE."),
         (cls.Tag.BODY, "This Act may be cited as the Defense Act."),
     ]
-    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
     tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
     assert len(tree.nodes) == 1
     n = tree.nodes[0]
-    assert "military personnel" in " ".join(n.match_path).lower()
     assert n.section_number == "Sec. 101"
     assert "Defense Act" in n.body_text
+    assert "military personnel" in n.match_path[0].lower()
+    assert n.match_path[-1] == "sec. 101"
 
 
-def test_build_synthetic_root_synthesizes_title_for_orphan_appro_major():
-    """When appro-* appears with no prior TITLE, synthesize a title from
-    the first appro-major header so the walker recognizes the structure
-    and downstream match_paths are deterministic."""
+def test_shallow_appro_intermediate_uses_major_as_parent_not_title():
+    """When inside a TITLE that contains an APPRO_MAJOR (agency), an
+    APPRO_INTERMEDIATE leaf should pair under the agency, not the title.
+    This is the central design choice: agency disambiguation is the only
+    structural level that matters for cross-version pairing."""
     from bill_tree import normalize_bill_from_root
     from parsers import classifier as cls
-    from parsers.pdf_parser import _build_synthetic_root
+    from parsers.pdf_parser import _build_shallow_root
 
     classified = [
-        (cls.Tag.APPRO_MAJOR, "OFFICE OF THE SECRETARY"),
+        (cls.Tag.TITLE, "TITLE II — SECURITY, ENFORCEMENT, AND INVESTIGATIONS"),
+        (cls.Tag.APPRO_MAJOR, "U.S. CUSTOMS AND BORDER PROTECTION"),
+        (cls.Tag.APPRO_INTERMEDIATE, "OPERATIONS AND SUPPORT"),
+        (cls.Tag.BODY, "For necessary expenses of CBP, $17,000,000,000."),
+    ]
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    n = next(x for x in tree.nodes if "operations" in x.match_path[-1].lower())
+    # parent_context is the agency, NOT the title
+    assert "u.s. customs" in n.match_path[0].lower()
+    assert "operations and support" in n.match_path[-1].lower()
+    assert "$17,000,000,000" in n.body_text
+
+
+def test_shallow_section_inside_title_with_open_major_still_uses_title():
+    """If a TITLE has both agencies (majors) AND administrative-provision
+    SECs at the end, the SECs pair under the TITLE (their semantic parent),
+    not under the most-recently-seen major (a different concept)."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_shallow_root
+
+    classified = [
+        (cls.Tag.TITLE, "TITLE II — SECURITY"),
+        (cls.Tag.APPRO_MAJOR, "U.S. CUSTOMS AND BORDER PROTECTION"),
+        (cls.Tag.APPRO_INTERMEDIATE, "OPERATIONS AND SUPPORT"),
+        (cls.Tag.BODY, "$1,000."),
+        (cls.Tag.SECTION, "SEC. 201. ADMINISTRATIVE PROVISION."),
+        (cls.Tag.BODY, "None of the funds..."),
+    ]
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
+    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+    sec = next(x for x in tree.nodes if x.section_number == "Sec. 201")
+    # SEC. 201's parent_context is the TITLE, not the most-recent major
+    assert "security" in sec.match_path[0].lower()
+    assert sec.match_path[-1] == "sec. 201"
+
+
+def test_shallow_orphan_appro_intermediate_synthesizes_major_wrapper():
+    """When APPRO_INTERMEDIATE appears with no APPRO_MAJOR before it,
+    synthesize a wrapper from the intermediate's own header. Two PDFs
+    of the same bill will both synthesize the same way and pair."""
+    from bill_tree import normalize_bill_from_root
+    from parsers import classifier as cls
+    from parsers.pdf_parser import _build_shallow_root
+
+    classified = [
+        (cls.Tag.APPRO_INTERMEDIATE, "OPERATIONS AND SUPPORT"),
         (cls.Tag.BODY, "For necessary expenses, $1,500,000."),
     ]
-    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
     tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
-    # Walker emits at least one BillNode for the appro-major.
-    assert len(tree.nodes) >= 1
+    # Some leaf containing the body is emitted; the deterministic detail is
+    # that the synth happens, not the exact match_path shape.
     bodies = " ".join(n.body_text for n in tree.nodes)
     assert "1,500,000" in bodies
 
 
-def test_build_synthetic_root_returns_empty_legis_body_when_only_body_lines():
+def test_shallow_returns_empty_legis_body_when_only_body_lines():
     """No structural lines = no nodes. Body content with no leaf to
     attach to is silently dropped (acceptable -- happens at the start
     of preamble continuation in real bills)."""
     from bill_tree import normalize_bill_from_root
     from parsers import classifier as cls
-    from parsers.pdf_parser import _build_synthetic_root
+    from parsers.pdf_parser import _build_shallow_root
 
     classified = [
         (cls.Tag.BODY, "Just some text"),
         (cls.Tag.BODY, "And more text"),
     ]
-    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
+    root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
     tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
     assert tree.nodes == []
 
 
-def test_build_synthetic_root_division_resets_lower_state():
-    """A new DIVISION starts fresh: a section under DIVISION B should
-    not inherit DIVISION A's title."""
+def test_shallow_intermediate_pairs_across_versions_under_same_agency():
+    """The whole point of the shallow design: two PDFs of the same bill
+    produce identical match_paths for matching agency leaves, so
+    diff_bills pairs them correctly."""
     from bill_tree import normalize_bill_from_root
     from parsers import classifier as cls
-    from parsers.pdf_parser import _build_synthetic_root
+    from parsers.pdf_parser import _build_shallow_root
 
-    classified = [
-        (cls.Tag.DIVISION, "DIVISION A — FIRST"),
-        (cls.Tag.TITLE, "TITLE I — A-TITLE"),
-        (cls.Tag.SECTION, "SEC. 101. ALPHA."),
-        (cls.Tag.BODY, "Alpha body text."),
-        (cls.Tag.DIVISION, "DIVISION B — SECOND"),
-        (cls.Tag.SECTION, "SEC. 201. BETA."),
-        (cls.Tag.BODY, "Beta body text."),
-    ]
-    root = _build_synthetic_root(classified, congress=118, bill_type="hr", bill_number=999)
-    tree = normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
-    div_labels = {n.division_label for n in tree.nodes}
-    # Both DIVISION A and DIVISION B sections appear, with division_label set
-    assert (
-        any("A" in d for d in div_labels)
-        or any("First" in d for d in div_labels)
-        or any("FIRST" in d.upper() for d in div_labels)
-    )
-    assert (
-        any("B" in d for d in div_labels)
-        or any("Second" in d for d in div_labels)
-        or any("SECOND" in d.upper() for d in div_labels)
-    )
+    def _build(intermediate_body: str):
+        classified = [
+            (cls.Tag.TITLE, "TITLE II — SECURITY"),
+            (cls.Tag.APPRO_MAJOR, "U.S. COAST GUARD"),
+            (cls.Tag.APPRO_INTERMEDIATE, "OPERATIONS AND SUPPORT"),
+            (cls.Tag.BODY, intermediate_body),
+        ]
+        root = _build_shallow_root(classified, congress=118, bill_type="hr", bill_number=999)
+        return normalize_bill_from_root(root, congress=118, bill_type="hr", bill_number=999, version="rh")
+
+    v1 = _build("For necessary expenses, $9,500,000.")
+    v2 = _build("For necessary expenses, $10,000,000.")
+    # Both have the same Operations and Support node under the same agency
+    v1_paths = {n.match_path for n in v1.nodes}
+    v2_paths = {n.match_path for n in v2.nodes}
+    common = v1_paths & v2_paths
+    assert any("operations and support" in p[-1].lower() for p in common)
 
 
 def test_parse_pdf_on_committed_fixture_yields_at_least_one_node():
