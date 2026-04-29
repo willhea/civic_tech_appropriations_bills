@@ -140,6 +140,25 @@ def modified_section_overlap(
     return covered / len(xml_modified)
 
 
+def unpair_rate(diff: BillDiff) -> float:
+    """Fraction of nodes the diff couldn't pair across the two versions.
+
+    For consecutive bill versions most sections are unchanged, so a
+    high unpair rate signals parser noise -- the parser produced
+    different structures for v1 and v2 and ``diff_bills`` couldn't
+    match them. This is the gate metric for PDF-vs-PDF self-consistency
+    (no XML truth required).
+
+    Returned in ``[0.0, 1.0]``. ``0.0`` when nothing was unpaired (or
+    when the diff is empty -- vacuous). ``1.0`` when nothing was paired.
+    """
+    s = diff.summary
+    paired = s.get("modified", 0) + s.get("unchanged", 0) + s.get("moved", 0)
+    unpaired = s.get("added", 0) + s.get("removed", 0)
+    total = paired + unpaired
+    return unpaired / total if total else 0.0
+
+
 def change_type_jaccard(xml_diff: BillDiff, pdf_diff: BillDiff) -> float:
     """Jaccard similarity over ``(match_path, change_type)`` tuples.
 

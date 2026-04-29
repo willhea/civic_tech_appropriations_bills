@@ -9,14 +9,14 @@ from __future__ import annotations
 import math
 from collections import Counter
 
+from diff_bill import BillDiff, NodeDiff
 from parsers.diff_agreement_metrics import (
     change_type_jaccard,
     financial_total_agreement,
     modified_section_overlap,
     summary_count_delta,
+    unpair_rate,
 )
-
-from diff_bill import BillDiff, NodeDiff
 
 
 def _node(
@@ -241,3 +241,48 @@ def test_change_type_jaccard_both_empty_is_one():
     xml = _diff()
     pdf = _diff()
     assert change_type_jaccard(xml, pdf) == 1.0
+
+
+# --- unpair_rate -------------------------------------------------------
+
+
+def test_unpair_rate_all_unchanged_is_zero():
+    """No changes between versions -> nothing to unpair."""
+    diff = _diff(_node(("a",), "unchanged"), _node(("b",), "unchanged"))
+    assert unpair_rate(diff) == 0.0
+
+
+def test_unpair_rate_all_added_is_one():
+    """Every node is on one side only -> 100% unpaired."""
+    diff = _diff(_node(("a",), "added"), _node(("b",), "added"))
+    assert unpair_rate(diff) == 1.0
+
+
+def test_unpair_rate_mixed_returns_unpaired_fraction():
+    """2 added + 1 modified + 1 unchanged = 2/4 unpaired."""
+    diff = _diff(
+        _node(("a",), "added"),
+        _node(("b",), "added"),
+        _node(("c",), "modified"),
+        _node(("d",), "unchanged"),
+    )
+    assert unpair_rate(diff) == 0.5
+
+
+def test_unpair_rate_empty_diff_is_vacuous_zero():
+    """No nodes at all -> nothing was unpaired (vacuous). Caller should
+    sanity-check the diff isn't empty before relying on the metric."""
+    assert unpair_rate(_diff()) == 0.0
+
+
+def test_unpair_rate_modified_and_moved_count_as_paired():
+    """All change types except added / removed represent successful
+    pairing. ``moved`` reflects a section the matcher relocated --
+    still paired."""
+    diff = _diff(
+        _node(("a",), "modified"),
+        _node(("b",), "moved"),
+        _node(("c",), "added"),
+    )
+    # 2 paired (modified + moved), 1 unpaired (added) -> 1/3
+    assert unpair_rate(diff) == 1 / 3
