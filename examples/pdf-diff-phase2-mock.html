@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Diff — Phase 2 Output Mock (HR 8752 reported → engrossed)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height: 1.6; }
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar (parity with XML pipeline) */
+.sidebar { width: 300px; position: fixed; top: 0; left: 0; height: 100vh;
+  overflow-y: auto; background: #f7f7f7; border-right: 1px solid #ddd; padding: 12px; }
+.sidebar input { width: 100%; padding: 6px 8px; margin-bottom: 8px;
+  border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+.sidebar ul { list-style: none; }
+.sidebar li { margin-bottom: 2px; }
+.sidebar a { display: block; padding: 4px 6px; text-decoration: none;
+  color: #333; font-size: 13px; border-radius: 3px; }
+.sidebar a:hover { background: #e8e8e8; }
+.sidebar .nav-item.unanchored a { color: #6c757d; font-style: italic; }
+
+/* Main content */
+.main { margin-left: 300px; padding: 24px 32px; max-width: 900px; flex: 1; }
+
+/* Mock banner (only in this mock, not in production) */
+.mock-banner { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px 14px;
+  border-radius: 4px; margin-bottom: 24px; font-size: 13px; color: #856404; }
+.mock-banner strong { color: #6b4d00; }
+
+/* Header (parity) */
+.report-header h1 { font-size: 22px; margin-bottom: 4px; }
+.report-header .versions { color: #666; font-size: 15px; margin-bottom: 16px; }
+.summary-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.summary-item { font-size: 14px; }
+.summary-item strong { margin-right: 4px; }
+
+/* Badges (parity) */
+.badge { display: inline-block; padding: 1px 6px; border-radius: 3px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-modified { background: #fff3cd; color: #856404; }
+.badge-added { background: #d4edda; color: #155724; }
+.badge-removed { background: #f8d7da; color: #721c24; }
+.badge-moved { background: #cce5ff; color: #004085; }
+
+/* Financial table (parity + amendment row extension) */
+.financial-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+.financial-table th { background: #f0f0f0; text-align: left; padding: 8px; border-bottom: 2px solid #ccc; }
+.financial-table td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+.financial-table .amount { text-align: right; font-variant-numeric: tabular-nums; }
+.financial-table a { color: #0056b3; text-decoration: none; }
+.financial-table a:hover { text-decoration: underline; }
+tr.increase .change-amount { color: #155724; }
+tr.decrease .change-amount { color: #721c24; }
+tr.unchanged .change-amount { color: #666; }
+/* PDF-specific: amendment annotation detail row spanning all columns */
+tr.amendment-detail td { background: #f8f9fa; padding: 4px 12px 8px;
+  font-size: 12px; color: #555; border-bottom: 1px solid #eee; }
+tr.amendment-detail .amendment-list { font-family: 'SF Mono', Menlo, Consolas, monospace; }
+tr.amendment-detail .net { font-weight: 600; color: #222; margin-left: 8px; }
+tr.amendment-detail .net.decrease { color: #721c24; }
+tr.amendment-detail .net.increase { color: #155724; }
+
+/* Change cards (parity) */
+.change-card { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 16px;
+  padding: 16px; background: #fff; }
+.change-card.added { border-left: 4px solid #28a745; }
+.change-card.removed { border-left: 4px solid #dc3545; }
+.change-card.modified { border-left: 4px solid #ffc107; }
+.change-card.moved { border-left: 4px solid #007bff; }
+/* PDF-specific: degraded anchor */
+.change-card.unanchored { border-left: 4px solid #6c757d; background: #fafafa; }
+.change-card.unanchored .change-header h3 {
+  color: #6c757d; font-style: italic; font-weight: 400; }
+.change-card.unanchored .change-header h3::before { content: "⚠ "; }
+
+.change-header { margin-bottom: 6px; }
+.change-header h3 { font-size: 16px; display: inline; margin-left: 8px; }
+.section-number { display: block; font-size: 13px; color: #666; margin-top: 2px; }
+
+/* PDF-specific: page/line citation block */
+.citation { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px;
+  color: #555; margin: 4px 0 12px; }
+.citation .v1, .citation .v2 { display: inline-block; padding: 1px 6px;
+  background: #f0f0f0; border-radius: 3px; margin-right: 6px; }
+.citation .v1::before { content: "v1: "; color: #888; }
+.citation .v2::before { content: "v2: "; color: #888; }
+
+.change-body { font-size: 14px; line-height: 1.7; }
+.added-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.removed-text { background: #ffe6e6; padding: 8px; border-radius: 4px;
+  text-decoration: line-through; color: #666; }
+.old-text { background: #ffe6e6; padding: 8px; border-radius: 4px; margin-bottom: 8px; }
+.new-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.move-info { font-size: 13px; color: #004085; margin-bottom: 8px;
+  padding: 6px 10px; background: #e7f1ff; border-radius: 3px; }
+.move-info code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; }
+.amendment-note { font-size: 12px; color: #856404; background: #fff3cd; padding: 4px 8px;
+  border-radius: 3px; margin-top: 4px; }
+
+/* Inline diff (parity) */
+del { background: #fecdd3; text-decoration: line-through; color: #9a3412; }
+ins { background: #bbf7d0; text-decoration: none; color: #166534; }
+
+/* Financial callout (parity) */
+.financial-callout { margin-top: 10px; padding: 8px 12px; background: #f0f7ff;
+  border: 1px solid #b6d4fe; border-radius: 4px; font-size: 13px; }
+.financial-callout .row { display: flex; gap: 10px; margin-bottom: 2px;
+  font-variant-numeric: tabular-nums; }
+.financial-callout .label { color: #555; min-width: 110px; }
+.financial-callout .delta.decrease { color: #721c24; font-weight: 600; }
+.financial-callout .delta.increase { color: #155724; font-weight: 600; }
+.financial-callout .delta.unchanged { color: #555; }
+.financial-callout .net { margin-top: 6px; padding-top: 6px;
+  border-top: 1px solid #b6d4fe; font-weight: 600; }
+.amendment-list-card { margin-top: 6px; font-size: 12px; color: #555; }
+.amendment-list-card code { font-family: 'SF Mono', Menlo, Consolas, monospace; }
+
+/* Nav buttons (parity) */
+.nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10; }
+.nav-buttons button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 4px;
+  background: #fff; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.nav-buttons button:hover { background: #f0f0f0; }
+
+@media print {
+  .sidebar, .nav-buttons, #sidebar-filter, .mock-banner { display: none; }
+  .main { margin-left: 0; }
+  .change-card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="sidebar">
+<input type="text" id="sidebar-filter" placeholder="Filter sections...">
+<ul>
+<li class="nav-item" data-type="modified"><a href="#change-0"><span class="badge badge-modified">modified</span> TITLE I &gt; OFFICE OF THE SECRETARY &gt; Operations and Support</a></li>
+<li class="nav-item" data-type="modified"><a href="#change-1"><span class="badge badge-modified">modified</span> TITLE I &gt; MANAGEMENT DIRECTORATE &gt; Operations and Support</a></li>
+<li class="nav-item" data-type="modified"><a href="#change-2"><span class="badge badge-modified">modified</span> TITLE I &gt; MANAGEMENT DIRECTORATE &gt; Procurement, Construction, and Improvements</a></li>
+<li class="nav-item" data-type="modified"><a href="#change-3"><span class="badge badge-modified">modified</span> TITLE II &gt; CBP &gt; Operations and Support</a></li>
+<li class="nav-item" data-type="modified"><a href="#change-4"><span class="badge badge-modified">modified</span> TITLE IV &gt; Administrative Provisions &gt; SEC. 406</a></li>
+<li class="nav-item" data-type="added"><a href="#change-5"><span class="badge badge-added">added</span> TITLE V &gt; SEC. 558 — TSA Inclusion Action Committee</a></li>
+<li class="nav-item" data-type="moved"><a href="#change-6"><span class="badge badge-moved">moved</span> TITLE IV &gt; Administrative Provisions &gt; SEC. 414 → 413</a></li>
+<li class="nav-item unanchored" data-type="modified"><a href="#change-7"><span class="badge badge-modified">modified</span> (uncategorized) — p.47 L18</a></li>
+</ul>
+</nav>
+
+<div class="main">
+
+<div class="mock-banner">
+<strong>Phase 2 Step 0 — staffer-facing output design.</strong>
+Hand-authored mock of what the PDF-pipeline diff will produce, matching the XML pipeline's layout
+(<code>formatters/html.py</code>) for visual parity. <strong>No code is being written yet</strong>; this
+exists so design choices can be reviewed before parser implementation begins. Approval here unblocks Steps
+1-4 of the Phase 2 plan. The <em>only</em> PDF-specific additions are (a) the page/line citation block on
+each card, and (b) the degraded fallback for hunks where no SEC./TITLE/account anchor could be resolved
+(see Sample 8 / sidebar's italic entry).
+</div>
+
+<div class="report-header">
+<h1>HR 8752 — Bill Comparison</h1>
+<div class="versions">v1: reported-in-house &rarr; v2: engrossed-in-house · 118th Congress</div>
+<div class="summary-bar">
+<span class="summary-item"><span class="badge badge-modified">modified</span> <strong>5</strong></span>
+<span class="summary-item"><span class="badge badge-added">added</span> <strong>1</strong></span>
+<span class="summary-item"><span class="badge badge-moved">moved</span> <strong>1</strong></span>
+<span class="summary-item"><span class="badge badge-modified">modified</span> <strong>1</strong> (unanchored)</span>
+</div>
+</div>
+
+<div class="mock-banner" style="background: #e7f1ff; border-color: #b6d4fe; color: #004085;">
+<strong>No Financial Summary table is rendered for this diff.</strong> HR 8752 v1→v2 has zero base-amount
+changes — every numeric edit is a floor amendment annotation layered on top of an unchanged appropriation.
+Per the XML pipeline's design (which is preserved here), the top-level Financial Summary table only
+includes sections where the actual base amount differs across versions. That keeps the table tight on
+massive bills. Floor amendments are listed inside each change card's financial callout below.
+For diffs where base amounts <em>do</em> change (e.g., reported → enrolled with real edits), the table
+appears here with the same columns and formatting as the XML examples.
+</div>
+
+<h2>Changes</h2>
+
+<div class="change-card modified" id="change-0">
+  <div class="change-header">
+    <span class="badge badge-modified">modified</span>
+    <h3>TITLE I &gt; OFFICE OF THE SECRETARY AND EXECUTIVE MANAGEMENT &gt; Operations and Support</h3>
+  </div>
+  <div class="citation">
+    <span class="v1">p.2 L14 – p.2 L25</span>
+    <span class="v2">p.2 L12 – p.3 L2</span>
+  </div>
+  <div class="change-body diff-inline">
+    For necessary expenses of the Office of the Secretary and for executive management for operations
+    and support, $281,358,000<ins>(reduced by $20,000,000) (reduced by $5,000,000) (increased by $10,000,000)
+    (reduced by $10,000,000) (reduced by $1,650,000) (reduced by $5,000,000) (reduced by $10,000,000)</ins>,
+    of which $22,151,000 shall remain available until September 30, 2026: …
+  </div>
+  <div class="financial-callout">
+    <div class="row"><span class="label">v1 amount:</span><span>$281,358,000</span></div>
+    <div class="row"><span class="label">v2 amount:</span><span>$281,358,000</span></div>
+    <div class="amendment-list-card">
+      <strong>7 floor amendments added in v2:</strong>
+      <code>−$20M, −$5M, +$10M, −$10M, −$1.65M, −$5M, −$10M</code>
+    </div>
+    <div class="row net"><span class="label">Net change:</span><span class="delta decrease">−$31,650,000</span></div>
+  </div>
+</div>
+
+<div class="change-card modified" id="change-4">
+  <div class="change-header">
+    <span class="badge badge-modified">modified</span>
+    <h3>TITLE IV &gt; Administrative Provisions &gt; SEC. 406</h3>
+  </div>
+  <div class="citation">
+    <span class="v1">p.61 L5 – p.61 L19</span>
+    <span class="v2">p.62 L23 – p.63 L12</span>
+  </div>
+  <div class="change-body diff-inline">
+    SEC. 406. Notwithstanding the numerical limitation set forth in section 214(g)(1)(B) of the Immigration
+    and Nationality Act (8 U.S.C. 1184(g)(1)(B)), the Secretary of Homeland Security, after consultation with
+    the Secretary of Labor, and upon determining that the needs of American businesses cannot be satisfied
+    during fiscal year 2025 with United States workers who are willing, qualified, and able to perform
+    temporary nonagricultural labor, <del>shall</del><ins>may</ins> increase the total number of
+    <del>visas available to qualifying aliens</del><ins>aliens who may receive a visa</ins> under section
+    101(a)(15)(H)(ii)(b) of such Act (8 U.S.C. 1101(a)(15)(H)(ii)(b)) in such fiscal year above such
+    limitation by <ins>not more than</ins> the highest number of H-2B nonimmigrants who participated in
+    the H-2B returning worker program in any fiscal year in which returning workers were exempt from such
+    numerical limitation.
+  </div>
+</div>
+
+<div class="change-card added" id="change-5">
+  <div class="change-header">
+    <span class="badge badge-added">added</span>
+    <h3>TITLE V &gt; SEC. 558</h3>
+  </div>
+  <div class="citation">
+    <span class="v1">— (new in v2)</span>
+    <span class="v2">p.100 L23 – p.100 L25</span>
+  </div>
+  <div class="change-body added-text">
+    SEC. 558. None of the funds made available by this Act may be used for the Inclusion Action Committee
+    of the Transportation Security Administration.
+  </div>
+</div>
+
+<div class="change-card moved" id="change-6">
+  <div class="change-header">
+    <span class="badge badge-moved">moved</span>
+    <h3>TITLE IV &gt; Administrative Provisions</h3>
+  </div>
+  <div class="citation">
+    <span class="v1">p.63 L17 – p.63 L22</span>
+    <span class="v2">p.65 L4 – p.65 L9</span>
+  </div>
+  <div class="move-info">
+    Renumbered: <code>SEC. 414</code> &rarr; <code>SEC. 413</code> · body text unchanged
+  </div>
+  <div class="change-body">
+    SEC. 413. None of the funds made available in this Act may be made available to implement, administer,
+    or enforce the "Asylum Program Fee" from the Final Rule entitled "U.S. Citizenship and Immigration
+    Services Fee Schedule and Changes to Certain Other Immigration Benefit Request Requirements"
+    (88 Fed. Reg. 6194).
+  </div>
+</div>
+
+<div class="change-card modified unanchored" id="change-7">
+  <div class="change-header">
+    <span class="badge badge-modified">modified</span>
+    <h3>anchor unresolved · see PDF for context</h3>
+  </div>
+  <div class="citation">
+    <span class="v1">p.47 L18 – p.47 L19</span>
+    <span class="v2">p.49 L4 – p.49 L5</span>
+  </div>
+  <div class="change-body diff-inline">
+    …in the operation of <del>any</del><ins>each</ins> facility constructed under this paragraph…
+  </div>
+</div>
+
+</div>
+
+<div class="nav-buttons">
+<button id="btn-prev">&larr; Prev</button>
+<button id="btn-next">Next &rarr;</button>
+</div>
+
+</div>
+</body>
+</html>
