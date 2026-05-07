@@ -108,22 +108,25 @@ def parse_lines(chrome_stripped: str) -> tuple[Line, ...]:
 
     # Rejoin per-page soft hyphens at line boundaries: when line[i] ends with
     # `WORD-` and line[i+1].text starts with a lowercase letter, merge them.
+    # Chain: a single hunk in the GPO source can span 3+ lines (e.g. `wel-\n
+    # fare; ... (in-\ncreased by …)`), so the merged line itself may end in
+    # another soft hyphen that needs joining with the line after.
     merged: list[Line] = []
     i = 0
     while i < len(parsed):
         current = parsed[i]
-        if (
-            i + 1 < len(parsed)
+        next_i = i + 1
+        while (
+            next_i < len(parsed)
             and current.text.endswith("-")
             and len(current.text) >= 2
             and current.text[-2].isalnum()
-            and parsed[i + 1].text[:1].islower()
+            and parsed[next_i].text[:1].islower()
         ):
-            merged.append(Line(current.line_number, current.text[:-1] + parsed[i + 1].text))
-            i += 2
-            continue
+            current = Line(current.line_number, current.text[:-1] + parsed[next_i].text)
+            next_i += 1
         merged.append(current)
-        i += 1
+        i = next_i
     return tuple(merged)
 
 
