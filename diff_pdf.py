@@ -40,6 +40,14 @@ _AMENDMENT_RE_DETAIL = re.compile(r"\((increased|reduced|decreased) by\s+\$([\d,
 # and to reconcile a removed+added pair as moved. Matches diff_bill's threshold.
 _MOVE_SIMILARITY_THRESHOLD = 0.6
 
+# Below this similarity, two blocks paired by alignment aren't really a
+# modified pair — they're an unrelated removal + addition that happen to
+# share an anchor (e.g. v1 SEC. 413 = H-2A waiver, v2 SEC. 413 = Asylum
+# Fee renumbered from SEC. 414). Split them so reconcile_moves can pair
+# v1 SEC. 414 with v2 SEC. 413 by body similarity. Matches diff_bill's
+# _SIMILARITY_THRESHOLD.
+_PAIR_BODY_THRESHOLD = 0.4
+
 
 @dataclass(frozen=True)
 class PdfHunk:
@@ -316,15 +324,23 @@ def diff_pdfs(v1_pages: list[Page], v2_pages: list[Page]) -> PdfDiff:
         autojunk=False,
     )
 
+    def _emit_pair(v1_b: _Block, v2_b: _Block, sink: list[PdfHunk]) -> None:
+        """Emit a paired-block hunk OR split into removed+added if bodies disagree."""
+        if v1_b.text == v2_b.text:
+            return
+        if _text_similarity(v1_b.text, v2_b.text) < _PAIR_BODY_THRESHOLD:
+            sink.append(_hunk_for_removed(v1_b))
+            sink.append(_hunk_for_added(v2_b))
+        else:
+            sink.append(_hunk_for_paired_blocks(v1_b, v2_b))
+
     hunks: list[PdfHunk] = []
     for op, i1, i2, j1, j2 in matcher.get_opcodes():
         if op == "equal":
             # Block keys match. Bodies might still differ (e.g. amendment
-            # annotations appearing past the 80-char preview); emit modified
-            # for those, skip truly identical blocks.
+            # annotations appearing past the 80-char preview).
             for v1_b, v2_b in zip(v1_blocks[i1:i2], v2_blocks[j1:j2]):
-                if v1_b.text != v2_b.text:
-                    hunks.append(_hunk_for_paired_blocks(v1_b, v2_b))
+                _emit_pair(v1_b, v2_b, hunks)
         elif op == "delete":
             for v1_b in v1_blocks[i1:i2]:
                 hunks.append(_hunk_for_removed(v1_b))
@@ -339,8 +355,7 @@ def diff_pdfs(v1_pages: list[Page], v2_pages: list[Page]) -> PdfDiff:
                 v1_b = v1_slice[k] if k < len(v1_slice) else None
                 v2_b = v2_slice[k] if k < len(v2_slice) else None
                 if v1_b is not None and v2_b is not None:
-                    if v1_b.text != v2_b.text:
-                        hunks.append(_hunk_for_paired_blocks(v1_b, v2_b))
+                    _emit_pair(v1_b, v2_b, hunks)
                 elif v1_b is not None:
                     hunks.append(_hunk_for_removed(v1_b))
                 else:
