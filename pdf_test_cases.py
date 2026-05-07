@@ -31,6 +31,10 @@ _EXPECTED_FIELD = re.compile(
     r"^- (Anchor|What changed|Net)[^:]*:\s*(.*?)(?=\n- (?:Change type|Anchor|What changed|Net)[^:]*:|\Z)",
     re.DOTALL | re.MULTILINE,
 )
+_EXTRACTION_BLOCK = re.compile(
+    r"\*\*Extraction notes:\*\*\s*\n(.*?)(?=\n---|\Z)",
+    re.DOTALL,
+)
 
 
 @dataclass(frozen=True)
@@ -45,6 +49,7 @@ class PdfTestCase:
     expected_anchor: str
     expected_what_changed: str
     expected_net: str | None
+    extraction_notes: str
 
 
 def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
@@ -65,6 +70,7 @@ def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
                 v1_text=_parse_text(body, _V1_TEXT_BLOCK),
                 v2_text=_parse_text(body, _V2_TEXT_BLOCK),
                 **_parse_expected(body),
+                extraction_notes=_parse_extraction_notes(body),
             )
         )
     return cases
@@ -98,6 +104,11 @@ def _parse_text(body: str, block_regex: re.Pattern[str]) -> str:
     if _PLACEHOLDER_TEXT.match(raw):
         return ""
     return raw
+
+
+def _parse_extraction_notes(body: str) -> str:
+    m = _EXTRACTION_BLOCK.search(body)
+    return m.group(1).strip() if m else ""
 
 
 def _parse_expected(body: str) -> dict:

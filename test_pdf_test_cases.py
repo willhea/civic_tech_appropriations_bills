@@ -58,3 +58,13 @@ def test_expected_anchor_present(case):
     assert case.expected_anchor.strip(), f"case {case.number}: missing expected anchor"
     assert case.expected_what_changed.strip(), f"case {case.number}: missing what_changed"
     assert case.expected_net is None or isinstance(case.expected_net, str)
+
+
+@pytest.mark.parametrize("case", CASES, ids=CASE_IDS)
+def test_extraction_notes_attached(case):
+    assert isinstance(case.extraction_notes, str)
+
+
+def test_extraction_notes_filled_in_for_most_cases():
+    populated = [c for c in CASES if c.extraction_notes.strip()]
+    assert len(populated) >= 5, f"only {len(populated)} cases have extraction notes"
