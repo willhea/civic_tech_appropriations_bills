@@ -38,3 +38,16 @@ def test_locations_parse(case):
     elif case.change_type == "removed":
         assert case.v1_location is not None
         assert case.v2_location is None, f"case {case.number}: v2 should be None for removed"
+
+
+@pytest.mark.parametrize("case", CASES, ids=CASE_IDS)
+def test_text_bodies_present(case):
+    if case.change_type in {"modified", "moved"}:
+        assert case.v1_text.strip(), f"case {case.number}: v1_text should be non-empty"
+        assert case.v2_text.strip(), f"case {case.number}: v2_text should be non-empty"
+    elif case.change_type == "added":
+        assert case.v1_text == "", f"case {case.number}: v1_text should be empty for added"
+        assert case.v2_text.strip()
+    elif case.change_type == "removed":
+        assert case.v1_text.strip()
+        assert case.v2_text == "", f"case {case.number}: v2_text should be empty for removed"

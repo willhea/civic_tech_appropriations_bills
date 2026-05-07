@@ -20,6 +20,9 @@ _TYPE_LINE = re.compile(r"^\*\*Type:\*\*\s+(\w+)", re.MULTILINE)
 _V1_LOCATION_LINE = re.compile(r"^\*\*V1 location:\*\*\s+(.+?)\s*$", re.MULTILINE)
 _V2_LOCATION_LINE = re.compile(r"^\*\*V2 location:\*\*\s+(.+?)\s*$", re.MULTILINE)
 _LOCATION_RANGE = re.compile(r"p\.(\d+)\s+L(\d+)\s*[–-]\s*p\.(\d+)\s+L(\d+)")
+_V1_TEXT_BLOCK = re.compile(r"\*\*V1 text:\*\*\s*\n```\n(.*?)\n```", re.DOTALL)
+_V2_TEXT_BLOCK = re.compile(r"\*\*V2 text:\*\*\s*\n```\n(.*?)\n```", re.DOTALL)
+_PLACEHOLDER_TEXT = re.compile(r"^\(none\s+[—-]\s+(added|removed) in v2\)$")
 
 
 @dataclass(frozen=True)
@@ -29,6 +32,8 @@ class PdfTestCase:
     change_type: str
     v1_location: Location | None
     v2_location: Location | None
+    v1_text: str
+    v2_text: str
 
 
 def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
@@ -46,6 +51,8 @@ def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
                 change_type=_parse_type(body),
                 v1_location=_parse_location(body, _V1_LOCATION_LINE),
                 v2_location=_parse_location(body, _V2_LOCATION_LINE),
+                v1_text=_parse_text(body, _V1_TEXT_BLOCK),
+                v2_text=_parse_text(body, _V2_TEXT_BLOCK),
             )
         )
     return cases
@@ -69,3 +76,13 @@ def _parse_location(body: str, line_regex: re.Pattern[str]) -> Location | None:
     if not range_match:
         raise ValueError(f"unparseable location: {value!r}")
     return tuple(int(g) for g in range_match.groups())  # type: ignore[return-value]
+
+
+def _parse_text(body: str, block_regex: re.Pattern[str]) -> str:
+    m = block_regex.search(body)
+    if not m:
+        raise ValueError(f"missing text block for pattern {block_regex.pattern}")
+    raw = m.group(1).strip()
+    if _PLACEHOLDER_TEXT.match(raw):
+        return ""
+    return raw
