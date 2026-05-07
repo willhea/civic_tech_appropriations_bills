@@ -12,7 +12,6 @@ Reuses `word_diff` from `formatters.html` for inline prose diffs.
 from __future__ import annotations
 
 from html import escape
-from typing import Iterable
 
 from diff_pdf import PdfDiff, PdfHunk
 from formatters.html import fmt_dollar, word_diff
@@ -323,8 +322,6 @@ ins { background: #bbf7d0; text-decoration: none; color: #166534; padding: 0 1px
 .financial-callout .delta.unchanged { color: #555; }
 .financial-callout .net { margin-top: 6px; padding-top: 6px;
   border-top: 1px solid #b6d4fe; font-weight: 600; }
-.amendment-list-card { margin-top: 6px; font-size: 12px; color: #555; }
-.amendment-list-card code { font-family: 'SF Mono', Menlo, Consolas, monospace; }
 
 .nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10; }
 .nav-buttons button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 4px;
@@ -428,10 +425,3 @@ def format_pdf_html(
 </script>
 </body>
 </html>"""
-
-
-def render_iter_hunks(diff: PdfDiff) -> Iterable[str]:
-    """Generator form for streaming output (currently unused, useful for huge bills)."""
-    yield _build_sidebar(diff)
-    for i, h in enumerate(diff.hunks):
-        yield _build_card(h, i, diff.v1_anchors, diff.v2_anchors)

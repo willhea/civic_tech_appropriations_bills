@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pdfplumber
 
-_LINE_NUMBER_PREFIX = re.compile(r"^\d{1,2} ", re.MULTILINE)
 _NUMBERED_LINE = re.compile(r"^(\d{1,2}) (.*)$")
 _SOFT_HYPHEN_BREAK = re.compile(r"(\w)-\n([a-z])")
 _PAGE_HEADER_NUMBER = re.compile(r"\A\d+\n")
@@ -45,11 +44,6 @@ class Page:
     @property
     def text(self) -> str:
         return "\n".join(line.text for line in self.lines)
-
-
-def strip_line_numbers(text: str) -> str:
-    """Remove leading 1- or 2-digit line numbers (followed by a space) from each line."""
-    return _LINE_NUMBER_PREFIX.sub("", text)
 
 
 def strip_page_chrome(text: str) -> str:
