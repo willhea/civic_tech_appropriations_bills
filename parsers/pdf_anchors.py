@@ -15,7 +15,7 @@ import re
 from dataclasses import dataclass
 from typing import Literal
 
-from parsers.pdf_text import Page
+from parsers.pdf_text import Page, parse_lines, strip_page_chrome
 
 AnchorKind = Literal["title", "section", "account"]
 
@@ -58,7 +58,6 @@ def _scan_anchors_in_page(page_number: int, raw_text: str) -> list[Anchor]:
     Test-only entry point that takes a raw `<n> content` string per line.
     Production path uses `extract_anchors(pages)` which reads `Page.lines`.
     """
-    from parsers.pdf_text import parse_lines, strip_page_chrome
 
     page = Page(page_number, parse_lines(strip_page_chrome(raw_text)))
     return _anchors_from_page(page)

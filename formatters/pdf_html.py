@@ -15,7 +15,7 @@ from html import escape
 from typing import Iterable
 
 from diff_pdf import PdfDiff, PdfHunk
-from formatters.html import _fmt_dollar, word_diff
+from formatters.html import fmt_dollar, word_diff
 from parsers.pdf_anchors import Anchor, breadcrumb_for
 
 
@@ -86,8 +86,8 @@ def _format_amount_callout(
         delta_class = "increase" if diff > 0 else "decrease" if diff < 0 else "unchanged"
         parts.append(
             f'<div class="row"><span class="label">Amount:</span>'
-            f"<span>{escape(_fmt_dollar(old))} &rarr; {escape(_fmt_dollar(new))}</span>"
-            f'<span class="delta {delta_class}">({sign}{_fmt_dollar(diff)})</span></div>'
+            f"<span>{escape(fmt_dollar(old))} &rarr; {escape(fmt_dollar(new))}</span>"
+            f'<span class="delta {delta_class}">({sign}{fmt_dollar(diff)})</span></div>'
         )
     if has_amendment_annotations:
         parts.append('<div class="amendment-note">Includes floor amendment annotations (increased/reduced by)</div>')
@@ -218,9 +218,9 @@ def _build_financial_summary(diff: PdfDiff) -> str:
             rows.append(
                 f'<tr class="{css}">'
                 f'<td><a href="#change-{i}">{label}</a></td>'
-                f'<td class="amount">{_fmt_dollar(old)}</td>'
-                f'<td class="amount">{_fmt_dollar(new)}</td>'
-                f'<td class="amount change-amount">{sign}{_fmt_dollar(diff_dollar)}</td>'
+                f'<td class="amount">{fmt_dollar(old)}</td>'
+                f'<td class="amount">{fmt_dollar(new)}</td>'
+                f'<td class="amount change-amount">{sign}{fmt_dollar(diff_dollar)}</td>'
                 f'<td class="amount change-amount">{pct}</td>'
                 f"</tr>"
             )
