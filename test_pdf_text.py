@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from parsers.pdf_text import (
     Page,
+    normalize_glyphs,
     page_range_text,
     rejoin_soft_hyphens,
     strip_line_numbers,
@@ -102,3 +103,31 @@ class TestPageRangeText:
     def test_skips_pages_outside_range(self):
         pages = [Page(1, "a"), Page(2, "b"), Page(3, "c")]
         assert page_range_text(pages, 2, 2) == "b"
+
+
+class TestNormalizeGlyphs:
+    def test_em_dash_to_padded_hyphen(self):
+        # GPO uses em-dash to introduce enumerated subparagraphs; readers see it
+        # as " - ". Pad with spaces so whitespace-normalization handles either form.
+        assert normalize_glyphs("used—(1)") == "used - (1)"
+
+    def test_en_dash_to_padded_hyphen(self):
+        # Same treatment for en-dash (U+2013), used in `H–2B`.
+        assert normalize_glyphs("H–2B") == "H - 2B"
+
+    def test_smart_singles_to_ascii_apostrophe(self):
+        assert normalize_glyphs("‘foo’") == "'foo'"
+
+    def test_smart_doubles_to_ascii_double_quote(self):
+        assert normalize_glyphs("“foo”") == '"foo"'
+
+    def test_paired_smart_singles_collapse_to_double_quote(self):
+        # GPO encodes double quotes as two adjacent single-glyph smart quotes:
+        # ``Asylum Program Fee'' → "Asylum Program Fee"
+        assert normalize_glyphs("‘‘Asylum’’") == '"Asylum"'
+
+    def test_preserves_ascii_hyphen(self):
+        assert normalize_glyphs("police-type") == "police-type"
+
+    def test_preserves_apostrophe_in_possessive(self):
+        assert normalize_glyphs("Will's") == "Will's"

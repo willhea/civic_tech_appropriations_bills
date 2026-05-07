@@ -12,6 +12,14 @@ _LINE_NUMBER_PREFIX = re.compile(r"^\d{1,2} ", re.MULTILINE)
 _SOFT_HYPHEN_BREAK = re.compile(r"(\w)-\n([a-z])")
 _PAGE_HEADER_NUMBER = re.compile(r"\A\d+\n")
 _PAGE_FOOTER_AND_BELOW = re.compile(r"\n?•HR\b.*\Z", re.DOTALL)
+_SMART_GLYPHS = str.maketrans(
+    {
+        "‘": "'",
+        "’": "'",
+        "“": '"',
+        "”": '"',
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -44,6 +52,23 @@ def rejoin_soft_hyphens(text: str) -> str:
     continuation, so the lowercase guard preserves them.
     """
     return _SOFT_HYPHEN_BREAK.sub(r"\1\2", text)
+
+
+def normalize_glyphs(text: str) -> str:
+    """Map typographic glyphs to ASCII equivalents for comparison-time use.
+
+    Em/en-dashes become ` - ` (space-padded so whitespace normalization handles
+    spaced and unspaced source forms). Smart single/double quotes become their
+    ASCII counterparts. GPO encodes double quotes as two adjacent single-glyph
+    smart quotes (`‘‘…’’`), so paired ASCII apostrophes collapse to `"`.
+
+    The extractor itself preserves original glyphs; this helper exists so
+    comparison and diff layers can canonicalize without losing source bytes.
+    """
+    text = text.replace("—", " - ").replace("–", " - ")
+    text = text.translate(_SMART_GLYPHS)
+    text = text.replace("''", '"')
+    return text
 
 
 def page_range_text(pages: list[Page], start_page: int, end_page: int) -> str:

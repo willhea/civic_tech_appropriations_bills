@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from parsers.pdf_text import Page, extract_clean_pages, page_range_text
+from parsers.pdf_text import Page, extract_clean_pages, normalize_glyphs, page_range_text
 from pdf_test_cases import PdfTestCase, load_cases
 
 BILLS_DIR = Path(__file__).parent / "bills"
@@ -26,7 +26,7 @@ _WS = re.compile(r"\s+")
 
 
 def _normalize(text: str) -> str:
-    return _WS.sub(" ", text).strip()
+    return _WS.sub(" ", normalize_glyphs(text)).strip()
 
 
 @pytest.fixture(scope="module")
