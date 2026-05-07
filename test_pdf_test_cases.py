@@ -51,3 +51,10 @@ def test_text_bodies_present(case):
     elif case.change_type == "removed":
         assert case.v1_text.strip()
         assert case.v2_text == "", f"case {case.number}: v2_text should be empty for removed"
+
+
+@pytest.mark.parametrize("case", CASES, ids=CASE_IDS)
+def test_expected_anchor_present(case):
+    assert case.expected_anchor.strip(), f"case {case.number}: missing expected anchor"
+    assert case.expected_what_changed.strip(), f"case {case.number}: missing what_changed"
+    assert case.expected_net is None or isinstance(case.expected_net, str)

@@ -23,6 +23,14 @@ _LOCATION_RANGE = re.compile(r"p\.(\d+)\s+L(\d+)\s*[–-]\s*p\.(\d+)\s+L(\d+)")
 _V1_TEXT_BLOCK = re.compile(r"\*\*V1 text:\*\*\s*\n```\n(.*?)\n```", re.DOTALL)
 _V2_TEXT_BLOCK = re.compile(r"\*\*V2 text:\*\*\s*\n```\n(.*?)\n```", re.DOTALL)
 _PLACEHOLDER_TEXT = re.compile(r"^\(none\s+[—-]\s+(added|removed) in v2\)$")
+_EXPECTED_BLOCK = re.compile(
+    r"\*\*Expected diff output:\*\*\s*\n(.*?)(?=\n\*\*Extraction notes:\*\*|\n---|\Z)",
+    re.DOTALL,
+)
+_EXPECTED_FIELD = re.compile(
+    r"^- (Anchor|What changed|Net)[^:]*:\s*(.*?)(?=\n- (?:Change type|Anchor|What changed|Net)[^:]*:|\Z)",
+    re.DOTALL | re.MULTILINE,
+)
 
 
 @dataclass(frozen=True)
@@ -34,6 +42,9 @@ class PdfTestCase:
     v2_location: Location | None
     v1_text: str
     v2_text: str
+    expected_anchor: str
+    expected_what_changed: str
+    expected_net: str | None
 
 
 def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
@@ -53,6 +64,7 @@ def load_cases(path: Path = DEFAULT_FIXTURE) -> list[PdfTestCase]:
                 v2_location=_parse_location(body, _V2_LOCATION_LINE),
                 v1_text=_parse_text(body, _V1_TEXT_BLOCK),
                 v2_text=_parse_text(body, _V2_TEXT_BLOCK),
+                **_parse_expected(body),
             )
         )
     return cases
@@ -86,3 +98,16 @@ def _parse_text(body: str, block_regex: re.Pattern[str]) -> str:
     if _PLACEHOLDER_TEXT.match(raw):
         return ""
     return raw
+
+
+def _parse_expected(body: str) -> dict:
+    m = _EXPECTED_BLOCK.search(body)
+    if not m:
+        raise ValueError("missing **Expected diff output:** block")
+    block = m.group(1)
+    fields = {label: value.strip() for label, value in _EXPECTED_FIELD.findall(block)}
+    return {
+        "expected_anchor": fields.get("Anchor", ""),
+        "expected_what_changed": fields.get("What changed", ""),
+        "expected_net": fields.get("Net"),
+    }
