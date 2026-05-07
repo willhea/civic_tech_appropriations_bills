@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from parsers.pdf_text import (
+    Line,
     Page,
     normalize_glyphs,
     page_range_text,
@@ -10,6 +11,14 @@ from parsers.pdf_text import (
     strip_line_numbers,
     strip_page_chrome,
 )
+
+
+def _page(page_number: int, text: str) -> Page:
+    """Test helper: build a Page whose text round-trips through the property.
+
+    Each newline in `text` becomes its own Line with no source line number.
+    """
+    return Page(page_number, tuple(Line(None, line) for line in text.split("\n")))
 
 
 class TestStripLineNumbers:
@@ -86,22 +95,22 @@ class TestStripPageChrome:
 
 class TestPageRangeText:
     def test_concatenates_pages_in_range(self):
-        pages = [Page(1, "first"), Page(2, "second"), Page(3, "third")]
+        pages = [_page(1, "first"), _page(2, "second"), _page(3, "third")]
         assert page_range_text(pages, 1, 2) == "first\nsecond"
 
     def test_inclusive_end(self):
-        pages = [Page(1, "a"), Page(2, "b"), Page(3, "c")]
+        pages = [_page(1, "a"), _page(2, "b"), _page(3, "c")]
         assert page_range_text(pages, 1, 3) == "a\nb\nc"
 
     def test_rejoins_cross_page_soft_hyphen(self):
         # Per-page cleanup leaves a trailing `-` on the prior page when the
         # break crosses a page boundary; concatenation re-creates `-\n` and
         # the helper must rejoin it.
-        pages = [Page(15, "not to ex-"), Page(16, "ceed $7,650")]
+        pages = [_page(15, "not to ex-"), _page(16, "ceed $7,650")]
         assert page_range_text(pages, 15, 16) == "not to exceed $7,650"
 
     def test_skips_pages_outside_range(self):
-        pages = [Page(1, "a"), Page(2, "b"), Page(3, "c")]
+        pages = [_page(1, "a"), _page(2, "b"), _page(3, "c")]
         assert page_range_text(pages, 2, 2) == "b"
 
 
