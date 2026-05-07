@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from parsers.pdf_text import Page, extract_clean_pages
+from parsers.pdf_text import Page, extract_clean_pages, page_range_text
 from pdf_test_cases import PdfTestCase, load_cases
 
 BILLS_DIR = Path(__file__).parent / "bills"
@@ -27,10 +27,6 @@ _WS = re.compile(r"\s+")
 
 def _normalize(text: str) -> str:
     return _WS.sub(" ", text).strip()
-
-
-def _page_range_text(pages: list[Page], start_page: int, end_page: int) -> str:
-    return "\n".join(p.text for p in pages if start_page <= p.page_number <= end_page)
 
 
 @pytest.fixture(scope="module")
@@ -68,7 +64,7 @@ def test_recall(case: PdfTestCase, version: str, hr8752_v1_pages, hr8752_v2_page
     assert location is not None
 
     start_page, _, end_page, _ = location
-    extracted = _normalize(_page_range_text(pages, start_page, end_page))
+    extracted = _normalize(page_range_text(pages, start_page, end_page))
     expected_norm = _normalize(expected)
 
     assert expected_norm in extracted, (
