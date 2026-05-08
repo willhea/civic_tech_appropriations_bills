@@ -93,7 +93,7 @@ def _xml_move_info_html(change: dict) -> str:
     return f'<div class="move-info">Moved: {old_path} &rarr; {new_path}</div>'
 
 
-def _change_view_from_xml(change: dict, index: int) -> ChangeView:
+def _change_view_from_xml(change: dict) -> ChangeView:
     financial = change.get("financial")
     pairs = _pair_amounts(financial)
     return ChangeView(
@@ -108,7 +108,6 @@ def _change_view_from_xml(change: dict, index: int) -> ChangeView:
         new_text=change.get("new_text") or "",
         amount_pairs=_real_changes(pairs),
         has_amendment_annotations=bool(financial and financial.get("has_amendment_annotations")),
-        group_key=f"xml-{index}",
     )
 
 
@@ -124,7 +123,7 @@ def xml_dict_to_view(diff_dict: dict) -> DiffView:
         v1_version_number=diff_dict.get("old_version_number"),
         v2_version_number=diff_dict.get("new_version_number"),
         summary=dict(diff_dict.get("summary") or {}),
-        changes=tuple(_change_view_from_xml(c, i) for i, c in enumerate(changes)),
+        changes=tuple(_change_view_from_xml(c) for c in changes),
     )
 
 
@@ -225,7 +224,6 @@ def _pdf_move_info_html(
 
 def _change_view_from_pdf(
     hunk: PdfHunk,
-    index: int,
     v1_anchors: tuple[Anchor, ...],
     v2_anchors: tuple[Anchor, ...],
 ) -> ChangeView:
@@ -242,7 +240,6 @@ def _change_view_from_pdf(
         new_text=hunk.v2_text or "",
         amount_pairs=_real_changes(hunk.amount_pairs),
         has_amendment_annotations=hunk.has_amendment_annotations,
-        group_key=f"pdf-{index}",
     )
 
 
@@ -270,5 +267,5 @@ def pdf_diff_to_view(
         v1_version_number=None,
         v2_version_number=None,
         summary=dict(diff.summary),
-        changes=tuple(_change_view_from_pdf(h, i, diff.v1_anchors, diff.v2_anchors) for i, h in enumerate(diff.hunks)),
+        changes=tuple(_change_view_from_pdf(h, diff.v1_anchors, diff.v2_anchors) for h in diff.hunks),
     )

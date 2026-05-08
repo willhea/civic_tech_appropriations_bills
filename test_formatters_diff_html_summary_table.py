@@ -1,9 +1,9 @@
 """Tests for the unified renderer's Financial Summary table.
 
-Canonical layout: rowspan grouping by ChangeView.group_key (so a multi-pair
-change lists its pairs under one section cell), data-group attr for the JS
-sort, "Old Amount" / "New Amount" headers (canonical choice #5), and only
-real changes (canonical choice #7 — the adapters pre-filter amount_pairs).
+Layout: rowspan groups multiple amount pairs from one change under a single
+section cell; each row carries a data-group index for the JS column sort.
+Headers are "Old Amount" / "New Amount". Only "real" amount changes (both
+sides present and differing) appear — adapters pre-filter amount_pairs.
 """
 
 from __future__ import annotations
@@ -25,7 +25,6 @@ def _change(**overrides) -> ChangeView:
         new_text="",
         amount_pairs=(),
         has_amendment_annotations=False,
-        group_key="x-0",
     )
     base.update(overrides)
     return ChangeView(**base)
@@ -96,8 +95,8 @@ def test_data_group_attribute_set_per_change():
     html = _build_financial_summary(
         _view(
             [
-                _change(amount_pairs=((1000, 1500),), group_key="g0"),
-                _change(amount_pairs=((2000, 2500),), group_key="g1"),
+                _change(amount_pairs=((1000, 1500),)),
+                _change(amount_pairs=((2000, 2500),)),
             ]
         )
     )
@@ -132,8 +131,8 @@ def test_increase_decrease_css_class_on_row():
     html = _build_financial_summary(
         _view(
             [
-                _change(amount_pairs=((1000, 1500),), group_key="up"),
-                _change(amount_pairs=((2000, 1500),), group_key="dn"),
+                _change(amount_pairs=((1000, 1500),)),
+                _change(amount_pairs=((2000, 1500),)),
             ]
         )
     )

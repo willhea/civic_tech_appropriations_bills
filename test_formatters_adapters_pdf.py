@@ -137,6 +137,56 @@ def test_added_hunk_citation_marks_v1_as_new_in_v2():
     assert "(new in v2)" in cv.citation_html
 
 
+def test_moved_with_no_anchors_falls_back_to_page_range_in_move_info():
+    """When neither anchor resolves on a moved hunk, _pdf_move_info_html
+    falls through to the "Moved: v1 → v2" form. Without breadcrumbs, both
+    sides use the page+line range as the visible label."""
+    hunk = PdfHunk(
+        change_type="moved",
+        v1_anchor=None,
+        v2_anchor=None,
+        v1_range=(3, 7, 3, 12),
+        v2_range=(8, 4, 8, 9),
+        v1_text="same body",
+        v2_text="same body",
+    )
+    diff = _diff(hunks=[hunk])
+    view = pdf_diff_to_view(diff, **_meta())
+    cv = view.changes[0]
+    # Falls into the "Moved: ..." branch (not "Renumbered: ..." since neither
+    # anchor exists to compare texts).
+    assert "Renumbered" not in cv.move_info_html
+    assert cv.move_info_html.startswith('<div class="move-info">Moved: ')
+    # Both sides use the page-range fallback.
+    assert "p.3 L7" in cv.move_info_html
+    assert "p.8 L4" in cv.move_info_html
+    # The hunk is also degraded since no anchor resolved at all — sanity check.
+    assert cv.degraded is True
+
+
+def test_moved_with_one_anchor_missing_uses_page_range_for_missing_side():
+    """Asymmetric anchors: only v2 resolves. v1 side falls back to its
+    page-range string in the move-info."""
+    hunk = PdfHunk(
+        change_type="moved",
+        v1_anchor=None,
+        v2_anchor=SEC_201,
+        v1_range=(3, 7, 3, 12),
+        v2_range=(5, 1, 5, 12),
+        v1_text="same body",
+        v2_text="same body",
+    )
+    diff = _diff(hunks=[hunk], v2_anchors=[SEC_201])
+    view = pdf_diff_to_view(diff, **_meta())
+    cv = view.changes[0]
+    # Goes through the "Moved" branch (not Renumbered — needs BOTH anchors).
+    assert "Renumbered" not in cv.move_info_html
+    # v1 side: page range (no breadcrumb available).
+    assert "p.3 L7" in cv.move_info_html
+    # v2 side: breadcrumb resolves to SEC. 201.
+    assert "SEC. 201" in cv.move_info_html
+
+
 def test_moved_with_renumbered_anchor_uses_renumbered_form():
     """When the anchor text changes (SEC. 101 -> SEC. 202) but body is similar,
     the canonical move-info form is "Renumbered: <code>SEC. 101</code> → <code>SEC. 202</code>".

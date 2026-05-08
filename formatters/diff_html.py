@@ -1,13 +1,12 @@
 """Unified HTML renderer for both XML and PDF bill diffs.
 
 Consumes a DiffView produced by an adapter (formatters.adapters.xml_dict_to_view
-or .pdf_diff_to_view). Replaces formatters/html.py and formatters/pdf_html.py
-once the migration shims (steps 9 and 10) are in place.
+or .pdf_diff_to_view). The renderer does not branch on which pipeline produced
+the view — pipeline-specific data (citations, degraded styling, section
+numbers) is rendered when present and omitted when absent.
 
-The renderer makes canonical visual choices documented in the plan
-plans/.../staged-sutherland.md — it does not branch on which pipeline produced
-the view. Pipeline-specific data (citations, degraded styling, section numbers)
-is rendered when present and omitted when absent.
+The HTML output and CSS are deliberately shared across both pipelines so
+staffers see one consistent product regardless of source format.
 """
 
 from __future__ import annotations
@@ -35,10 +34,14 @@ def _build_card(change: ChangeView, index: int) -> str:
     """
     extra_card_class = " unanchored" if change.degraded else ""
     h3_class = ' class="degraded"' if change.degraded else ""
+    # Defensive escape: change_type is a Literal in the view model, but the XML
+    # adapter pulls it from a dict that ultimately reflects upstream parser
+    # output. Escape so a stray value can't break attribute quoting.
+    ct = escape(change.change_type)
 
-    parts = [f'<div class="change-card {change.change_type}{extra_card_class}" id="change-{index}">']
+    parts = [f'<div class="change-card {ct}{extra_card_class}" id="change-{index}">']
     parts.append('<div class="change-header">')
-    parts.append(f'<span class="badge badge-{change.change_type}">{change.change_type}</span>')
+    parts.append(f'<span class="badge badge-{ct}">{ct}</span>')
     parts.append(f"<h3{h3_class}>{change.heading_html}</h3>")
     if change.section_number:
         parts.append(f'<span class="section-number">{escape(change.section_number)}</span>')
@@ -80,8 +83,9 @@ def _card_body_html(change: ChangeView) -> str:
 def _prose_body_html(old_text: str, new_text: str) -> str:
     """Render a prose diff: inline word-diff when similar enough, stacked otherwise.
 
-    This is the canonical body for `modified` changes and the canonical fallback
-    for `moved` changes whose texts differ (canonical choice #10).
+    Used as the body for `modified` changes and as the fallback for `moved`
+    changes whose texts differ — keeping the "old vs new" comparison
+    consistent regardless of change type.
     """
     inline = word_diff(old_text, new_text) if (old_text and new_text) else None
     if inline is not None:
@@ -112,12 +116,14 @@ def _moved_body_html(change: ChangeView) -> str:
 def _build_callout(change: ChangeView) -> str:
     """Render the financial callout for a card.
 
-    Canonical layout (choice #12): PDF's flex rows with semantic delta classes
-    (.increase / .decrease / .unchanged) for color. Returns "" when there are
-    no real amount changes and no amendment annotations.
+    Layout: flex rows with semantic delta classes (.increase / .decrease /
+    .unchanged) for color. Returns "" when there are no real amount changes
+    and no amendment annotations.
 
-    `change.amount_pairs` is already filtered to real changes (by the adapters),
-    so this function does not re-filter — every pair becomes a row.
+    `change.amount_pairs` is already filtered to real changes by the adapters
+    (both sides present and differing), so this function does not re-filter —
+    every pair becomes a row. The `unchanged` delta branch is therefore
+    unreachable from current adapters; it stays as a defensive default.
     """
     if not change.amount_pairs and not change.has_amendment_annotations:
         return ""
@@ -153,10 +159,11 @@ def _build_nav_item(change: ChangeView, index: int) -> str:
     label = change.nav_label_html
     if change.section_number:
         label = f"{escape(change.section_number)} — {label}"
+    ct = escape(change.change_type)
     return (
-        f'<li class="{nav_class}" data-type="{change.change_type}">'
+        f'<li class="{nav_class}" data-type="{ct}">'
         f'<a href="#change-{index}">'
-        f'<span class="badge badge-{change.change_type}">{change.change_type}</span> '
+        f'<span class="badge badge-{ct}">{ct}</span> '
         f"{label}"
         f"</a></li>"
     )
@@ -333,14 +340,9 @@ def format_diff_html(view: DiffView) -> str:
 
 
 # ---------------------------------------------------------------------------
-# CSS — union of formatters/html.py and formatters/pdf_html.py.
-#
-# Where selectors collide, the more polished version wins. Notable choices:
-# - .change-card.unanchored / .degraded styling kept from PDF (XML never used
-#   them; harmless when classes aren't applied).
-# - .citation styling kept from PDF for the same reason.
-# - .financial-callout layout takes PDF's flex rows (canonical choice #12).
-# - tr.unchanged .change-amount color kept from PDF.
+# CSS for the unified report. Includes selectors that only fire for one
+# pipeline (.citation, .change-card.unanchored, .section-number) — they are
+# inert when their classes aren't applied, so both pipelines share one stylesheet.
 # ---------------------------------------------------------------------------
 
 _CSS = """\

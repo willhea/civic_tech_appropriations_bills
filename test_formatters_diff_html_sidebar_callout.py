@@ -24,7 +24,6 @@ def _change(**overrides) -> ChangeView:
         new_text="",
         amount_pairs=(),
         has_amendment_annotations=False,
-        group_key="x-0",
     )
     base.update(overrides)
     return ChangeView(**base)
@@ -97,7 +96,7 @@ def test_callout_empty_when_no_amounts_and_no_annotations():
 
 
 def test_callout_real_change_uses_flex_row_with_delta_class():
-    """Per canonical choice #12: PDF's flex rows are the canonical layout."""
+    """Callout uses flex rows with semantic delta classes for color."""
     callout = _build_callout(_change(amount_pairs=((1000, 1500),)))
     assert callout.startswith('<div class="financial-callout">')
     assert callout.rstrip().endswith("</div>")

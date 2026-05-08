@@ -25,7 +25,6 @@ def _change(**overrides) -> ChangeView:
         new_text="",
         amount_pairs=(),
         has_amendment_annotations=False,
-        group_key="x-0",
     )
     base.update(overrides)
     return ChangeView(**base)
@@ -127,8 +126,8 @@ def test_modified_card_falls_back_to_stacked_when_dissimilar():
 
 
 def test_moved_card_renders_move_info_then_body():
-    """Per canonical choice #10, moved cards with differing texts and
-    word_diff failure use the stacked old/new fallback (matches modified)."""
+    """Moved cards whose texts differ fall back to the stacked old/new layout
+    (same as the modified-card fallback) when word_diff returns None."""
     move_html = '<div class="move-info">Moved: A &gt; B &rarr; C &gt; D</div>'
     html = _build_card(
         _change(

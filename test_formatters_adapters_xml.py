@@ -70,8 +70,6 @@ def test_modified_change_basic_fields():
     assert cv.move_info_html == ""
     assert cv.amount_pairs == ()
     assert cv.has_amendment_annotations is False
-    # group_key is stable per-change so financial-summary rowspan grouping works.
-    assert cv.group_key  # non-empty
 
 
 def test_path_segments_are_html_escaped_per_segment():
@@ -206,30 +204,6 @@ def test_amendment_annotations_flag_propagates():
     assert cv.amount_pairs == ()
     # ...but the annotation flag still surfaces, so the callout shows the note.
     assert cv.has_amendment_annotations is True
-
-
-def test_group_keys_unique_per_change():
-    changes = [
-        {
-            "change_type": "modified",
-            "display_path_old": ["A"],
-            "display_path_new": ["A"],
-            "old_text": "x",
-            "new_text": "y",
-            "section_number": "",
-        },
-        {
-            "change_type": "modified",
-            "display_path_old": ["B"],
-            "display_path_new": ["B"],
-            "old_text": "x",
-            "new_text": "y",
-            "section_number": "",
-        },
-    ]
-    view = xml_dict_to_view(_diff_dict(changes=changes))
-    keys = {c.group_key for c in view.changes}
-    assert len(keys) == 2  # distinct
 
 
 def test_section_number_appears_separately_not_in_heading():

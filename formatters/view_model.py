@@ -15,12 +15,16 @@ renderer's branches are driven by data presence, not by pipeline identity.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
+
+ChangeType = Literal["added", "removed", "modified", "moved", "unchanged"]
 
 
 @dataclass(frozen=True)
 class ChangeView:
-    change_type: str
-    """One of: added, removed, modified, moved, unchanged."""
+    change_type: ChangeType
+    """The diff classifier. Constrained to a known set so the renderer can
+    rely on it for class names without runtime sanitization."""
 
     heading_html: str
     """Pre-escaped HTML ready to drop directly into the card <h3>."""
@@ -54,9 +58,6 @@ class ChangeView:
 
     has_amendment_annotations: bool
     """When True, financial callouts include the floor-amendment-annotation note."""
-
-    group_key: str
-    """Stable per-change key for the financial-summary table's rowspan grouping."""
 
 
 @dataclass(frozen=True)

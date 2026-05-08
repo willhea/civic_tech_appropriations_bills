@@ -35,21 +35,20 @@ def test_returns_html_document():
 
 
 def test_canonical_title_format():
-    """Per canonical choice #2: title is "{BILL_TYPE} {N} — Diff" — no
-    "Bill Comparison:" or "PDF Diff:" prefix."""
+    """Title is "{BILL_TYPE} {N} — Diff" — no "Bill Comparison:" or "PDF Diff:" prefix."""
     html = format_diff_html(_empty())
     assert "<title>HR 1234 — Diff</title>" in html
 
 
 def test_canonical_h1_format():
-    """Per canonical choice #3: h1 suffix is "Comparison" — no XML/PDF qualifier."""
+    """h1 suffix is "Comparison" — no XML/PDF qualifier."""
     html = format_diff_html(_empty())
     assert "HR 1234 &mdash; Comparison" in html
 
 
 def test_versions_line_with_version_numbers():
-    """Per canonical choice #4: when version numbers are present, prefix labels
-    with "v1: " / "v2: ". Use literal · (Unicode middot)."""
+    """When version numbers are present, labels are prefixed "v1: " / "v2: ".
+    Separator is the literal · (Unicode middot)."""
     html = format_diff_html(_empty())
     assert "v1: Reported in House" in html
     assert "v2: Engrossed in House" in html
@@ -73,7 +72,7 @@ def test_versions_line_without_version_numbers():
 
 
 def test_summary_bar_canonical_order():
-    """Per canonical choice #1: order is modified, added, removed, moved.
+    """Summary bar order: modified, added, removed, moved.
 
     Asserts ordering by checking byte position.
     """
@@ -93,7 +92,7 @@ def test_summary_bar_skips_zero_buckets():
 
 
 def test_no_changes_message_canonical_text():
-    """Per canonical choice #8."""
+    """No-changes message text is "No changes found between these versions."."""
     html = format_diff_html(_empty())
     assert "No changes found between these versions." in html
 
