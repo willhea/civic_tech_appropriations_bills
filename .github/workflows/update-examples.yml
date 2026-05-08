@@ -54,10 +54,18 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Stage Pages content
+        # Pages takes a single directory artifact, so copy the static
+        # examples/ outputs and the prototype/ demo into one staging dir.
+        run: |
+          mkdir -p _site
+          cp -r examples/. _site/
+          cp -r prototype _site/prototype
+
       - name: Upload to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: examples/
+          path: _site/
 
       - name: Deploy to Pages
         id: deployment
