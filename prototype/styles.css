@@ -311,12 +311,16 @@ del.diff-del {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 24px 36px;
-  font-size: 14px;
-  line-height: 1.7;
-  font-family: "Times New Roman", Georgia, serif;
+  padding: 24px 28px;
+  font-size: 13px;
+  line-height: 1.55;
+  font-family: ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, monospace;
   max-width: 920px;
   box-shadow: var(--shadow);
+  /* Bills typeset with line numbers in a left margin; preserving the
+     leading whitespace in the JSON keeps that alignment when rendered
+     in monospace. */
+  tab-size: 4;
 }
 .bill-line {
   white-space: pre-wrap;

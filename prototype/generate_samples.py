@@ -37,9 +37,18 @@ from parsers.pdf_text import extract_clean_pages  # noqa: E402
 
 
 def _pdf_full_text(pages) -> str:
-    """Join the cleaned PDF pages into one plaintext string with blank-line
-    page separators. Suitable for full-document tracked-changes rendering."""
-    return "\n\n".join(p.text for p in pages)
+    """Render the cleaned PDF pages with their original line numbers, so the
+    full-bill view matches how the printed bill looks. Each line gets a
+    5-char right-aligned line-number prefix (blank padding when the source
+    line was unnumbered). Pages are separated by a blank line."""
+    out: list[str] = []
+    for i, page in enumerate(pages):
+        if i > 0:
+            out.append("")  # blank line between pages
+        for line in page.lines:
+            prefix = f"{line.line_number:>5}" if line.line_number is not None else " " * 5
+            out.append(f"{prefix}  {line.text}")
+    return "\n".join(out)
 
 
 OUT_DIR = ROOT / "prototype" / "sample-diffs"

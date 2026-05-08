@@ -94,6 +94,36 @@ def test_headings_are_separated_by_blank_lines():
     assert "alpha\n\nSec. 102" in out or "alpha\n\n" in out and "beta" in out
 
 
+def test_section_node_emits_uppercased_run_in_heading():
+    """Section nodes get a `SEC. N.  ` run-in heading (bill convention),
+    using the section_number from the node. The redundant trailing path
+    segment (lowercased "sec. 101") is suppressed so it doesn't appear
+    twice."""
+    nodes = [
+        _node(
+            path=("DEPARTMENT OF DEFENSE", "Administrative provisions", "sec. 101"),
+            body="None of the funds made available...",
+            tag="section",
+        )
+    ]
+    nodes[0] = BillNode(
+        match_path=("department of defense", "administrative provisions", "sec. 101"),
+        display_path=("DEPARTMENT OF DEFENSE", "Administrative provisions", "sec. 101"),
+        tag="section",
+        element_id="",
+        header_text="",
+        body_text="None of the funds made available...",
+        section_number="Sec. 101",
+        division_label="",
+    )
+    out = serialize_tree(_tree(nodes))
+    assert "SEC. 101." in out
+    # The lowercased redundant path segment must not appear.
+    assert "sec. 101" not in out
+    # Body follows the run-in heading on the same line.
+    assert "SEC. 101.  None of the funds" in out
+
+
 def test_real_bill_serializes_without_error_and_contains_known_text():
     """Smoke test: the HR4366 reported XML has 165 nodes; the serializer
     must produce non-trivial output containing recognizable strings."""
