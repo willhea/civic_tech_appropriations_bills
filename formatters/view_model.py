@@ -5,8 +5,11 @@ PDF pipeline (via formatters.adapters.pdf_diff_to_view) target this shape.
 The renderer in formatters.diff_html consumes it without knowing which
 pipeline produced it.
 
-PDF-only fields default to "absent" values (None / False / "" / ()) so the
-XML adapter can ignore them and the renderer can branch on presence.
+Pipeline-specific HTML fragments (heading_html, nav_label_html,
+citation_html, move_info_html) are pre-rendered by the adapters so the
+renderer doesn't need to know about XML display paths or PDF anchor
+breadcrumbs. Optional/PDF-only fields default to empty/False so that the
+renderer's branches are driven by data presence, not by pipeline identity.
 """
 
 from __future__ import annotations
@@ -23,45 +26,49 @@ class ChangeView:
     """Pre-escaped HTML ready to drop directly into the card <h3>."""
 
     nav_label_html: str
-    """Pre-escaped HTML for the sidebar nav-item label."""
-
-    nav_extra_class: str
-    """Extra CSS class on the nav-item ("" or "unanchored")."""
-
-    group_key: str
-    """Stable key used by the financial-summary table for rowspan grouping."""
+    """Pre-escaped HTML for the sidebar nav-item label (excluding section prefix)."""
 
     section_number: str
-    """Section number prefix for the sidebar label, or "" when absent."""
+    """Section number string. Empty when absent. The renderer emits a separate
+    <span class="section-number"> when set, and prefixes the sidebar label."""
 
-    old_text: str | None
-    """Raw old text. The renderer escapes."""
-
-    new_text: str | None
-    """Raw new text. The renderer escapes."""
-
-    citation_html: str | None
-    """Pre-rendered citation block. None for XML; a <div class="citation">... for PDF."""
+    citation_html: str
+    """Pre-rendered citation block. "" for XML; full <div class="citation">
+    ... </div> for PDF."""
 
     degraded: bool
     """When True, card and nav item gain "unanchored" / "degraded" classes."""
 
+    move_info_html: str
+    """Pre-rendered move-info div for change_type=="moved". "" otherwise."""
+
+    old_text: str
+    """Old text body. "" when absent."""
+
+    new_text: str
+    """New text body. "" when absent."""
+
     amount_pairs: tuple[tuple[int | None, int | None], ...]
-    """Old/new amount pairs, with None for one-sided amounts."""
+    """Already filtered to "real" amount changes (both sides present and
+    differing). The renderer iterates without re-filtering."""
 
     has_amendment_annotations: bool
     """When True, financial callouts include the floor-amendment-annotation note."""
 
-    summary_amount_filter: str
-    """Per-pipeline filter selector: "amounts_changed" (XML) or "real_change" (PDF)."""
+    group_key: str
+    """Stable per-change key for the financial-summary table's rowspan grouping."""
 
 
 @dataclass(frozen=True)
 class DiffView:
     bill_type: str
-    bill_number: int
-    congress: int
+    bill_number: int | str
+    congress: int | str
     v1_label: str
     v2_label: str
+    v1_version_number: int | None
+    """Version index (1, 2, ...) when known. Drives the "v1: " prefix in the
+    rendered versions line. None for PDFs (no version index available)."""
+    v2_version_number: int | None
     summary: dict[str, int]
     changes: tuple[ChangeView, ...] = field(default_factory=tuple)
