@@ -53,21 +53,18 @@ def _location_within_range(
 def _hunk_covering(diff: PdfDiff, case: PdfTestCase) -> PdfHunk | None:
     """Find the hunk whose v1/v2 ranges cover the case's v1/v2 locations.
 
-    For added cases (v1_location is None), match only on v2 side.
-    For removed cases (v2_location is None), match only on v1 side.
-    For modified/moved, both sides must match.
+    A hunk matches a case when each side's "has a range?" lines up with the
+    case's "has a location?" — i.e. an added case (v1_location=None) only
+    matches an added hunk (v1_range=None), and so on. The location-covers
+    check then confirms the present sides line up positionally.
     """
     for h in diff.hunks:
+        if (case.v1_location is not None) != (h.v1_range is not None):
+            continue
+        if (case.v2_location is not None) != (h.v2_range is not None):
+            continue
         v1_ok = case.v1_location is None or _location_within_range(h.v1_range, case.v1_location)
         v2_ok = case.v2_location is None or _location_within_range(h.v2_range, case.v2_location)
-        # When the case has a None side, the corresponding hunk side must also be None
-        # (an added case shouldn't be matched by a modified hunk that has a v1_range).
-        if case.v1_location is None and h.v1_range is not None and h.change_type != "removed":
-            if h.change_type != "added":
-                continue
-        if case.v2_location is None and h.v2_range is not None and h.change_type != "added":
-            if h.change_type != "removed":
-                continue
         if v1_ok and v2_ok:
             return h
     return None
