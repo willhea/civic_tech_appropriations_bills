@@ -176,11 +176,17 @@ def _block_key(block: _Block) -> str:
     return f"{anchor_text}::{body_preview}"
 
 
-def _amount_pairs_when_changed(v1_text: str, v2_text: str) -> tuple[tuple[int | None, int | None], ...]:
-    """Return non-trivial amount pairs (i.e. excluding pairs that are unchanged)."""
-    pairs = match_amounts(v1_text, v2_text)
-    nontrivial = tuple((old, new) for old, new in pairs if old != new)
-    return nontrivial
+def _amount_pairs(v1_text: str, v2_text: str) -> tuple[tuple[int | None, int | None], ...]:
+    """All amount pairs from match_amounts as a tuple, including unchanged pairs.
+
+    Unchanged pairs (e.g. `$281,358,000 → $281,358,000` when only floor
+    amendment annotations were added) are preserved here so the renderer can
+    show them in the callout — matches the XML pipeline's
+    `_financial_callout`, which renders every paired amount including `(+$0)`
+    rows. The Financial Summary table at the top still filters to truly-changed
+    pairs via `_has_real_amount_change` in the renderer.
+    """
+    return tuple(match_amounts(v1_text, v2_text))
 
 
 def _has_amendment_annotations(v1_text: str, v2_text: str) -> bool:
@@ -220,7 +226,7 @@ def _hunk_for_paired_blocks(v1_block: _Block, v2_block: _Block, similarity: floa
         v2_range=v2_block.page_range,
         v1_text=v1_text,
         v2_text=v2_text,
-        amount_pairs=_amount_pairs_when_changed(v1_text, v2_text),
+        amount_pairs=_amount_pairs(v1_text, v2_text),
         has_amendment_annotations=_has_amendment_annotations(v1_text, v2_text),
     )
 
@@ -301,7 +307,7 @@ def _reconcile_moves(hunks: list[PdfHunk], threshold: float = _MOVE_SIMILARITY_T
                     v2_range=added.v2_range,
                     v1_text=removed.v1_text,
                     v2_text=added.v2_text,
-                    amount_pairs=_amount_pairs_when_changed(removed.v1_text, added.v2_text),
+                    amount_pairs=_amount_pairs(removed.v1_text, added.v2_text),
                     has_amendment_annotations=_has_amendment_annotations(removed.v1_text, added.v2_text),
                 )
             )
