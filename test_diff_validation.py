@@ -11,6 +11,7 @@ Test categories:
 """
 
 from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 
 import pytest
@@ -25,6 +26,17 @@ from diff_bill import (
 )
 
 BILLS_DIR = Path(__file__).parent / "bills"
+
+
+@lru_cache(maxsize=None)
+def _cached_normalize(path: Path):
+    return normalize_bill(path)
+
+
+@lru_cache(maxsize=None)
+def _cached_diff(old_path: Path, new_path: Path):
+    """Memoize (parse + diff) per (old_path, new_path) for the corpus smoke test."""
+    return diff_bills(_cached_normalize(old_path), _cached_normalize(new_path))
 
 
 def _changes_by_type(diff, change_type):
@@ -392,17 +404,13 @@ class TestCorpusDiffSmoke:
 
     def test_no_crash(self, old_path, new_path):
         """Diff pipeline should not crash on any version pair."""
-        old_tree = normalize_bill(old_path)
-        new_tree = normalize_bill(new_path)
-        result = diff_bills(old_tree, new_tree)
+        result = _cached_diff(old_path, new_path)
         assert result is not None
         assert len(result.changes) > 0
 
     def test_no_false_matches(self, old_path, new_path):
         """No modified section should have similarity below the split threshold (0.4)."""
-        old_tree = normalize_bill(old_path)
-        new_tree = normalize_bill(new_path)
-        result = diff_bills(old_tree, new_tree)
+        result = _cached_diff(old_path, new_path)
 
         for c in result.changes:
             if c.change_type == "modified" and c.old_text and c.new_text:
@@ -419,9 +427,7 @@ class TestCorpusDiffSmoke:
         divisions. Element IDs are always unique per XML element, so they serve
         as the correct uniqueness key for pairings.
         """
-        old_tree = normalize_bill(old_path)
-        new_tree = normalize_bill(new_path)
-        result = diff_bills(old_tree, new_tree)
+        result = _cached_diff(old_path, new_path)
 
         id_pairs = Counter((c.element_id_old, c.element_id_new) for c in result.changes)
         duplicates = {k: v for k, v in id_pairs.items() if v > 1}
@@ -430,9 +436,7 @@ class TestCorpusDiffSmoke:
 
     def test_summary_counts_non_negative(self, old_path, new_path):
         """All summary counts should be non-negative."""
-        old_tree = normalize_bill(old_path)
-        new_tree = normalize_bill(new_path)
-        result = diff_bills(old_tree, new_tree)
+        result = _cached_diff(old_path, new_path)
 
         for key, value in result.summary.items():
             assert value >= 0, f"Negative summary count {key}={value}"
