@@ -2,13 +2,39 @@
 
 from __future__ import annotations
 
-from diff_pdf import diff_pdfs
+from diff_pdf import _Block, _block_key, _IndexedLine, diff_pdfs
 from parsers.pdf_anchors import Anchor
 from parsers.pdf_text import Line, Page
 
 
 def _page(page_number: int, *lines: tuple[int | None, str]) -> Page:
     return Page(page_number, tuple(Line(ln, txt) for ln, txt in lines))
+
+
+def _block(anchor: Anchor | None, *lines: tuple[int, int, str]) -> _Block:
+    """Build a test _Block from (page_number, line_number, text) tuples."""
+    return _Block(anchor, tuple(_IndexedLine(text, p, ln) for p, ln, text in lines))
+
+
+class TestBlockKey:
+    def test_anchor_text_and_body_preview_combined(self):
+        anchor = Anchor(2, 1, "section", "SEC. 101")
+        block = _block(anchor, (2, 1, "SEC. 101. alpha body"), (2, 2, "more body"))
+        assert _block_key(block) == "SEC. 101::SEC. 101. alpha body\nmore body"
+
+    def test_preamble_block_uses_sentinel_anchor_text(self):
+        block = _block(None, (1, 1, "Be it enacted by the Senate"))
+        assert _block_key(block) == "(preamble)::Be it enacted by the Senate"
+
+    def test_body_preview_capped_at_80_chars(self):
+        # Two blocks with same anchor and identical first 80 chars but different
+        # tails get the same key — so SequenceMatcher aligns them as 'equal'
+        # and the downstream text-equality check catches the body difference.
+        long_prefix = "a" * 80
+        anchor = Anchor(1, 1, "section", "SEC. 1")
+        block_a = _block(anchor, (1, 1, long_prefix + "X"))
+        block_b = _block(anchor, (1, 1, long_prefix + "Y"))
+        assert _block_key(block_a) == _block_key(block_b)
 
 
 class TestNoChanges:
@@ -108,6 +134,17 @@ class TestNumericClassification:
         v2 = [_page(2, (14, "SEC. 101. heading"), (15, "the program may be operated"))]
         h = diff_pdfs(v1, v2).hunks[0]
         assert h.amount_pairs == ()
+
+    def test_unchanged_amount_preserved_alongside_changed_amount(self):
+        # When a hunk's body changes one amount but leaves another stable,
+        # both pairs survive — including the unchanged one. Renderer parity
+        # with the XML callout (which shows `$X → $X (+$0)` rows for stable
+        # amounts in modified sections).
+        v1 = [_page(2, (14, "SEC. 101. heading"), (15, "$100,000,000 of which $5,000,000 shall remain"))]
+        v2 = [_page(2, (14, "SEC. 101. heading"), (15, "$200,000,000 of which $5,000,000 shall remain"))]
+        h = diff_pdfs(v1, v2).hunks[0]
+        assert (100_000_000, 200_000_000) in h.amount_pairs
+        assert (5_000_000, 5_000_000) in h.amount_pairs
 
 
 class TestMovedClassification:
