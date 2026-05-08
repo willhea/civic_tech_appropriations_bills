@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/willhea/appropriations_bills/prototype/sample-diffs/schema.json",
+  "title": "Canonical Diff JSON",
+  "description": "Pipeline-neutral diff between two bill versions. See schema.md for prose spec.",
+  "type": "object",
+  "required": ["schema_version", "bill", "versions", "summary", "changes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$",
+      "description": "Major.minor. Consumers reject unknown majors."
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "bill": {
+      "type": "object",
+      "required": ["type", "number", "congress"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string" },
+        "number": { "type": ["integer", "string"] },
+        "congress": { "type": ["integer", "string"] }
+      }
+    },
+    "versions": {
+      "type": "object",
+      "required": ["v1", "v2"],
+      "additionalProperties": false,
+      "properties": {
+        "v1": { "$ref": "#/$defs/VersionInfo" },
+        "v2": { "$ref": "#/$defs/VersionInfo" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Change" }
+    }
+  },
+  "$defs": {
+    "VersionInfo": {
+      "type": "object",
+      "required": ["label", "version_number", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "version_number": { "type": ["integer", "null"] },
+        "source": { "enum": ["xml", "pdf"] }
+      }
+    },
+    "Change": {
+      "type": "object",
+      "required": [
+        "id",
+        "change_type",
+        "section_number",
+        "path",
+        "location",
+        "anchor_resolution",
+        "text",
+        "amounts",
+        "move"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "change_type": { "enum": ["added", "removed", "modified", "moved"] },
+        "section_number": { "type": ["string", "null"] },
+        "path": {
+          "type": "object",
+          "required": ["v1", "v2"],
+          "additionalProperties": false,
+          "properties": {
+            "v1": { "$ref": "#/$defs/PathArray" },
+            "v2": { "$ref": "#/$defs/PathArray" }
+          }
+        },
+        "location": {
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["v1", "v2"],
+              "additionalProperties": false,
+              "properties": {
+                "v1": { "$ref": "#/$defs/Range" },
+                "v2": { "$ref": "#/$defs/Range" }
+              }
+            }
+          ]
+        },
+        "anchor_resolution": { "enum": ["resolved", "degraded"] },
+        "text": {
+          "type": "object",
+          "required": ["old", "new"],
+          "additionalProperties": false,
+          "properties": {
+            "old": { "type": ["string", "null"] },
+            "new": { "type": ["string", "null"] }
+          }
+        },
+        "amounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["old", "new"],
+            "additionalProperties": false,
+            "properties": {
+              "old": { "type": "integer" },
+              "new": { "type": "integer" }
+            }
+          }
+        },
+        "move": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/MoveRenumbered" },
+            { "$ref": "#/$defs/MoveRelocated" }
+          ]
+        }
+      }
+    },
+    "PathArray": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "Range": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["start_page", "start_line", "end_page", "end_line"],
+          "additionalProperties": false,
+          "properties": {
+            "start_page": { "type": "integer", "minimum": 1 },
+            "start_line": { "type": ["integer", "null"], "minimum": 1 },
+            "end_page": { "type": "integer", "minimum": 1 },
+            "end_line": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        }
+      ]
+    },
+    "MoveRenumbered": {
+      "type": "object",
+      "required": ["kind", "old_label", "new_label", "body_unchanged"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "renumbered" },
+        "old_label": { "type": "string" },
+        "new_label": { "type": "string" },
+        "body_unchanged": { "type": "boolean" }
+      }
+    },
+    "MoveRelocated": {
+      "type": "object",
+      "required": ["kind", "body_unchanged"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "relocated" },
+        "body_unchanged": { "type": "boolean" }
+      }
+    }
+  }
+}
