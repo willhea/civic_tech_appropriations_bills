@@ -28,8 +28,8 @@
     "moved": 2
   },
   "full_text": {
-    "v1": "TITLE I \u2014 DEPARTMENT OF CUSTOMS\n\nSec. 101.\n\nFor necessary expenses of the Department of Customs, $5,000,000, to remain available until September 30, 2027.\n\nTITLE II \u2014 DEPARTMENT OF INNOVATION\n\nSec. 201.\n\nFor necessary expenses of departmental administration, $12,000,000.\n\nTITLE III \u2014 GENERAL PROVISIONS\n\nSec. 301. None of the funds made available by this Act may be used in contravention of section 552 of title 5, United States Code.\n\nSec. 307. None of the funds made available by this Act may be used to finalize the rule proposed in 89 Fed. Reg. 12,345.\n\nTITLE IV \u2014 REPORTING\n\nSec. 401. Reporting requirement on quarterly obligations to the Committees on Appropriations.\n\nTITLE V \u2014 DEFENSE WORKING CAPITAL FUND\n\nSubtitle A \u2014 Transfer authorities\n\nSec. 502. Limitation on transfer authority for the Defense Working Capital Fund.\n\nGENERAL PROVISIONS \u2014 DEPARTMENTWIDE\n\nProvided further, That amounts under this heading shall be available for fiscal year 2027.\n",
-    "v2": "TITLE I \u2014 DEPARTMENT OF CUSTOMS\n\nSec. 101.\n\nFor necessary expenses of the Department of Customs, $5,500,000, to remain available until September 30, 2028.\n\nTITLE II \u2014 DEPARTMENT OF INNOVATION\n\nSec. 201.\n\nFor necessary expenses of departmental administration, $12,000,000.\n\nOffice of Innovation.\n\nThere is established within the Department an Office of Innovation, headed by a Director appointed by the Secretary.\n\nTITLE III \u2014 GENERAL PROVISIONS\n\nSec. 301. None of the funds made available by this Act may be used in contravention of section 552 of title 5, United States Code.\n\nTITLE IV \u2014 REPORTING\n\nSec. 501. Reporting requirement on quarterly obligations to the Committees on Appropriations.\n\nTITLE V \u2014 DEFENSE WORKING CAPITAL FUND\n\nSubtitle B \u2014 Transfer authorities\n\nSec. 502. Limitation on transfer authority for the Defense Working Capital Fund.\n\nGENERAL PROVISIONS \u2014 DEPARTMENTWIDE\n\nProvided further, That amounts under this heading shall be available for fiscal year 2028.\n"
+    "v1": "TITLE I \u2014 DEPARTMENT OF CUSTOMS\n\nSec. 101.\n\nFor necessary expenses of the Department of Customs, $5,000,000, to remain available until September 30, 2027.\n\nTITLE II \u2014 DEPARTMENT OF INNOVATION\n\nSec. 201.\n\nFor necessary expenses of departmental administration, $12,000,000.\n\nTITLE III \u2014 GENERAL PROVISIONS\n\nSec. 301. None of the funds in this Act may be used in contravention of 5 U.S.C. \u00a7 552.\n\nSec. 307. None of the funds made available by this Act may be used to finalize the rule proposed in 89 Fed. Reg. 12,345.\n\nTITLE IV \u2014 REPORTING\n\nSec. 401. Reporting requirement on quarterly obligations to the Committees on Appropriations.\n\nTITLE V \u2014 DEFENSE WORKING CAPITAL FUND\n\nSubtitle A \u2014 Transfer authorities\n\nSec. 502. Limitation on transfer authority for the Defense Working Capital Fund.\n\nGENERAL PROVISIONS \u2014 DEPARTMENTWIDE\n\nProvided further, That amounts under this heading shall be available for fiscal year 2027.\n",
+    "v2": "TITLE I \u2014 DEPARTMENT OF CUSTOMS\n\nSec. 101.\n\nFor necessary expenses of the Department of Customs, $5,500,000, to remain available until September 30, 2028.\n\nTITLE II \u2014 DEPARTMENT OF INNOVATION\n\nSec. 201.\n\nFor necessary expenses of departmental administration, $12,000,000.\n\nOffice of Innovation.\n\nThere is established within the Department an Office of Innovation, headed by a Director appointed by the Secretary.\n\nTITLE III \u2014 GENERAL PROVISIONS\n\nSec. 301. None of the funds in this Act may be used in contravention of 5 U.S.C. \u00a7 552.\n\nTITLE IV \u2014 REPORTING\n\nSec. 501. Reporting requirement on quarterly obligations to the Committees on Appropriations.\n\nTITLE V \u2014 DEFENSE WORKING CAPITAL FUND\n\nSubtitle B \u2014 Transfer authorities\n\nSec. 502. Limitation on transfer authority for the Defense Working Capital Fund.\n\nGENERAL PROVISIONS \u2014 DEPARTMENTWIDE\n\nProvided further, That amounts under this heading shall be available for fiscal year 2028.\n"
   },
   "changes": [
     {
@@ -150,8 +150,8 @@
       "move": null,
       "full_text_span": {
         "v1": {
-          "start": 447,
-          "end": 557
+          "start": 404,
+          "end": 514
         },
         "v2": null
       }
@@ -198,12 +198,12 @@
       },
       "full_text_span": {
         "v1": {
-          "start": 591,
-          "end": 674
+          "start": 548,
+          "end": 631
         },
         "v2": {
-          "start": 610,
-          "end": 693
+          "start": 567,
+          "end": 650
         }
       }
     },
@@ -249,12 +249,12 @@
       },
       "full_text_span": {
         "v1": {
-          "start": 761,
-          "end": 831
+          "start": 718,
+          "end": 788
         },
         "v2": {
-          "start": 780,
-          "end": 850
+          "start": 737,
+          "end": 807
         }
       }
     },
@@ -289,12 +289,12 @@
       "move": null,
       "full_text_span": {
         "v1": {
-          "start": 870,
-          "end": 960
+          "start": 827,
+          "end": 917
         },
         "v2": {
-          "start": 889,
-          "end": 979
+          "start": 846,
+          "end": 936
         }
       }
     }

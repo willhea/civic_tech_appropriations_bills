@@ -320,7 +320,7 @@ For necessary expenses of departmental administration, $12,000,000.
 
 TITLE III — GENERAL PROVISIONS
 
-Sec. 301. None of the funds made available by this Act may be used in contravention of section 552 of title 5, United States Code.
+Sec. 301. None of the funds in this Act may be used in contravention of 5 U.S.C. § 552.
 
 Sec. 307. None of the funds made available by this Act may be used to finalize the rule proposed in 89 Fed. Reg. 12,345.
 
@@ -357,7 +357,7 @@ There is established within the Department an Office of Innovation, headed by a 
 
 TITLE III — GENERAL PROVISIONS
 
-Sec. 301. None of the funds made available by this Act may be used in contravention of section 552 of title 5, United States Code.
+Sec. 301. None of the funds in this Act may be used in contravention of 5 U.S.C. § 552.
 
 TITLE IV — REPORTING
 
