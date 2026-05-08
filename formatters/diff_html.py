@@ -47,7 +47,9 @@ def _build_card(change: ChangeView, index: int) -> str:
     if change.citation_html:
         parts.append(change.citation_html)
 
-    parts.append(_card_body_html(change))
+    body = _card_body_html(change)
+    if body:
+        parts.append(body)
 
     callout = _build_callout(change)
     if callout:
@@ -58,15 +60,21 @@ def _build_card(change: ChangeView, index: int) -> str:
 
 
 def _card_body_html(change: ChangeView) -> str:
-    """Render the body region of a card. Excludes header, citation, callout."""
+    """Render the body region of a card. Excludes header, citation, callout.
+
+    Returns "" for "unchanged" (and any unrecognized) change types so the
+    card surfaces only as a header + section reference. The four known types
+    each get their own body shape.
+    """
     if change.change_type == "added":
         return f'<div class="change-body added-text">{escape(change.new_text)}</div>'
     if change.change_type == "removed":
         return f'<div class="change-body removed-text">{escape(change.old_text)}</div>'
     if change.change_type == "moved":
         return _moved_body_html(change)
-    # modified (and any other / unknown type defaults to modified-style)
-    return _prose_body_html(change.old_text, change.new_text)
+    if change.change_type == "modified":
+        return _prose_body_html(change.old_text, change.new_text)
+    return ""
 
 
 def _prose_body_html(old_text: str, new_text: str) -> str:
