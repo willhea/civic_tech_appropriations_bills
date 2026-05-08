@@ -176,7 +176,7 @@ def _block_key(block: _Block) -> str:
     return f"{anchor_text}::{body_preview}"
 
 
-def _amount_pairs(v1_text: str, v2_text: str) -> tuple[tuple[int | None, int | None], ...]:
+def _extract_amount_pairs(v1_text: str, v2_text: str) -> tuple[tuple[int | None, int | None], ...]:
     """All amount pairs from match_amounts as a tuple, including unchanged pairs.
 
     Unchanged pairs (e.g. `$281,358,000 → $281,358,000` when only floor
@@ -197,25 +197,20 @@ def _has_amendment_annotations(v1_text: str, v2_text: str) -> bool:
     return bool(_AMENDMENT_RE_DETAIL.search(v1_text) or _AMENDMENT_RE_DETAIL.search(v2_text))
 
 
-def _hunk_for_paired_blocks(v1_block: _Block, v2_block: _Block, similarity: float | None = None) -> PdfHunk:
+def _hunk_for_paired_blocks(v1_block: _Block, v2_block: _Block, similarity: float) -> PdfHunk:
     """Emit a hunk for two blocks paired by alignment.
 
-    Classifies as `moved` when anchors differ but bodies are highly similar
+    Classifies as `moved` when anchors differ and bodies are highly similar
     (renumbered SEC.), else `modified`. Caller has already confirmed v1 and v2
-    block texts differ — this routine doesn't filter equal blocks.
-
-    `similarity`, if provided, is the precomputed `_text_similarity` between
-    v1 and v2 text. Caller can pass it to avoid a second computation when it
-    already had to compute one (e.g. to decide split-vs-pair upstream).
+    block texts differ AND has computed `similarity` (the
+    `_text_similarity` between the two block texts) to decide split-vs-pair.
     """
     v1_text = v1_block.text
     v2_text = v2_block.text
     v1_anchor = v1_block.anchor
     v2_anchor = v2_block.anchor
-    if v1_anchor and v2_anchor and v1_anchor.text != v2_anchor.text:
-        if similarity is None:
-            similarity = _text_similarity(v1_text, v2_text)
-        change_type: ChangeType = "moved" if similarity >= _MOVE_SIMILARITY_THRESHOLD else "modified"
+    if v1_anchor and v2_anchor and v1_anchor.text != v2_anchor.text and similarity >= _MOVE_SIMILARITY_THRESHOLD:
+        change_type: ChangeType = "moved"
     else:
         change_type = "modified"
     return PdfHunk(
@@ -226,7 +221,7 @@ def _hunk_for_paired_blocks(v1_block: _Block, v2_block: _Block, similarity: floa
         v2_range=v2_block.page_range,
         v1_text=v1_text,
         v2_text=v2_text,
-        amount_pairs=_amount_pairs(v1_text, v2_text),
+        amount_pairs=_extract_amount_pairs(v1_text, v2_text),
         has_amendment_annotations=_has_amendment_annotations(v1_text, v2_text),
     )
 
@@ -307,7 +302,7 @@ def _reconcile_moves(hunks: list[PdfHunk], threshold: float = _MOVE_SIMILARITY_T
                     v2_range=added.v2_range,
                     v1_text=removed.v1_text,
                     v2_text=added.v2_text,
-                    amount_pairs=_amount_pairs(removed.v1_text, added.v2_text),
+                    amount_pairs=_extract_amount_pairs(removed.v1_text, added.v2_text),
                     has_amendment_annotations=_has_amendment_annotations(removed.v1_text, added.v2_text),
                 )
             )
@@ -319,6 +314,23 @@ def _reconcile_moves(hunks: list[PdfHunk], threshold: float = _MOVE_SIMILARITY_T
 
 
 # ---- Public entry point ------------------------------------------------------
+
+
+def _emit_pair(v1_b: _Block, v2_b: _Block, sink: list[PdfHunk]) -> None:
+    """Emit a paired-block hunk into `sink`, or split into removed+added.
+
+    When v1/v2 block texts are very dissimilar, treat the pair as an unrelated
+    removal and addition that happen to share alignment — emit two hunks so
+    `_reconcile_moves` can later pair them with the right counterparts.
+    """
+    if v1_b.text == v2_b.text:
+        return
+    sim = _text_similarity(v1_b.text, v2_b.text)
+    if sim < _PAIR_BODY_THRESHOLD:
+        sink.append(_hunk_for_removed(v1_b))
+        sink.append(_hunk_for_added(v2_b))
+    else:
+        sink.append(_hunk_for_paired_blocks(v1_b, v2_b, similarity=sim))
 
 
 def diff_pdfs(v1_pages: list[Page], v2_pages: list[Page]) -> PdfDiff:
@@ -336,17 +348,6 @@ def diff_pdfs(v1_pages: list[Page], v2_pages: list[Page]) -> PdfDiff:
         b=[_block_key(b) for b in v2_blocks],
         autojunk=False,
     )
-
-    def _emit_pair(v1_b: _Block, v2_b: _Block, sink: list[PdfHunk]) -> None:
-        """Emit a paired-block hunk OR split into removed+added if bodies disagree."""
-        if v1_b.text == v2_b.text:
-            return
-        sim = _text_similarity(v1_b.text, v2_b.text)
-        if sim < _PAIR_BODY_THRESHOLD:
-            sink.append(_hunk_for_removed(v1_b))
-            sink.append(_hunk_for_added(v2_b))
-        else:
-            sink.append(_hunk_for_paired_blocks(v1_b, v2_b, similarity=sim))
 
     hunks: list[PdfHunk] = []
     for op, i1, i2, j1, j2 in matcher.get_opcodes():
