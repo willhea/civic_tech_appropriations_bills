@@ -19,17 +19,17 @@ import json
 from pathlib import Path
 
 import pytest
+
+from diff_pdf import PdfDiff, PdfHunk
+from formatters.adapters import pdf_diff_to_view, xml_dict_to_view
 from formatters.canonical import (
     pdf_diff_to_canonical,
     view_from_canonical,
     xml_diff_to_canonical,
 )
-
-from diff_pdf import PdfDiff, PdfHunk
-from formatters.adapters import pdf_diff_to_view, xml_dict_to_view
 from parsers.pdf_anchors import Anchor
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 
 # ---------- XML producer ------------------------------------------------------
@@ -451,6 +451,34 @@ def test_xml_canonical_validates_against_json_schema():
     )
     canonical = xml_diff_to_canonical(diff_dict)
     jsonschema.validate(canonical, _load_schema())
+
+
+def test_xml_full_text_default_null():
+    canonical = xml_diff_to_canonical(_xml_diff_dict())
+    assert canonical["full_text"] is None
+
+
+def test_xml_full_text_passes_through():
+    canonical = xml_diff_to_canonical(_xml_diff_dict(), full_text={"v1": "alpha", "v2": "beta"})
+    assert canonical["full_text"] == {"v1": "alpha", "v2": "beta"}
+
+
+def test_pdf_full_text_default_null():
+    diff = PdfDiff(hunks=(), v1_anchors=(), v2_anchors=())
+    assert pdf_diff_to_canonical(diff, **_pdf_meta())["full_text"] is None
+
+
+def test_pdf_full_text_passes_through():
+    diff = PdfDiff(hunks=(), v1_anchors=(), v2_anchors=())
+    canonical = pdf_diff_to_canonical(diff, **_pdf_meta(), full_text={"v1": "x", "v2": "y"})
+    assert canonical["full_text"] == {"v1": "x", "v2": "y"}
+
+
+def test_full_text_invalid_shape_rejected():
+    with pytest.raises(ValueError):
+        xml_diff_to_canonical(_xml_diff_dict(), full_text={"only_v1": "x"})
+    with pytest.raises(ValueError):
+        xml_diff_to_canonical(_xml_diff_dict(), full_text={"v1": "x", "v2": 42})
 
 
 def test_pdf_canonical_validates_against_json_schema():

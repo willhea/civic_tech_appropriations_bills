@@ -25,7 +25,7 @@ from diff_pdf import PdfDiff, PdfHunk
 from formatters.view_model import ChangeView, DiffView
 from parsers.pdf_anchors import Anchor, breadcrumb_for
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 GENERATOR_NAME = "appropriations_bills"
 
 
@@ -83,11 +83,15 @@ def _xml_move(change: dict) -> dict:
     }
 
 
-def xml_diff_to_canonical(diff_dict: dict) -> dict:
+def xml_diff_to_canonical(diff_dict: dict, *, full_text: dict | None = None) -> dict:
     """Convert a bill-diff dict (from bill_diff_to_dict) into canonical JSON.
 
     Drops `unchanged` entries: bill_diff_to_dict emits a card per matched node,
     but the canonical JSON only carries actual diffs.
+
+    `full_text`, when provided, must be a dict with string keys "v1" and "v2"
+    holding the complete serialized bill text per side. The canonical JSON
+    surfaces it at the top level for full-document rendering.
     """
     diffed = [c for c in (diff_dict.get("changes") or []) if c.get("change_type") != "unchanged"]
     return {
@@ -111,8 +115,25 @@ def xml_diff_to_canonical(diff_dict: dict) -> dict:
             },
         },
         "summary": dict(diff_dict.get("summary") or {}),
+        "full_text": _normalize_full_text(full_text),
         "changes": [_xml_change_to_canonical(c, i) for i, c in enumerate(diffed)],
     }
+
+
+def _normalize_full_text(full_text: dict | None) -> dict | None:
+    """Validate and pass through the optional full_text field.
+
+    Accepts None for "no full text available," or a dict with string v1/v2
+    keys. Anything else raises -- the producer is the gatekeeper for the
+    schema, not the consumer.
+    """
+    if full_text is None:
+        return None
+    if not isinstance(full_text, dict) or set(full_text) != {"v1", "v2"}:
+        raise ValueError("full_text must be None or a dict with keys 'v1' and 'v2'")
+    if not all(isinstance(full_text[k], str) for k in ("v1", "v2")):
+        raise ValueError("full_text values must be strings")
+    return {"v1": full_text["v1"], "v2": full_text["v2"]}
 
 
 # ---------- PDF producer -----------------------------------------------------
@@ -198,6 +219,7 @@ def pdf_diff_to_canonical(
     congress: int | str,
     v1_label: str = "v1",
     v2_label: str = "v2",
+    full_text: dict | None = None,
 ) -> dict:
     return {
         "schema_version": SCHEMA_VERSION,
@@ -208,6 +230,7 @@ def pdf_diff_to_canonical(
             "v2": {"label": v2_label, "version_number": None, "source": "pdf"},
         },
         "summary": dict(diff.summary),
+        "full_text": _normalize_full_text(full_text),
         "changes": [_pdf_hunk_to_canonical(h, i, diff.v1_anchors, diff.v2_anchors) for i, h in enumerate(diff.hunks)],
     }
 
