@@ -1,15 +1,20 @@
-"""Tests for the historical XML pipeline entry point format_html.
+"""Integration tests for the XML diff dict -> HTML rendering path.
 
-Exercises the public facade and CLI integration. Internal builders that
-used to live in formatters.html (build_change_card / build_sidebar /
-build_financial_table) moved into formatters.diff_html as private helpers
-when the renderers were unified — they are tested directly via the
-test_formatters_diff_html_*.py modules.
+Exercises the full dict -> view-model -> HTML pipeline plus CLI integration.
+Internal builders are tested directly via the test_formatters_diff_html_*.py
+modules; word_diff lives in formatters._text.
 """
 
 import pytest
 
-from formatters.html import format_html, word_diff
+from formatters._text import word_diff
+from formatters.adapters import xml_dict_to_view
+from formatters.diff_html import format_diff_html
+
+
+def format_html(diff_dict):
+    """Local helper preserving the historical dict -> HTML entry point."""
+    return format_diff_html(xml_dict_to_view(diff_dict))
 
 
 class TestWordDiff:

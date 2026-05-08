@@ -1,18 +1,22 @@
-"""Tests for the historical PDF pipeline entry point format_pdf_html.
+"""Integration tests for the PdfDiff -> HTML rendering path.
 
-Exercises the public facade. Internal builders that used to live in
-formatters.pdf_html (_build_card, _build_financial_summary) moved into
-formatters.diff_html as private helpers when the renderers were unified;
-they are tested directly via the test_formatters_diff_html_*.py modules.
-The PDF-specific data conversion (anchors, citations, degraded fallback,
-"Renumbered" form) is exercised via test_formatters_adapters_pdf.py.
+Exercises the full PdfDiff -> view-model -> HTML pipeline. Internal
+builders are tested directly via the test_formatters_diff_html_*.py
+modules; PDF-specific data conversion (anchors, citations, degraded
+fallback, "Renumbered" form) is exercised via test_formatters_adapters_pdf.py.
 """
 
 from __future__ import annotations
 
 from diff_pdf import PdfDiff, PdfHunk
-from formatters.pdf_html import format_pdf_html
+from formatters.adapters import pdf_diff_to_view
+from formatters.diff_html import format_diff_html
 from parsers.pdf_anchors import Anchor
+
+
+def format_pdf_html(diff: PdfDiff, **kwargs) -> str:
+    """Local helper preserving the historical PdfDiff -> HTML entry point."""
+    return format_diff_html(pdf_diff_to_view(diff, **kwargs))
 
 
 def _empty_diff() -> PdfDiff:
