@@ -25,6 +25,19 @@ BILLS_DIR = Path(__file__).parent / "bills"
 HR8752_V1 = BILLS_DIR / "118-hr-8752" / "1_reported-in-house.pdf"
 HR8752_V2 = BILLS_DIR / "118-hr-8752" / "2_engrossed-in-house.pdf"
 
+# Sentinel for "open-ended" line on an unnumbered (-1) line at end of a hunk
+# range. Larger than any realistic per-page line count; small enough that
+# tuple comparisons are cheap.
+_OPEN_END_LINE = 10_000
+
+try:
+    _CASES = load_cases()
+except (FileNotFoundError, ValueError):
+    # Missing or malformed fixture — emit no parametrized tests rather than
+    # failing pytest collection. The module-level fixture below also skips
+    # when the source PDFs are missing.
+    _CASES = []
+
 
 @pytest.fixture(scope="module")
 def hr8752_pdf_diff() -> PdfDiff:
@@ -44,9 +57,9 @@ def _location_within_range(
         return hunk_range is None and location is None
     sp, sl, ep, el = hunk_range
     csp, csl, _, _ = location
-    # Treat unnumbered (-1) as 0 for start, "very large" for end so it's permissive.
+    # Treat unnumbered (-1) as 0 for start, _OPEN_END_LINE for end so it's permissive.
     hunk_start = (sp, sl if sl >= 0 else 0)
-    hunk_end = (ep, el if el >= 0 else 10_000)
+    hunk_end = (ep, el if el >= 0 else _OPEN_END_LINE)
     return hunk_start <= (csp, csl) <= hunk_end
 
 
@@ -70,7 +83,7 @@ def _hunk_covering(diff: PdfDiff, case: PdfTestCase) -> PdfHunk | None:
     return None
 
 
-@pytest.mark.parametrize("case", load_cases(), ids=lambda c: f"case{c.number}")
+@pytest.mark.parametrize("case", _CASES, ids=lambda c: f"case{c.number}")
 class TestRecall:
     def test_hunk_exists_for_case(self, case: PdfTestCase, hr8752_pdf_diff: PdfDiff):
         h = _hunk_covering(hr8752_pdf_diff, case)
