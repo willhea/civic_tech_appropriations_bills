@@ -1,0 +1,244 @@
+{
+  "schema_version": "1.0",
+  "generator": {
+    "name": "appropriations_bills",
+    "version": "0-synthetic"
+  },
+  "bill": {
+    "type": "HR",
+    "number": "DEMO-2026",
+    "congress": 119
+  },
+  "versions": {
+    "v1": {
+      "label": "Committee Print",
+      "version_number": 1,
+      "source": "pdf"
+    },
+    "v2": {
+      "label": "Floor Manager's Mark",
+      "version_number": 2,
+      "source": "pdf"
+    }
+  },
+  "summary": {
+    "added": 1,
+    "removed": 1,
+    "modified": 2,
+    "moved": 2
+  },
+  "changes": [
+    {
+      "id": "c-0001",
+      "change_type": "modified",
+      "section_number": "101",
+      "path": {
+        "v1": [
+          "TITLE I",
+          "Department of Customs",
+          "Sec. 101"
+        ],
+        "v2": [
+          "TITLE I",
+          "Department of Customs",
+          "Sec. 101"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 12,
+          "start_line": 4,
+          "end_page": 12,
+          "end_line": 18
+        },
+        "v2": {
+          "start_page": 13,
+          "start_line": 1,
+          "end_page": 13,
+          "end_line": 14
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "For necessary expenses of the Department of Customs, $5,000,000, to remain available until September 30, 2027.",
+        "new": "For necessary expenses of the Department of Customs, $5,500,000, to remain available until September 30, 2028."
+      },
+      "amounts": [
+        {
+          "old": 5000000,
+          "new": 5500000
+        }
+      ],
+      "move": null
+    },
+    {
+      "id": "c-0002",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE II",
+          "Office of Innovation"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 24,
+          "start_line": 1,
+          "end_page": 25,
+          "end_line": 30
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "There is established within the Department an Office of Innovation, headed by a Director appointed by the Secretary."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0003",
+      "change_type": "removed",
+      "section_number": "307",
+      "path": {
+        "v1": [
+          "TITLE III",
+          "General Provisions",
+          "Sec. 307"
+        ],
+        "v2": null
+      },
+      "location": {
+        "v1": {
+          "start_page": 41,
+          "start_line": 8,
+          "end_page": 41,
+          "end_line": 22
+        },
+        "v2": null
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "None of the funds made available by this Act may be used to finalize the rule proposed in 89 Fed. Reg. 12,345.",
+        "new": null
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0004",
+      "change_type": "moved",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE IV",
+          "Sec. 401"
+        ],
+        "v2": [
+          "TITLE IV",
+          "Sec. 501"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 52,
+          "start_line": 1,
+          "end_page": 53,
+          "end_line": 4
+        },
+        "v2": {
+          "start_page": 61,
+          "start_line": 1,
+          "end_page": 62,
+          "end_line": 4
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "Reporting requirement on quarterly obligations to the Committees on Appropriations.",
+        "new": "Reporting requirement on quarterly obligations to the Committees on Appropriations."
+      },
+      "amounts": [],
+      "move": {
+        "kind": "renumbered",
+        "old_label": "Sec. 401",
+        "new_label": "Sec. 501",
+        "body_unchanged": true
+      }
+    },
+    {
+      "id": "c-0005",
+      "change_type": "moved",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE V",
+          "Subtitle A",
+          "Sec. 502"
+        ],
+        "v2": [
+          "TITLE V",
+          "Subtitle B",
+          "Sec. 502"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 70,
+          "start_line": 1,
+          "end_page": 70,
+          "end_line": 12
+        },
+        "v2": {
+          "start_page": 75,
+          "start_line": 1,
+          "end_page": 75,
+          "end_line": 12
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "Limitation on transfer authority for the Defense Working Capital Fund.",
+        "new": "Limitation on transfer authority for the Defense Working Capital Fund."
+      },
+      "amounts": [],
+      "move": {
+        "kind": "relocated",
+        "body_unchanged": true
+      }
+    },
+    {
+      "id": "c-0006",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": null
+      },
+      "location": {
+        "v1": {
+          "start_page": 88,
+          "start_line": null,
+          "end_page": 88,
+          "end_line": null
+        },
+        "v2": {
+          "start_page": 91,
+          "start_line": null,
+          "end_page": 91,
+          "end_line": null
+        }
+      },
+      "anchor_resolution": "degraded",
+      "text": {
+        "old": "Provided further, That amounts under this heading shall be available for fiscal year 2027.",
+        "new": "Provided further, That amounts under this heading shall be available for fiscal year 2028."
+      },
+      "amounts": [],
+      "move": null
+    }
+  ]
+}

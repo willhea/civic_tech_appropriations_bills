@@ -1,0 +1,1137 @@
+{
+  "schema_version": "1.0",
+  "generator": {
+    "name": "appropriations_bills",
+    "version": "0"
+  },
+  "bill": {
+    "type": "hr",
+    "number": 4366,
+    "congress": 118
+  },
+  "versions": {
+    "v1": {
+      "label": "Reported in House",
+      "version_number": null,
+      "source": "pdf"
+    },
+    "v2": {
+      "label": "Engrossed in House",
+      "version_number": null,
+      "source": "pdf"
+    }
+  },
+  "summary": {
+    "modified": 24,
+    "removed": 1,
+    "added": 8
+  },
+  "changes": [
+    {
+      "id": "c-0001",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": null
+      },
+      "location": {
+        "v1": {
+          "start_page": 1,
+          "start_line": null,
+          "end_page": 2,
+          "end_line": 7
+        },
+        "v2": {
+          "start_page": 1,
+          "start_line": null,
+          "end_page": 2,
+          "end_line": 5
+        }
+      },
+      "anchor_resolution": "degraded",
+      "text": {
+        "old": "IB\nUnion Calendar No. 94\n118TH CONGRESS H. R. 4366\n1ST SESSION\n[Report No. 118\u2013122]\nMaking appropriations for military construction, the Department of Veterans\nAffairs, and related agencies for the fiscal year ending September 30,\n2024, and for other purposes.\nIN THE HOUSE OF REPRESENTATIVES\nJUNE 27, 2023\nMr. CARTER of Texas, from the Committee on Appropriations, reported the\nfollowing bill; which was committed to the Committee of the Whole House\non the State of the Union and ordered to be printed\nA BILL\nMaking appropriations for military construction, the Department of Veterans Affairs, and related agencies for the\nfiscal year ending September 30, 2024, and for other\npurposes.\nVerDate Sep 11 2014 00:17 Jun 28, 2023 Jkt 039200 PO 00000 Frm 00001 Fmt 6652 Sfmt 6652 E:\\BILLS\\H4366.RH H4366\nSLLIB\nhtiw\nDORP32NQ621KSD\nno\nrecnepSS\nBe it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,\nThat the following sums are appropriated, out of any\nmoney in the Treasury not otherwise appropriated, for\nmilitary construction, the Department of Veterans Affairs,\nand related agencies for the fiscal year ending September\n30, 2024, and for other purposes, namely:",
+        "new": "118TH CONGRESS H. R. 4366\n1ST SESSION\nAN ACT\nMaking appropriations for military construction, the Department of Veterans Affairs, and related agencies for the\nfiscal year ending September 30, 2024, and for other\npurposes.\nBe it enacted by the Senate and House of Representatives of the United States of America in Congress assembled,\nThat the following sums are appropriated, out of any\nmoney in the Treasury not otherwise appropriated, for\nmilitary construction, the Department of Veterans Affairs,\nand related agencies for the fiscal year ending September\n30, 2024, and for other purposes, namely:"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0002",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE I"
+        ],
+        "v2": [
+          "TITLE I"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 2,
+          "start_line": 8,
+          "end_page": 12,
+          "end_line": 21
+        },
+        "v2": {
+          "start_page": 2,
+          "start_line": 6,
+          "end_page": 12,
+          "end_line": 21
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "TITLE I\nDEPARTMENT OF DEFENSE\nMILITARY CONSTRUCTION, ARMY\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, military\ninstallations, facilities, and real property for the Army as\ncurrently authorized by law, including personnel in the\nArmy Corps of Engineers and other personal services necessary for the purposes of this appropriation, and for construction and operation of facilities in support of the functions of the Commander in Chief, $1,517,455,000, to remain available until September 30, 2028: Provided, That,\nof this amount, not to exceed $345,775,000 shall be available for study, planning, design, architect and engineer\nservices, and host nation support, as authorized by law,\nunless the Secretary of the Army determines that additional obligations are necessary for such purposes and notifies the Committees on Appropriations of both Houses\nof Congress of the determination and the reasons therefor:\nProvided further, That of the amount made available\nunder this heading, $162,900,000 shall be for the projects\nand activities, and in the amounts, specified in the table\nunder the heading \u2018\u2018Military Construction, Army\u2019\u2019 in the\nreport accompanying this Act, in addition to amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, NAVY AND MARINE CORPS\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, naval installations, facilities, and real property for the Navy and\nMarine Corps as currently authorized by law, including\npersonnel in the Naval Facilities Engineering Command\nand other personal services necessary for the purposes of\nthis appropriation, $4,477,961,000, to remain available\nuntil September 30, 2028: Provided, That, of this amount,\nnot to exceed $602,625,000 shall be available for study,\nplanning, design, and architect and engineer services, as\nauthorized by law, unless the Secretary of the Navy determines that additional obligations are necessary for such\npurposes and notifies the Committees on Appropriations\nof both Houses of Congress of the determination and the\nreasons therefor: Provided further, That of the amount\nmade available under this heading, $52,683,000 shall be\nfor the projects and activities, and in the amounts, speci-\nfied in the table under the heading \u2018\u2018Military Construction,\nNavy and Marine Corps\u2019\u2019 in the report accompanying this\nAct, in addition to amounts otherwise available for such\npurposes.\nMILITARY CONSTRUCTION, AIR FORCE\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, military\ninstallations, facilities, and real property for the Air Force\nas currently authorized by law, $2,439,614,000, to remain\navailable until September 30, 2028: Provided, That, of this\namount, not to exceed $450,614,000 shall be available for\nstudy, planning, design, and architect and engineer services, as authorized by law, unless the Secretary of the Air\nForce determines that additional obligations are necessary\nfor such purposes and notifies the Committees on Appropriations of both Houses of Congress of the determination\nand the reasons therefor: Provided further, That of the\namount made available under this heading, $30,300,000\nshall be for the projects and activities, and in the amounts,\nspecified in the table under the heading \u2018\u2018Military Construction, Air Force\u2019\u2019 in the report accompanying this Act,\nin addition to amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, DEFENSE-WIDE\n(INCLUDING TRANSFER OF FUNDS)\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, installations, facilities, and real property for activities and agencies of the Department of Defense (other than the military\ndepartments), as currently authorized by law,\n$2,651,047,000, to remain available until September 30,\n2028: Provided, That such amounts of this appropriation\nas may be determined by the Secretary of Defense may\nbe transferred to such appropriations of the Department\nof Defense available for military construction or family\nhousing as the Secretary may designate, to be merged with\nand to be available for the same purposes, and for the\nsame time period, as the appropriation or fund to which\ntransferred: Provided further, That, of the amount, not to\nexceed $304,045,000 shall be available for study, planning, design, and architect and engineer services, as authorized by law, unless the Secretary of Defense determines that additional obligations are necessary for such\npurposes and notifies the Committees on Appropriations\nof both Houses of Congress of the determination and the\nreasons therefor.\nMILITARY CONSTRUCTION, ARMY NATIONAL GUARD\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Army National Guard, and contributions therefor, as authorized by chapter 1803 of title 10,\nUnited States Code, and Military Construction Authorization Acts, $369,261,000, to remain available until September 30, 2028: Provided, That, of the amount, not to\nexceed $42,361,000 shall be available for study, planning,\ndesign, and architect and engineer services, as authorized\nby law, unless the Director of the Army National Guard\ndetermines that additional obligations are necessary for\nsuch purposes and notifies the Committees on Appropriations of both Houses of Congress of the determination and\nthe reasons therefor: Provided further, That of the amount\nmade available under this heading, $19,075,000 shall be\nfor the projects and activities, and in the amounts, specified in the table under the heading \u2018\u2018Military Construction,\nArmy National Guard\u2019\u2019 in the report accompanying this\nAct, in addition to amounts otherwise available for such\npurposes.\nMILITARY CONSTRUCTION, AIR NATIONAL GUARD\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Air National Guard, and contributions\ntherefor, as authorized by chapter 1803 of title 10, United\nStates Code, and Military Construction Authorization\nActs, $189,322,000, to remain available until September\n30, 2028: Provided, That, of the amount, not to exceed\n$36,200,000 shall be available for study, planning, design,\nand architect and engineer services, as authorized by law,\nunless the Director of the Air National Guard determines\nthat additional obligations are necessary for such purposes\nand notifies the Committees on Appropriations of both\nHouses of Congress of the determination and the reasons\ntherefor: Provided further, That of the amount made available under this heading, $600,000 shall be for the projects\nand activities, and in the amounts, specified in the table\nunder the heading \u2018\u2018Military Construction, Air National\nGuard\u2019\u2019 in the report accompanying this Act, in addition\nto amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, ARMY RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Army Reserve as authorized by chapter\n1803 of title 10, United States Code, and Military Construction Authorization Acts, $117,076,000, to remain\navailable until September 30, 2028: Provided, That, of the\namount, not to exceed $23,389,000 shall be available for\nstudy, planning, design, and architect and engineer serv-\nices, as authorized by law, unless the Chief of the Army\nReserve determines that additional obligations are necessary for such purposes and notifies the Committees on\nAppropriations of both Houses of Congress of the determination and the reasons therefor.\nMILITARY CONSTRUCTION, NAVY RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the reserve components of the Navy and\nMarine Corps as authorized by chapter 1803 of title 10,\nUnited States Code, and Military Construction Authorization Acts, $61,291,000, to remain available until September 30, 2028: Provided, That, of the amount, not to\nexceed $6,495,000 shall be available for study, planning,\ndesign, and architect and engineer services, as authorized\nby law, unless the Secretary of the Navy determines that\nadditional obligations are necessary for such purposes and\nnotifies the Committees on Appropriations of both Houses\nof Congress of the determination and the reasons therefor.\nMILITARY CONSTRUCTION, AIR FORCE RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Air Force Reserve as authorized by\nchapter 1803 of title 10, United States Code, and Military\nConstruction Authorization Acts, $330,572,000, to remain\navailable until September 30, 2028: Provided, That, of the\namount, not to exceed $12,146,000 shall be available for\nstudy, planning, design, and architect and engineer services, as authorized by law, unless the Chief of the Air\nForce Reserve determines that additional obligations are\nnecessary for such purposes and notifies the Committees\non Appropriations of both Houses of Congress of the determination and the reasons therefor: Provided further,\nThat of the amount made available under this heading,\n$29,000,000 shall be for the projects and activities, and\nin the amounts, specified in the table under the heading\n\u2018\u2018Military Construction, Air Force Reserve\u2019\u2019 in the report\naccompanying this Act, in addition to amounts otherwise\navailable for such purposes.\nNORTH ATLANTIC TREATY ORGANIZATION\nSECURITY INVESTMENT PROGRAM\nFor the United States share of the cost of the North\nAtlantic Treaty Organization Security Investment Program for the acquisition and construction of military facilities and installations (including international military\nheadquarters) and for related expenses for the collective\ndefense of the North Atlantic Treaty Area as authorized\nby section 2806 of title 10, United States Code, and Military Construction Authorization Acts, $293,434,000, to\nremain available until expended.\nDEPARTMENT OF DEFENSE BASE CLOSURE ACCOUNT\nFor deposit into the Department of Defense Base\nClosure Account, established by section 2906(a) of the Defense Base Closure and Realignment Act of 1990 (10\nU.S.C. 2687 note), $539,174,000, to remain available\nuntil expended.\nFAMILY HOUSING CONSTRUCTION, ARMY\nFor expenses of family housing for the Army for construction, including acquisition, replacement, addition, expansion, extension, and alteration, as authorized by law,\n$304,895,000, to remain available until September 30,\n2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nARMY\nFor expenses of family housing for the Army for operation and maintenance, including debt payment, leasing,\nminor construction, principal and interest charges, and insurance premiums, as authorized by law, $395,485,000.\nFAMILY HOUSING CONSTRUCTION, NAVY AND MARINE\nCORPS\nFor expenses of family housing for the Navy and Marine Corps for construction, including acquisition, replacement, addition, expansion, extension, and alteration, as\nauthorized by law, $277,142,000, to remain available until\nSeptember 30, 2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nNAVY AND MARINE CORPS\nFor expenses of family housing for the Navy and Marine Corps for operation and maintenance, including debt\npayment, leasing, minor construction, principal and interest charges, and insurance premiums, as authorized by\nlaw, $373,854,000.\nFAMILY HOUSING CONSTRUCTION, AIR FORCE\nFor expenses of family housing for the Air Force for\nconstruction, including acquisition, replacement, addition,\nexpansion, extension, and alteration, as authorized by law,\n$237,097,000, to remain available until September 30,\n2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE, AIR\nFORCE\nFor expenses of family housing for the Air Force for\noperation and maintenance, including debt payment, leasing, minor construction, principal and interest charges,\nand insurance premiums, as authorized by law,\n$324,386,000.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nDEFENSE-WIDE\nFor expenses of family housing for the activities and\nagencies of the Department of Defense (other than the\nmilitary departments) for operation and maintenance,\nleasing, and minor construction, as authorized by law,\n$50,785,000.\nDEPARTMENT OF DEFENSE\nFAMILY HOUSING IMPROVEMENT FUND\nFor the Department of Defense Family Housing Improvement Fund, $6,611,000, to remain available until expended, for family housing initiatives undertaken pursuant to section 2883 of title 10, United States Code, providing alternative means of acquiring and improving military family housing and supporting facilities.\nDEPARTMENT OF DEFENSE\nMILITARY UNACCOMPANIED HOUSING IMPROVEMENT\nFUND\nFor the Department of Defense Military Unaccompanied Housing Improvement Fund, $496,000, to remain\navailable until expended, for unaccompanied housing initiatives undertaken pursuant to section 2883 of title 10,\nUnited States Code, providing alternative means of acquiring and improving military unaccompanied housing and\nsupporting facilities.\nADMINISTRATIVE PROVISIONS",
+        "new": "TITLE I\nDEPARTMENT OF DEFENSE\nMILITARY CONSTRUCTION, ARMY\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, military\ninstallations, facilities, and real property for the Army as\ncurrently authorized by law, including personnel in the\nArmy Corps of Engineers and other personal services necessary for the purposes of this appropriation, and for construction and operation of facilities in support of the functions of the Commander in Chief, $1,517,455,000 (increased by $103,000,000) (reduced by $103,000,000), to\nremain available until September 30, 2028: Provided,\nThat, of this amount, not to exceed $345,775,000 shall\nbe available for study, planning, design, architect and engineer services, and host nation support, as authorized by\nlaw, unless the Secretary of the Army determines that additional obligations are necessary for such purposes and\nnotifies the Committees on Appropriations of both Houses\nof Congress of the determination and the reasons therefor:\nProvided further, That of the amount made available\nunder this heading, $162,900,000 shall be for the projects\nand activities, and in the amounts, specified in the table\nunder the heading \u2018\u2018Military Construction, Army\u2019\u2019 in the\nreport accompanying this Act, in addition to amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, NAVY AND MARINE CORPS\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, naval installations, facilities, and real property for the Navy and\nMarine Corps as currently authorized by law, including\npersonnel in the Naval Facilities Engineering Command\nand other personal services necessary for the purposes of\nthis appropriation, $4,477,961,000, to remain available\nuntil September 30, 2028: Provided, That, of this amount,\nnot to exceed $602,625,000 shall be available for study,\nplanning, design, and architect and engineer services, as\nauthorized by law, unless the Secretary of the Navy determines that additional obligations are necessary for such\npurposes and notifies the Committees on Appropriations\nof both Houses of Congress of the determination and the\nreasons therefor: Provided further, That of the amount\nmade available under this heading, $52,683,000 shall be\nfor the projects and activities, and in the amounts, specified in the table under the heading \u2018\u2018Military Construction,\nNavy and Marine Corps\u2019\u2019 in the report accompanying this\nAct, in addition to amounts otherwise available for such\npurposes.\nMILITARY CONSTRUCTION, AIR FORCE\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, military\ninstallations, facilities, and real property for the Air Force\nas currently authorized by law, $2,439,614,000, to remain\navailable until September 30, 2028: Provided, That, of this\namount, not to exceed $450,614,000 shall be available for\nstudy, planning, design, and architect and engineer services, as authorized by law, unless the Secretary of the Air\nForce determines that additional obligations are necessary\nfor such purposes and notifies the Committees on Appropriations of both Houses of Congress of the determination\nand the reasons therefor: Provided further, That of the\namount made available under this heading, $30,300,000\nshall be for the projects and activities, and in the amounts,\nspecified in the table under the heading \u2018\u2018Military Construction, Air Force\u2019\u2019 in the report accompanying this Act,\nin addition to amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, DEFENSE-WIDE\n(INCLUDING TRANSFER OF FUNDS)\nFor acquisition, construction, installation, and equipment of temporary or permanent public works, installations, facilities, and real property for activities and agencies of the Department of Defense (other than the military\ndepartments), as currently authorized by law,\n$2,651,047,000, to remain available until September 30,\n2028: Provided, That such amounts of this appropriation\nas may be determined by the Secretary of Defense may\nbe transferred to such appropriations of the Department\nof Defense available for military construction or family\nhousing as the Secretary may designate, to be merged with\nand to be available for the same purposes, and for the\nsame time period, as the appropriation or fund to which\ntransferred: Provided further, That, of the amount, not to\nexceed $304,045,000 shall be available for study, planning, design, and architect and engineer services, as authorized by law, unless the Secretary of Defense determines that additional obligations are necessary for such\npurposes and notifies the Committees on Appropriations\nof both Houses of Congress of the determination and the\nreasons therefor.\nMILITARY CONSTRUCTION, ARMY NATIONAL GUARD\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Army National Guard, and contributions therefor, as authorized by chapter 1803 of title 10,\nUnited States Code, and Military Construction Authorization Acts, $369,261,000, to remain available until September 30, 2028: Provided, That, of the amount, not to\nexceed $42,361,000 shall be available for study, planning,\ndesign, and architect and engineer services, as authorized\nby law, unless the Director of the Army National Guard\ndetermines that additional obligations are necessary for\nsuch purposes and notifies the Committees on Appropriations of both Houses of Congress of the determination and\nthe reasons therefor: Provided further, That of the amount\nmade available under this heading, $19,075,000 shall be\nfor the projects and activities, and in the amounts, specified in the table under the heading \u2018\u2018Military Construction,\nArmy National Guard\u2019\u2019 in the report accompanying this\nAct, in addition to amounts otherwise available for such\npurposes.\nMILITARY CONSTRUCTION, AIR NATIONAL GUARD\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Air National Guard, and contributions\ntherefor, as authorized by chapter 1803 of title 10, United\nStates Code, and Military Construction Authorization\nActs, $189,322,000, to remain available until September\n30, 2028: Provided, That, of the amount, not to exceed\n$36,200,000 shall be available for study, planning, design,\nand architect and engineer services, as authorized by law,\nunless the Director of the Air National Guard determines\nthat additional obligations are necessary for such purposes\nand notifies the Committees on Appropriations of both\nHouses of Congress of the determination and the reasons\ntherefor: Provided further, That of the amount made available under this heading, $600,000 shall be for the projects\nand activities, and in the amounts, specified in the table\nunder the heading \u2018\u2018Military Construction, Air National\nGuard\u2019\u2019 in the report accompanying this Act, in addition\nto amounts otherwise available for such purposes.\nMILITARY CONSTRUCTION, ARMY RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Army Reserve as authorized by chapter\n1803 of title 10, United States Code, and Military Construction Authorization Acts, $117,076,000, to remain\navailable until September 30, 2028: Provided, That, of the\namount, not to exceed $23,389,000 shall be available for\nstudy, planning, design, and architect and engineer serv-\nices, as authorized by law, unless the Chief of the Army\nReserve determines that additional obligations are necessary for such purposes and notifies the Committees on\nAppropriations of both Houses of Congress of the determination and the reasons therefor.\nMILITARY CONSTRUCTION, NAVY RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the reserve components of the Navy and\nMarine Corps as authorized by chapter 1803 of title 10,\nUnited States Code, and Military Construction Authorization Acts, $61,291,000, to remain available until September 30, 2028: Provided, That, of the amount, not to\nexceed $6,495,000 shall be available for study, planning,\ndesign, and architect and engineer services, as authorized\nby law, unless the Secretary of the Navy determines that\nadditional obligations are necessary for such purposes and\nnotifies the Committees on Appropriations of both Houses\nof Congress of the determination and the reasons therefor.\nMILITARY CONSTRUCTION, AIR FORCE RESERVE\nFor construction, acquisition, expansion, rehabilitation, and conversion of facilities for the training and administration of the Air Force Reserve as authorized by\nchapter 1803 of title 10, United States Code, and Military\nConstruction Authorization Acts, $330,572,000, to remain\navailable until September 30, 2028: Provided, That, of the\namount, not to exceed $12,146,000 shall be available for\nstudy, planning, design, and architect and engineer services, as authorized by law, unless the Chief of the Air\nForce Reserve determines that additional obligations are\nnecessary for such purposes and notifies the Committees\non Appropriations of both Houses of Congress of the determination and the reasons therefor: Provided further,\nThat of the amount made available under this heading,\n$29,000,000 shall be for the projects and activities, and\nin the amounts, specified in the table under the heading\n\u2018\u2018Military Construction, Air Force Reserve\u2019\u2019 in the report\naccompanying this Act, in addition to amounts otherwise\navailable for such purposes.\nNORTH ATLANTIC TREATY ORGANIZATION\nSECURITY INVESTMENT PROGRAM\nFor the United States share of the cost of the North\nAtlantic Treaty Organization Security Investment Program for the acquisition and construction of military facilities and installations (including international military\nheadquarters) and for related expenses for the collective\ndefense of the North Atlantic Treaty Area as authorized\nby section 2806 of title 10, United States Code, and Military Construction Authorization Acts, $293,434,000, to\nremain available until expended.\nDEPARTMENT OF DEFENSE BASE CLOSURE ACCOUNT\nFor deposit into the Department of Defense Base\nClosure Account, established by section 2906(a) of the Defense Base Closure and Realignment Act of 1990 (10\nU.S.C. 2687 note), $539,174,000, to remain available\nuntil expended.\nFAMILY HOUSING CONSTRUCTION, ARMY\nFor expenses of family housing for the Army for construction, including acquisition, replacement, addition, expansion, extension, and alteration, as authorized by law,\n$304,895,000, to remain available until September 30,\n2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nARMY\nFor expenses of family housing for the Army for operation and maintenance, including debt payment, leasing,\nminor construction, principal and interest charges, and insurance premiums, as authorized by law, $395,485,000.\nFAMILY HOUSING CONSTRUCTION, NAVY AND MARINE\nCORPS\nFor expenses of family housing for the Navy and Marine Corps for construction, including acquisition, replacement, addition, expansion, extension, and alteration, as\nauthorized by law, $277,142,000, to remain available until\nSeptember 30, 2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nNAVY AND MARINE CORPS\nFor expenses of family housing for the Navy and Marine Corps for operation and maintenance, including debt\npayment, leasing, minor construction, principal and interest charges, and insurance premiums, as authorized by\nlaw, $373,854,000.\nFAMILY HOUSING CONSTRUCTION, AIR FORCE\nFor expenses of family housing for the Air Force for\nconstruction, including acquisition, replacement, addition,\nexpansion, extension, and alteration, as authorized by law,\n$237,097,000, to remain available until September 30,\n2028.\nFAMILY HOUSING OPERATION AND MAINTENANCE, AIR\nFORCE\nFor expenses of family housing for the Air Force for\noperation and maintenance, including debt payment, leasing, minor construction, principal and interest charges,\nand insurance premiums, as authorized by law,\n$324,386,000.\nFAMILY HOUSING OPERATION AND MAINTENANCE,\nDEFENSE-WIDE\nFor expenses of family housing for the activities and\nagencies of the Department of Defense (other than the\nmilitary departments) for operation and maintenance,\nleasing, and minor construction, as authorized by law,\n$50,785,000.\nDEPARTMENT OF DEFENSE\nFAMILY HOUSING IMPROVEMENT FUND\nFor the Department of Defense Family Housing Improvement Fund, $6,611,000, to remain available until expended, for family housing initiatives undertaken pursuant to section 2883 of title 10, United States Code, providing alternative means of acquiring and improving military family housing and supporting facilities.\nDEPARTMENT OF DEFENSE\nMILITARY UNACCOMPANIED HOUSING IMPROVEMENT\nFUND\nFor the Department of Defense Military Unaccompanied Housing Improvement Fund, $496,000, to remain\navailable until expended, for unaccompanied housing initiatives undertaken pursuant to section 2883 of title 10,\nUnited States Code, providing alternative means of acquiring and improving military unaccompanied housing and\nsupporting facilities.\nADMINISTRATIVE PROVISIONS"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0003",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE I",
+          "SEC. 130"
+        ],
+        "v2": [
+          "TITLE I",
+          "SEC. 130"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 24,
+          "start_line": 18,
+          "end_page": 25,
+          "end_line": 7
+        },
+        "v2": {
+          "start_page": 24,
+          "start_line": 18,
+          "end_page": 25,
+          "end_line": 11
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 130. For an additional amount for the accounts\nand in the amounts specified for planning and design, for\nchild development centers, to remain available until September 30, 2028:\n\u2018\u2018Military Construction, Army\u2019\u2019, $25,000,000;\n\u2018\u2018Military Construction, Navy and Marine\nCorps\u2019\u2019, $25,000,000; and\n\u2018\u2018Military Construction, Air Force\u2019\u2019,\n$25,000,000:\nProvided, That not later than 60 days after the date of\nenactment of this Act, the Secretary of the military department concerned, or their designee, shall submit to the\nCommittees on Appropriations of both Houses of Congress\nan expenditure plan for funds provided under this section.",
+        "new": "SEC. 130. For an additional amount for the accounts\nand in the amounts specified for planning and design, for\nchild development centers, to remain available until September 30, 2028:\n\u2018\u2018Military Construction, Army\u2019\u2019, $25,000,000\n(increased by $25,000,000) (reduced by\n$25,000,000);\n\u2018\u2018Military Construction, Navy and Marine\nCorps\u2019\u2019, $25,000,000 (increased by $25,000,000)\n(reduced by $25,000,000); and\n\u2018\u2018Military Construction, Air Force\u2019\u2019,\n$25,000,000 (increased by $25,000,000) (reduced by\n$25,000,000):\nProvided, That not later than 60 days after the date of\nenactment of this Act, the Secretary of the military department concerned, or their designee, shall submit to the\nCommittees on Appropriations of both Houses of Congress\nan expenditure plan for funds provided under this section."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0004",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE I",
+          "SEC. 132"
+        ],
+        "v2": [
+          "TITLE I",
+          "SEC. 132"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 25,
+          "start_line": 21,
+          "end_page": 26,
+          "end_line": 24
+        },
+        "v2": {
+          "start_page": 26,
+          "start_line": 1,
+          "end_page": 27,
+          "end_line": 4
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 132. For an additional amount for the accounts\nand in the amounts specified for unspecified minor construction for demolition, to remain available until September 30, 2028:\n\u2018\u2018Military Construction, Army\u2019\u2019, $15,000,000;\n\u2018\u2018Military Construction, Navy and Marine\nCorps\u2019\u2019, $15,000,000;\n\u2018\u2018Military Construction, Air Force\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Army National Guard\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Air National Guard\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Army Reserve\u2019\u2019,\n$5,000,000;\n\u2018\u2018Military Construction, Navy Reserve\u2019\u2019,\n$5,000,000; and\n\u2018\u2018Military Construction, Air Force Reserve\u2019\u2019,\n$5,000,000:\nProvided, That not later than 60 days after the date of\nenactment of this Act, the Secretary of the military department concerned, or their designee, shall submit to the\nCommittees on Appropriations of both Houses of Congress\nan expenditure plan for funds provided under this section:\nProvided further, That the Secretary of the military department concerned may not obligate or expend any funds\nprior to approval by the Committees on Appropriations of\nboth Houses of Congress of the expenditure plan required\nby this section.",
+        "new": "SEC. 132. For an additional amount for the accounts\nand in the amounts specified for unspecified minor construction for demolition, to remain available until September 30, 2028:\n\u2018\u2018Military Construction, Army\u2019\u2019, $15,000,000;\n\u2018\u2018Military Construction, Navy and Marine\nCorps\u2019\u2019, $15,000,000;\n\u2018\u2018Military Construction, Air Force\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Army National Guard\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Air National Guard\u2019\u2019,\n$15,000,000;\n\u2018\u2018Military Construction, Army Reserve\u2019\u2019,\n$5,000,000;\n\u2018\u2018Military Construction, Navy Reserve\u2019\u2019,\n$5,000,000; and\n\u2018\u2018Military Construction, Air Force Reserve\u2019\u2019,\n$5,000,000:\nProvided, That not later than 60 days after the date of\nenactment of this Act, the Secretary of the military department concerned, or their designee, shall submit to the\nCommittees on Appropriations of both Houses of Congress\nan expenditure plan for funds provided under this section:\nProvided further, That the Secretary of the military de-\npartment concerned may not obligate or expend any funds\nprior to approval by the Committees on Appropriations of\nboth Houses of Congress of the expenditure plan required\nby this section."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0005",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE I",
+          "SEC. 134"
+        ],
+        "v2": [
+          "TITLE I",
+          "SEC. 134"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 27,
+          "start_line": 22,
+          "end_page": 28,
+          "end_line": 3
+        },
+        "v2": {
+          "start_page": 28,
+          "start_line": 1,
+          "end_page": 28,
+          "end_line": 7
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 134. For an additional amount for \u2018\u2018Military\nConstruction, Navy and Marine Corps\u2019\u2019, $50,000,000 to\nremain available until September 30, 2028, for planning\nand design for Shipyard Infrastructure Optimization Pro-\ngram construction: Provided, That not later than 60 days\nafter the date of enactment of this Act, the Secretary of\nthe Navy, or their designee, shall submit to the Committees on Appropriations of both Houses of Congress an expenditure plan for funds provided under this section.",
+        "new": "SEC. 134. For an additional amount for \u2018\u2018Military\nConstruction, Navy and Marine Corps\u2019\u2019, $50,000,000 to\nremain available until September 30, 2028, for planning\nand design for Shipyard Infrastructure Optimization Program construction: Provided, That not later than 60 days\nafter the date of enactment of this Act, the Secretary of\nthe Navy, or their designee, shall submit to the Committees on Appropriations of both Houses of Congress an expenditure plan for funds provided under this section."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0006",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II"
+        ],
+        "v2": [
+          "TITLE II"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 30,
+          "start_line": 1,
+          "end_page": 38,
+          "end_line": 23
+        },
+        "v2": {
+          "start_page": 30,
+          "start_line": 1,
+          "end_page": 39,
+          "end_line": 23
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "TITLE II\nDEPARTMENT OF VETERANS AFFAIRS\nVETERANS BENEFITS ADMINISTRATION\nCOMPENSATION AND PENSIONS\n(INCLUDING TRANSFER OF FUNDS)\nFor the payment of compensation benefits to or on\nbehalf of veterans and a pilot program for disability examinations as authorized by section 107 and chapters 11,\n13, 18, 51, 53, 55, and 61 of title 38, United States Code;\npension benefits to or on behalf of veterans as authorized\nby chapters 15, 51, 53, 55, and 61 of title 38, United\nStates Code; and burial benefits, the Reinstated Entitlement Program for Survivors, emergency and other officers\u2019 retirement pay, adjusted-service credits and certificates, payment of premiums due on commercial life insurance policies guaranteed under the provisions of title IV\nof the Servicemembers Civil Relief Act (50 U.S.C. App.\n541 et seq.) and for other benefits as authorized by sections 107, 1312, 1977, and 2106, and chapters 23, 51,\n53, 55, and 61 of title 38, United States Code,\n$4,655,879,000, which shall be in addition to funds previously appropriated under this heading that become available on October 1, 2023, to remain available until expended; and, in addition, $181,390,281,000, which shall\nbecome available on October 1, 2024, to remain available\nuntil expended: Provided, That not to exceed $22,109,000\nof the amount made available for fiscal year 2025 under\nthis heading shall be reimbursed to \u2018\u2018General Operating\nExpenses, Veterans Benefits Administration\u2019\u2019, and \u2018\u2018Information Technology Systems\u2019\u2019 for necessary expenses in\nimplementing the provisions of chapters 51, 53, and 55\nof title 38, United States Code, the funding source for\nwhich is specifically provided as the \u2018\u2018Compensation and\nPensions\u2019\u2019 appropriation: Provided further, That such\nsums as may be earned on an actual qualifying patient\nbasis, shall be reimbursed to \u2018\u2018Medical Care Collections\nFund\u2019\u2019 to augment the funding of individual medical facilities for nursing home care provided to pensioners as authorized.\nREADJUSTMENT BENEFITS\nFor the payment of readjustment and rehabilitation\nbenefits to or on behalf of veterans as authorized by chapters 21, 30, 31, 33, 34, 35, 36, 39, 41, 51, 53, 55, and\n61 of title 38, United States Code, $11,523,134,000,\nwhich shall become available on October 1, 2024, to remain available until expended: Provided, That expenses for\nrehabilitation program services and assistance which the\nSecretary is authorized to provide under subsection (a) of\nsection 3104 of title 38, United States Code, other than\nunder paragraphs (1), (2), (5), and (11) of that subsection, shall be charged to this account.\nVETERANS INSURANCE AND INDEMNITIES\nFor military and naval insurance, national service life\ninsurance, servicemen\u2019s indemnities, service-disabled veterans insurance, and veterans mortgage life insurance as\nauthorized by chapters 19 and 21 of title 38, United\nStates Code, $12,701,000, which shall be in addition to\nfunds previously appropriated under this heading that become available on October 1, 2023, to remain available\nuntil expended; and in addition, $135,119,422, which shall\nbecome available on October 1, 2024, to remain available\nuntil expended.\nVETERANS HOUSING BENEFIT PROGRAM FUND\nFor the cost of direct and guaranteed loans, such\nsums as may be necessary to carry out the program, as\nauthorized by subchapters I through III of chapter 37 of\ntitle 38, United States Code: Provided, That such costs,\nincluding the cost of modifying such loans, shall be as defined in section 502 of the Congressional Budget Act of\n1974: Provided further, That, during fiscal year 2024,\nwithin the resources available, not to exceed $500,000 in\ngross obligations for direct loans are authorized for specially adapted housing loans.\nIn addition, for administrative expenses to carry out\nthe direct and guaranteed loan programs, $316,742,419.\nVOCATIONAL REHABILITATION LOANS PROGRAM ACCOUNT\nFor the cost of direct loans, $78,337, as authorized\nby chapter 31 of title 38, United States Code: Provided,\nThat such costs, including the cost of modifying such\nloans, shall be as defined in section 502 of the Congressional Budget Act of 1974: Provided further, That funds\nmade available under this heading are available to subsidize gross obligations for the principal amount of direct\nloans not to exceed $2,026,000.\nIn addition, for administrative expenses necessary to\ncarry out the direct loan program, $460,698, which may\nbe paid to the appropriation for \u2018\u2018General Operating Expenses, Veterans Benefits Administration\u2019\u2019.\nNATIVE AMERICAN VETERAN HOUSING LOAN PROGRAM\nACCOUNT\nFor administrative expenses to carry out the direct\nloan program authorized by subchapter V of chapter 37\nof title 38, United States Code, $2,718,546.\nGENERAL OPERATING EXPENSES, VETERANS BENEFITS\nADMINISTRATION\nFor necessary operating expenses of the Veterans\nBenefits Administration, not otherwise provided for, including hire of passenger motor vehicles, reimbursement\nof the General Services Administration for security guard\nservices, and reimbursement of the Department of Defense for the cost of overseas employee mail,\n$3,899,000,000: Provided, That expenses for services and\nassistance authorized under paragraphs (1), (2), (5), and\n(11) of section 3104(a) of title 38, United States Code,\nthat the Secretary of Veterans Affairs determines are necessary to enable entitled veterans: (1) to the maximum extent feasible, to become employable and to obtain and\nmaintain suitable employment; or (2) to achieve maximum\nindependence in daily living, shall be charged to this account: Provided further, That, of the funds made available\nunder this heading, not to exceed 10 percent shall remain\navailable until September 30, 2025.\nVETERANS HEALTH ADMINISTRATION\nMEDICAL SERVICES\nFor necessary expenses for furnishing, as authorized\nby law, inpatient and outpatient care and treatment to\nbeneficiaries of the Department of Veterans Affairs and\nveterans described in section 1705(a) of title 38, United\nStates Code, including care and treatment in facilities not\nunder the jurisdiction of the Department, and including\nmedical supplies and equipment, bioengineering services,\nfood services, and salaries and expenses of healthcare employees hired under title 38, United States Code, assist-\nance and support services for caregivers as authorized by\nsection 1720G of title 38, United States Code, loan repayments authorized by section 604 of the Caregivers and\nVeterans Omnibus Health Services Act of 2010 (Public\nLaw 111\u2013163; 124 Stat. 1174; 38 U.S.C. 7681 note),\nmonthly assistance allowances authorized by section\n322(d) of title 38, United States Code, grants authorized\nby section 521A of title 38, United States Code, and administrative expenses necessary to carry out sections\n322(d) and 521A of title 38, United States Code, and hospital care and medical services authorized by section 1787\nof title 38, United States Code; $71,000,000,000, plus reimbursements, shall become available on October 1, 2024,\nand shall remain available until September 30, 2025: Provided, That, of the amount made available on October 1,\n2024, under this heading, $2,000,000,000 shall remain\navailable until September 30, 2026: Provided further,\nThat, notwithstanding any other provision of law, the Secretary of Veterans Affairs shall establish a priority for the\nprovision of medical treatment for veterans who have service-connected disabilities, lower income, or have special\nneeds: Provided further, That, notwithstanding any other\nprovision of law, the Secretary of Veterans Affairs shall\ngive priority funding for the provision of basic medical\nbenefits to veterans in enrollment priority groups 1\nthrough 6: Provided further, That, notwithstanding any\nother provision of law, the Secretary of Veterans Affairs\nmay authorize the dispensing of prescription drugs from\nVeterans Health Administration facilities to enrolled veterans with privately written prescriptions based on requirements established by the Secretary: Provided further,\nThat the implementation of the program described in the\nprevious proviso shall incur no additional cost to the Department of Veterans Affairs: Provided further, That the\nSecretary of Veterans Affairs shall ensure that sufficient\namounts appropriated under this heading for medical supplies and equipment are available for the acquisition of\nprosthetics designed specifically for female veterans: Provided further, That nothing in section 2044(e)(1) of title\n38, United States Code, may be construed as limiting\namounts that may be made available under this heading\nfor fiscal years 2024 and 2025 in this or prior Acts.\nMEDICAL COMMUNITY CARE\nFor necessary expenses for furnishing health care to\nindividuals pursuant to chapter 17 of title 38, United\nStates Code, at non-Department facilities,\n$20,382,000,000, plus reimbursements, shall become\navailable on October 1, 2024, and shall remain available\nuntil September 30, 2025: Provided, That, of the amount\nmade available on October 1, 2024, under this heading,\n$2,000,000,000 shall remain available until September 30,\n2026.\nMEDICAL SUPPORT AND COMPLIANCE\nFor necessary expenses in the administration of the\nmedical, hospital, nursing home, domiciliary, construction,\nsupply, and research activities, as authorized by law; administrative expenses in support of capital policy activities; and administrative and legal expenses of the Department for collecting and recovering amounts owed the Department as authorized under chapter 17 of title 38,\nUnited States Code, and the Federal Medical Care Recovery Act (42 U.S.C. 2651 et seq.), $11,800,000,000, plus\nreimbursements, shall become available on October 1,\n2024, and shall remain available until September 30,\n2025: Provided, That, of the amount made available on\nOctober 1, 2024, under this heading, $350,000,000 shall\nremain available until September 30, 2026.\nMEDICAL FACILITIES\nFor necessary expenses for the maintenance and operation of hospitals, nursing homes, domiciliary facilities,\nand other necessary facilities of the Veterans Health Administration; for administrative expenses in support of\nplanning, design, project management, real property acquisition and disposition, construction, and renovation of\nany facility under the jurisdiction or for the use of the\nDepartment; for oversight, engineering, and architectural\nactivities not charged to project costs; for repairing, altering, improving, or providing facilities in the several hospitals and homes under the jurisdiction of the Department, not otherwise provided for, either by contract or by\nthe hire of temporary employees and purchase of materials; for leases of facilities; and for laundry services;\n$9,400,000,000, plus reimbursements, shall become available on October 1, 2024, and shall remain available until\nSeptember 30, 2025: Provided, That, of the amount made\navailable on October 1, 2024, under this heading,\n$500,000,000 shall remain available until September 30,\n2026.\nMEDICAL AND PROSTHETIC RESEARCH\nFor necessary expenses in carrying out programs of\nmedical and prosthetic research and development as authorized by chapter 73 of title 38, United States Code,\n$938,000,000, plus reimbursements, shall remain available until September 30, 2025: Provided, That the Secretary of Veterans Affairs shall ensure that sufficient\namounts appropriated under this heading are available for\nprosthetic research specifically for female veterans, and\nfor toxic exposure research.",
+        "new": "TITLE II\nDEPARTMENT OF VETERANS AFFAIRS\nVETERANS BENEFITS ADMINISTRATION\nCOMPENSATION AND PENSIONS\n(INCLUDING TRANSFER OF FUNDS)\nFor the payment of compensation benefits to or on\nbehalf of veterans and a pilot program for disability examinations as authorized by section 107 and chapters 11,\n13, 18, 51, 53, 55, and 61 of title 38, United States Code;\npension benefits to or on behalf of veterans as authorized\nby chapters 15, 51, 53, 55, and 61 of title 38, United\nStates Code; and burial benefits, the Reinstated Entitlement Program for Survivors, emergency and other officers\u2019 retirement pay, adjusted-service credits and certificates, payment of premiums due on commercial life insurance policies guaranteed under the provisions of title IV\nof the Servicemembers Civil Relief Act (50 U.S.C. App.\n541 et seq.) and for other benefits as authorized by sections 107, 1312, 1977, and 2106, and chapters 23, 51,\n53, 55, and 61 of title 38, United States Code,\n$4,655,879,000, which shall be in addition to funds previously appropriated under this heading that become available on October 1, 2023, to remain available until expended; and, in addition, $181,390,281,000, which shall\nbecome available on October 1, 2024, to remain available\nuntil expended: Provided, That not to exceed $22,109,000\nof the amount made available for fiscal year 2025 under\nthis heading shall be reimbursed to \u2018\u2018General Operating\nExpenses, Veterans Benefits Administration\u2019\u2019, and \u2018\u2018Information Technology Systems\u2019\u2019 for necessary expenses in\nimplementing the provisions of chapters 51, 53, and 55\nof title 38, United States Code, the funding source for\nwhich is specifically provided as the \u2018\u2018Compensation and\nPensions\u2019\u2019 appropriation: Provided further, That such\nsums as may be earned on an actual qualifying patient\nbasis, shall be reimbursed to \u2018\u2018Medical Care Collections\nFund\u2019\u2019 to augment the funding of individual medical facilities for nursing home care provided to pensioners as authorized.\nREADJUSTMENT BENEFITS\nFor the payment of readjustment and rehabilitation\nbenefits to or on behalf of veterans as authorized by chapters 21, 30, 31, 33, 34, 35, 36, 39, 41, 51, 53, 55, and\n61 of title 38, United States Code, $11,523,134,000,\nwhich shall become available on October 1, 2024, to remain available until expended: Provided, That expenses for\nrehabilitation program services and assistance which the\nSecretary is authorized to provide under subsection (a) of\nsection 3104 of title 38, United States Code, other than\nunder paragraphs (1), (2), (5), and (11) of that subsection, shall be charged to this account.\nVETERANS INSURANCE AND INDEMNITIES\nFor military and naval insurance, national service life\ninsurance, servicemen\u2019s indemnities, service-disabled veterans insurance, and veterans mortgage life insurance as\nauthorized by chapters 19 and 21 of title 38, United\nStates Code, $12,701,000, which shall be in addition to\nfunds previously appropriated under this heading that become available on October 1, 2023, to remain available\nuntil expended; and in addition, $135,119,422, which shall\nbecome available on October 1, 2024, to remain available\nuntil expended.\nVETERANS HOUSING BENEFIT PROGRAM FUND\nFor the cost of direct and guaranteed loans, such\nsums as may be necessary to carry out the program, as\nauthorized by subchapters I through III of chapter 37 of\ntitle 38, United States Code: Provided, That such costs,\nincluding the cost of modifying such loans, shall be as defined in section 502 of the Congressional Budget Act of\n1974: Provided further, That, during fiscal year 2024,\nwithin the resources available, not to exceed $500,000 in\ngross obligations for direct loans are authorized for specially adapted housing loans.\nIn addition, for administrative expenses to carry out\nthe direct and guaranteed loan programs, $316,742,419\n(increased by $2,000,000) (reduced by $2,000,000) (reduced by $1,000,000) (increased by $1,000,000).\nVOCATIONAL REHABILITATION LOANS PROGRAM ACCOUNT\nFor the cost of direct loans, $78,337, as authorized\nby chapter 31 of title 38, United States Code: Provided,\nThat such costs, including the cost of modifying such\nloans, shall be as defined in section 502 of the Congressional Budget Act of 1974: Provided further, That funds\nmade available under this heading are available to subsidize gross obligations for the principal amount of direct\nloans not to exceed $2,026,000.\nIn addition, for administrative expenses necessary to\ncarry out the direct loan program, $460,698, which may\nbe paid to the appropriation for \u2018\u2018General Operating Expenses, Veterans Benefits Administration\u2019\u2019.\nNATIVE AMERICAN VETERAN HOUSING LOAN PROGRAM\nACCOUNT\nFor administrative expenses to carry out the direct\nloan program authorized by subchapter V of chapter 37\nof title 38, United States Code, $2,718,546.\nGENERAL OPERATING EXPENSES, VETERANS BENEFITS\nADMINISTRATION\nFor necessary operating expenses of the Veterans\nBenefits Administration, not otherwise provided for, including hire of passenger motor vehicles, reimbursement\nof the General Services Administration for security guard\nservices, and reimbursement of the Department of Defense for the cost of overseas employee mail,\n$3,899,000,000 (reduced by $1,000,000) (increased by\n$1,000,000) (reduced by $1,000,000) (increased by\n$1,000,000) (reduced by $1,000,000) (increased by\n$1,000,000) (increased by $10,000,000)(reduced by\n$10,000,000): Provided, That expenses for services and\nassistance authorized under paragraphs (1), (2), (5), and\n(11) of section 3104(a) of title 38, United States Code,\nthat the Secretary of Veterans Affairs determines are necessary to enable entitled veterans: (1) to the maximum extent feasible, to become employable and to obtain and\nmaintain suitable employment; or (2) to achieve maximum\nindependence in daily living, shall be charged to this account: Provided further, That, of the funds made available\nunder this heading, not to exceed 10 percent shall remain\navailable until September 30, 2025.\nVETERANS HEALTH ADMINISTRATION\nMEDICAL SERVICES\nFor necessary expenses for furnishing, as authorized\nby law, inpatient and outpatient care and treatment to\nbeneficiaries of the Department of Veterans Affairs and\nveterans described in section 1705(a) of title 38, United\nStates Code, including care and treatment in facilities not\nunder the jurisdiction of the Department, and including\nmedical supplies and equipment, bioengineering services,\nfood services, and salaries and expenses of healthcare employees hired under title 38, United States Code, assistance and support services for caregivers as authorized by\nsection 1720G of title 38, United States Code, loan repayments authorized by section 604 of the Caregivers and\nVeterans Omnibus Health Services Act of 2010 (Public\nLaw 111\u2013163; 124 Stat. 1174; 38 U.S.C. 7681 note),\nmonthly assistance allowances authorized by section\n322(d) of title 38, United States Code, grants authorized\nby section 521A of title 38, United States Code, and administrative expenses necessary to carry out sections\n322(d) and 521A of title 38, United States Code, and hospital care and medical services authorized by section 1787\nof title 38, United States Code; $71,000,000,000 (reduced\nby $10,000,000) (increased by $10,000,000) (reduced by\n$2,000,000) (increased by $2,000,000) (increased by\n$10,000,000) (reduced by $10,000,000) (reduced by\n$5,000,000) (increased by $5,000,000) (reduced by\n$1,000,000) (increased by $1,000,000) (reduced by\n$10,000,000) (increased by $10,000,000) (reduced by\n$2,000,000) (increased by $2,000,000) (reduced by\n$1,000,000) (increased by $1,000,000) (reduced by\n$10,000,000) (increased by $10,000,000) (increased by\n$1,000,000) (reduced by $1,000,000), plus reimbursements, shall become available on October 1, 2024, and\nshall remain available until September 30, 2025: Provided,\nThat, of the amount made available on October 1, 2024,\nunder this heading, $2,000,000,000 shall remain available\nuntil September 30, 2026: Provided further, That, notwithstanding any other provision of law, the Secretary of\nVeterans Affairs shall establish a priority for the provision\nof medical treatment for veterans who have service-connected disabilities, lower income, or have special needs:\nProvided further, That, notwithstanding any other provision of law, the Secretary of Veterans Affairs shall give\npriority funding for the provision of basic medical benefits\nto veterans in enrollment priority groups 1 through 6: Provided further, That, notwithstanding any other provision\nof law, the Secretary of Veterans Affairs may authorize\nthe dispensing of prescription drugs from Veterans Health\nAdministration facilities to enrolled veterans with privately\nwritten prescriptions based on requirements established by\nthe Secretary: Provided further, That the implementation\nof the program described in the previous proviso shall\nincur no additional cost to the Department of Veterans\nAffairs: Provided further, That the Secretary of Veterans\nAffairs shall ensure that sufficient amounts appropriated\nunder this heading for medical supplies and equipment are\navailable for the acquisition of prosthetics designed specifically for female veterans: Provided further, That nothing\nin section 2044(e)(1) of title 38, United States Code, may\nbe construed as limiting amounts that may be made available under this heading for fiscal years 2024 and 2025\nin this or prior Acts.\nMEDICAL COMMUNITY CARE\nFor necessary expenses for furnishing health care to\nindividuals pursuant to chapter 17 of title 38, United\nStates Code, at non-Department facilities,\n$20,382,000,000 (reduced by $1,000,000) (increased by\n$1,000,000), plus reimbursements, shall become available\non October 1, 2024, and shall remain available until September 30, 2025: Provided, That, of the amount made\navailable on October 1, 2024, under this heading,\n$2,000,000,000 shall remain available until September 30,\n2026.\nMEDICAL SUPPORT AND COMPLIANCE\nFor necessary expenses in the administration of the\nmedical, hospital, nursing home, domiciliary, construction,\nsupply, and research activities, as authorized by law; administrative expenses in support of capital policy activities; and administrative and legal expenses of the Department for collecting and recovering amounts owed the Department as authorized under chapter 17 of title 38,\nUnited States Code, and the Federal Medical Care Recovery Act (42 U.S.C. 2651 et seq.), $11,800,000,000 (reduced by $1,000,000) (increased by $1,000,000), plus reimbursements, shall become available on October 1, 2024,\nand shall remain available until September 30, 2025: Provided, That, of the amount made available on October 1,\n2024, under this heading, $350,000,000 shall remain\navailable until September 30, 2026.\nMEDICAL FACILITIES\nFor necessary expenses for the maintenance and operation of hospitals, nursing homes, domiciliary facilities,\nand other necessary facilities of the Veterans Health Administration; for administrative expenses in support of\nplanning, design, project management, real property acquisition and disposition, construction, and renovation of\nany facility under the jurisdiction or for the use of the\nDepartment; for oversight, engineering, and architectural\nactivities not charged to project costs; for repairing, altering, improving, or providing facilities in the several hospitals and homes under the jurisdiction of the Department, not otherwise provided for, either by contract or by\nthe hire of temporary employees and purchase of materials; for leases of facilities; and for laundry services;\n$9,400,000,000, plus reimbursements, shall become available on October 1, 2024, and shall remain available until\nSeptember 30, 2025: Provided, That, of the amount made\navailable on October 1, 2024, under this heading,\n$500,000,000 shall remain available until September 30,\n2026.\nMEDICAL AND PROSTHETIC RESEARCH\nFor necessary expenses in carrying out programs of\nmedical and prosthetic research and development as authorized by chapter 73 of title 38, United States Code,\n$938,000,000 (increased by $3,000,000) (reduced by\n$20,000,000) (increased by $20,000,000), plus reimbursements, shall remain available until September 30, 2025:\nProvided, That the Secretary of Veterans Affairs shall ensure that sufficient amounts appropriated under this\nheading are available for prosthetic research specifically\nfor female veterans, and for toxic exposure research."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0007",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "NATIONAL CEMETERY ADMINISTRATION"
+        ],
+        "v2": [
+          "TITLE II",
+          "NATIONAL CEMETERY ADMINISTRATION"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 39,
+          "start_line": 1,
+          "end_page": 43,
+          "end_line": 14
+        },
+        "v2": {
+          "start_page": 40,
+          "start_line": 1,
+          "end_page": 44,
+          "end_line": 20
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "NATIONAL CEMETERY ADMINISTRATION\nFor necessary expenses of the National Cemetery Administration for operations and maintenance, not otherwise provided for, including uniforms or allowances therefor; cemeterial expenses as authorized by law; purchase\nof one passenger motor vehicle for use in cemeterial operations; hire of passenger motor vehicles; and repair, alteration or improvement of facilities under the jurisdiction\nof the National Cemetery Administration, $480,000,000,\nof which not to exceed 10 percent shall remain available\nuntil September 30, 2025.\nDEPARTMENTAL ADMINISTRATION\nGENERAL ADMINISTRATION\n(INCLUDING TRANSFER OF FUNDS)\nFor necessary operating expenses of the Department\nof Veterans Affairs, not otherwise provided for, including\nadministrative expenses in support of Department-wide\ncapital planning, management and policy activities, uniforms, or allowances therefor; not to exceed $25,000 for\nofficial reception and representation expenses; hire of passenger motor vehicles; and reimbursement of the General\nServices Administration for security guard services,\n$475,000,000, of which not to exceed 10 percent shall remain available until September 30, 2025: Provided, That\nfunds provided under this heading may be transferred to\n\u2018\u2018General Operating Expenses, Veterans Benefits Administration\u2019\u2019.\nBOARD OF VETERANS APPEALS\nFor necessary operating expenses of the Board of\nVeterans Appeals, $287,000,000 of which not to exceed\n10 percent shall remain available until September 30,\n2025.\nINFORMATION TECHNOLOGY SYSTEMS\n(INCLUDING TRANSFER OF FUNDS)\nFor necessary expenses for information technology\nsystems and telecommunications support, including developmental information systems and operational information\nsystems; for pay and associated costs; and for the capital\nasset acquisition of information technology systems, including management and related contractual costs of said\nacquisitions, including contractual costs associated with\noperations authorized by section 3109 of title 5, United\nStates Code, $6,401,000,000, plus reimbursements: Provided, That $1,606,977,000 shall be for pay and associated costs, of which not to exceed 3 percent shall remain\navailable until September 30, 2025: Provided further, That\n$4,668,373,000 shall be for operations and maintenance,\nof which not to exceed 5 percent shall remain available\nuntil September 30, 2025: Provided further, That\n$125,650,000 shall be for information technology systems\ndevelopment, and shall remain available until September\n30, 2025: Provided further, That amounts made available\nfor salaries and expenses, operations and maintenance,\nand information technology systems development may be\ntransferred among the three subaccounts after the Secretary of Veterans Affairs requests from the Committees\non Appropriations of both Houses of Congress the authority to make the transfer and an approval is issued: Provided further, That amounts made available for the \u2018\u2018Information Technology Systems\u2019\u2019 account for development\nmay be transferred among projects or to newly defined\nprojects: Provided further, That no project may be increased or decreased by more than $3,000,000 of cost\nprior to submitting a request to the Committees on Appropriations of both Houses of Congress to make the transfer\nand an approval is issued, or absent a response, a period\nof 30 days has elapsed: Provided further, That the funds\nmade available under this heading for information technology systems development shall be for the projects, and\nin the amounts, specified in the table entitled \u2018\u2018Information Technology Development Projects\u2019\u2019 under this heading in the report accompanying this Act.\nVETERANS ELECTRONIC HEALTH RECORD\nFor activities related to implementation, preparation,\ndevelopment, interface, management, rollout, and mainte-\nnance of a Veterans Electronic Health Record system, including contractual costs associated with operations authorized by section 3109 of title 5, United States Code,\nand salaries and expenses of employees hired under titles\n5 and 38, United States Code, $1,863,000,000, to remain\navailable until September 30, 2026: Provided, That the\nSecretary of Veterans Affairs shall submit to the Committees on Appropriations of both Houses of Congress quarterly reports detailing obligations, expenditures, and deployment implementation by facility, including any\nchanges from the deployment plan or schedule: Provided\nfurther, That the funds provided in this account shall only\nbe available to the Office of the Deputy Secretary, to be\nadministered by that Office: Provided further, That 25\npercent of the funds made available under this heading\nshall not be available until July 1, 2024, and are contingent upon the Secretary of Veterans Affairs\u2014\n(1) providing the Committees on Appropriations\na report detailing the status of outstanding issues\nimpacting the stability and usability of the new electronic health record system, including those that\ncontributed to the October 13, 2022, deployment\ndelay, along with a timeline and measurable metrics\nto resolve issues, no later than 60 days after enactment of this Act;\n(2) certifying and detailing any changes to the\nfull deployment schedule, no later than 60 days prior\nto July 1, 2024; and\n(3) certifying in writing no later than 30 days\nprior to July 1, 2024, the following\u2014\n(A) the status of issues included in the report referenced in paragraph (1), including\nissues that have not been closed but have been\nsuitably resolved or mitigated in a manner that\nwill enhance provider productivity and minimize\nthe potential for patient harm; and\n(B) whether the system is stable, ready,\nand optimized for further deployment at VA\nsites.",
+        "new": "NATIONAL CEMETERY ADMINISTRATION\nFor necessary expenses of the National Cemetery Administration for operations and maintenance, not otherwise provided for, including uniforms or allowances therefor; cemeterial expenses as authorized by law; purchase\nof one passenger motor vehicle for use in cemeterial operations; hire of passenger motor vehicles; and repair, alteration or improvement of facilities under the jurisdiction\nof the National Cemetery Administration, $480,000,000\n(increased by $2,000,000), of which not to exceed 10 percent shall remain available until September 30, 2025.\nDEPARTMENTAL ADMINISTRATION\nGENERAL ADMINISTRATION\n(INCLUDING TRANSFER OF FUNDS)\nFor necessary operating expenses of the Department\nof Veterans Affairs, not otherwise provided for, including\nadministrative expenses in support of Department-wide\ncapital planning, management and policy activities, uniforms, or allowances therefor; not to exceed $25,000 for\nofficial reception and representation expenses; hire of passenger motor vehicles; and reimbursement of the General\nServices Administration for security guard services,\n$475,000,000 (reduced by $5,500,000) (reduced by\n$3,500,000) (reduced by $3,500,000) (reduced by\n$3,500,000) (reduced by $3,500,000) (reduced by\n$1,000,000) (increased by $1,000,000) (reduced by\n$5,000,000), of which not to exceed 10 percent shall remain available until September 30, 2025: Provided, That\nfunds provided under this heading may be transferred to\n\u2018\u2018General Operating Expenses, Veterans Benefits Administration\u2019\u2019.\nBOARD OF VETERANS APPEALS\nFor necessary operating expenses of the Board of\nVeterans Appeals, $287,000,000 (increased by\n$2,000,000) of which not to exceed 10 percent shall remain available until September 30, 2025.\nINFORMATION TECHNOLOGY SYSTEMS\n(INCLUDING TRANSFER OF FUNDS)\nFor necessary expenses for information technology\nsystems and telecommunications support, including developmental information systems and operational information\nsystems; for pay and associated costs; and for the capital\nasset acquisition of information technology systems, including management and related contractual costs of said\nacquisitions, including contractual costs associated with\noperations authorized by section 3109 of title 5, United\nStates Code, $6,401,000,000 (reduced by $5,000,000),\nplus reimbursements: Provided, That $1,606,977,000 (reduced by $5,000,000) shall be for pay and associated\ncosts, of which not to exceed 3 percent shall remain avail-\nable until September 30, 2025: Provided further, That\n$4,668,373,000 shall be for operations and maintenance,\nof which not to exceed 5 percent shall remain available\nuntil September 30, 2025: Provided further, That\n$125,650,000 shall be for information technology systems\ndevelopment, and shall remain available until September\n30, 2025: Provided further, That amounts made available\nfor salaries and expenses, operations and maintenance,\nand information technology systems development may be\ntransferred among the three subaccounts after the Secretary of Veterans Affairs requests from the Committees\non Appropriations of both Houses of Congress the authority to make the transfer and an approval is issued: Provided further, That amounts made available for the \u2018\u2018Information Technology Systems\u2019\u2019 account for development\nmay be transferred among projects or to newly defined\nprojects: Provided further, That no project may be increased or decreased by more than $3,000,000 of cost\nprior to submitting a request to the Committees on Appropriations of both Houses of Congress to make the transfer\nand an approval is issued, or absent a response, a period\nof 30 days has elapsed: Provided further, That the funds\nmade available under this heading for information technology systems development shall be for the projects, and\nin the amounts, specified in the table entitled \u2018\u2018Informa-\ntion Technology Development Projects\u2019\u2019 under this heading in the report accompanying this Act.\nVETERANS ELECTRONIC HEALTH RECORD\nFor activities related to implementation, preparation,\ndevelopment, interface, management, rollout, and maintenance of a Veterans Electronic Health Record system, including contractual costs associated with operations authorized by section 3109 of title 5, United States Code,\nand salaries and expenses of employees hired under titles\n5 and 38, United States Code, $1,863,000,000 (reduced\nby $1,000,000) (increased by $1,000,000), to remain\navailable until September 30, 2026: Provided, That the\nSecretary of Veterans Affairs shall submit to the Committees on Appropriations of both Houses of Congress quarterly reports detailing obligations, expenditures, and deployment implementation by facility, including any\nchanges from the deployment plan or schedule: Provided\nfurther, That the funds provided in this account shall only\nbe available to the Office of the Deputy Secretary, to be\nadministered by that Office: Provided further, That 25\npercent of the funds made available under this heading\nshall not be available until July 1, 2024, and are contingent upon the Secretary of Veterans Affairs\u2014\n(1) providing the Committees on Appropriations\na report detailing the status of outstanding issues\nimpacting the stability and usability of the new electronic health record system, including those that\ncontributed to the October 13, 2022, deployment\ndelay, along with a timeline and measurable metrics\nto resolve issues, no later than 60 days after enactment of this Act;\n(2) certifying and detailing any changes to the\nfull deployment schedule, no later than 60 days prior\nto July 1, 2024; and\n(3) certifying in writing no later than 30 days\nprior to July 1, 2024, the following\u2014\n(A) the status of issues included in the report referenced in paragraph (1), including\nissues that have not been closed but have been\nsuitably resolved or mitigated in a manner that\nwill enhance provider productivity and minimize\nthe potential for patient harm; and\n(B) whether the system is stable, ready,\nand optimized for further deployment at VA\nsites."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0008",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "OFFICE OF INSPECTOR GENERAL"
+        ],
+        "v2": [
+          "TITLE II",
+          "OFFICE OF INSPECTOR GENERAL"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 43,
+          "start_line": 15,
+          "end_page": 48,
+          "end_line": 8
+        },
+        "v2": {
+          "start_page": 44,
+          "start_line": 21,
+          "end_page": 49,
+          "end_line": 15
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "OFFICE OF INSPECTOR GENERAL\nFor necessary expenses of the Office of Inspector\nGeneral, to include information technology, in carrying out\nthe provisions of the Inspector General Act of 1978 (5\nU.S.C. App.), $296,000,000, of which not to exceed 10\npercent shall remain available until September 30, 2025.\nCONSTRUCTION, MAJOR PROJECTS\nFor constructing, altering, extending, and improving\nany of the facilities, including parking projects, under the\njurisdiction or for the use of the Department of Veterans\nAffairs, or for any of the purposes set forth in sections\n316, 2404, 2406 and chapter 81 of title 38, United States\nCode, not otherwise provided for, including planning, architectural and engineering services, construction management services, maintenance or guarantee period services\ncosts associated with equipment guarantees provided\nunder the project, services of claims analysts, offsite utility\nand storm drainage system construction costs, and site acquisition, where the estimated cost of a project is more\nthan the amount set forth in section 8104(a)(3)(A) of title\n38, United States Code, or where funds for a project were\nmade available in a previous major project appropriation,\n$881,000,000, of which $373,096,000 shall remain available until September 30, 2028, and of which\n$507,904,000 shall remain available until expended, of\nwhich $110,000,000 shall be available for seismic improvement projects and seismic program management activities,\nincluding for projects that would otherwise be funded by\nthe Construction, Minor Projects, Medical Facilities or\nNational Cemetery Administration accounts: Provided,\nThat except for advance planning activities, including\nneeds assessments which may or may not lead to capital\ninvestments, and other capital asset management related\nactivities, including portfolio development and management activities, and planning, cost estimating, and design\nfor major medical facility projects and major medical facil-\nity leases and investment strategy studies funded through\nthe advance planning fund and the planning and design\nactivities funded through the design fund, staffing expenses, and funds provided for the purchase, security, and\nmaintenance of land for the National Cemetery Administration through the land acquisition line item, none of the\nfunds made available under this heading shall be used for\nany project that has not been notified to Congress through\nthe budgetary process or that has not been approved by\nthe Congress through statute, joint resolution, or in the\nexplanatory statement accompanying such Act and presented to the President at the time of enrollment: Provided\nfurther, That such sums as may be necessary shall be\navailable to reimburse the \u2018\u2018General Administration\u2019\u2019 account for payment of salaries and expenses of all Office\nof Construction and Facilities Management employees to\nsupport the full range of capital infrastructure services\nprovided, including minor construction and leasing services: Provided further, That funds made available under\nthis heading for fiscal year 2024, for each approved\nproject shall be obligated: (1) by the awarding of a construction documents contract by September 30, 2024; and\n(2) by the awarding of a construction contract by September 30, 2025: Provided further, That the Secretary of\nVeterans Affairs shall promptly submit to the Committees\non Appropriations of both Houses of Congress a written\nreport on any approved major construction project for\nwhich obligations are not incurred within the time limitations established above: Provided further, That notwithstanding the requirements of section 8104(a) of title 38,\nUnited States Code, amounts made available under this\nheading for seismic improvement projects and seismic program management activities shall be available for the completion of both new and existing seismic projects of the\nDepartment.\nCONSTRUCTION, MINOR PROJECTS\nFor constructing, altering, extending, and improving\nany of the facilities, including parking projects, under the\njurisdiction or for the use of the Department of Veterans\nAffairs, including planning and assessments of needs\nwhich may lead to capital investments, architectural and\nengineering services, maintenance or guarantee period\nservices costs associated with equipment guarantees provided under the project, services of claims analysts, offsite\nutility and storm drainage system construction costs, and\nsite acquisition, or for any of the purposes set forth in\nsections 316, 2404, 2406 and chapter 81 of title 38,\nUnited States Code, not otherwise provided for, where the\nestimated cost of a project is equal to or less than the\namount set forth in section 8104(a)(3)(A) of title 38,\nUnited States Code, $680,000,000, of which\n$612,000,000 shall remain available until September 30,\n2028, and of which $68,000,000 shall remain available\nuntil expended, along with unobligated balances of previous \u2018\u2018Construction, Minor Projects\u2019\u2019 appropriations\nwhich are hereby made available for any project where the\nestimated cost is equal to or less than the amount set forth\nin such section: Provided, That funds made available\nunder this heading shall be for: (1) repairs to any of the\nnonmedical facilities under the jurisdiction or for the use\nof the Department which are necessary because of loss or\ndamage caused by any natural disaster or catastrophe;\nand (2) temporary measures necessary to prevent or to\nminimize further loss by such causes.\nGRANTS FOR CONSTRUCTION OF STATE EXTENDED CARE\nFACILITIES\nFor grants to assist States to acquire or construct\nState nursing home and domiciliary facilities and to remodel, modify, or alter existing hospital, nursing home,\nand domiciliary facilities in State homes, for furnishing\ncare to veterans as authorized by sections 8131 through\n8137 of title 38, United States Code, $164,000,000, to\nremain available until expended.\nGRANTS FOR CONSTRUCTION OF VETERANS CEMETERIES\nFor grants to assist States and tribal organizations\nin establishing, expanding, or improving veterans cemeteries as authorized by section 2408 of title 38, United\nStates Code, $60,000,000, to remain available until expended.\nADMINISTRATIVE PROVISIONS\n(INCLUDING TRANSFER OF FUNDS)",
+        "new": "OFFICE OF INSPECTOR GENERAL\nFor necessary expenses of the Office of Inspector\nGeneral, to include information technology, in carrying out\nthe provisions of the Inspector General Act of 1978 (5\nU.S.C. App.), $296,000,000, of which not to exceed 10\npercent shall remain available until September 30, 2025.\nCONSTRUCTION, MAJOR PROJECTS\nFor constructing, altering, extending, and improving\nany of the facilities, including parking projects, under the\njurisdiction or for the use of the Department of Veterans\nAffairs, or for any of the purposes set forth in sections\n316, 2404, 2406 and chapter 81 of title 38, United States\nCode, not otherwise provided for, including planning, architectural and engineering services, construction management services, maintenance or guarantee period services\ncosts associated with equipment guarantees provided\nunder the project, services of claims analysts, offsite utility\nand storm drainage system construction costs, and site acquisition, where the estimated cost of a project is more\nthan the amount set forth in section 8104(a)(3)(A) of title\n38, United States Code, or where funds for a project were\nmade available in a previous major project appropriation,\n$881,000,000, of which $373,096,000 shall remain available until September 30, 2028, and of which\n$507,904,000 shall remain available until expended, of\nwhich $110,000,000 shall be available for seismic improvement projects and seismic program management activities,\nincluding for projects that would otherwise be funded by\nthe Construction, Minor Projects, Medical Facilities or\nNational Cemetery Administration accounts: Provided,\nThat except for advance planning activities, including\nneeds assessments which may or may not lead to capital\ninvestments, and other capital asset management related\nactivities, including portfolio development and management activities, and planning, cost estimating, and design\nfor major medical facility projects and major medical facility leases and investment strategy studies funded through\nthe advance planning fund and the planning and design\nactivities funded through the design fund, staffing expenses, and funds provided for the purchase, security, and\nmaintenance of land for the National Cemetery Administration through the land acquisition line item, none of the\nfunds made available under this heading shall be used for\nany project that has not been notified to Congress through\nthe budgetary process or that has not been approved by\nthe Congress through statute, joint resolution, or in the\nexplanatory statement accompanying such Act and presented to the President at the time of enrollment: Provided\nfurther, That such sums as may be necessary shall be\navailable to reimburse the \u2018\u2018General Administration\u2019\u2019 account for payment of salaries and expenses of all Office\nof Construction and Facilities Management employees to\nsupport the full range of capital infrastructure services\nprovided, including minor construction and leasing serv-\nices: Provided further, That funds made available under\nthis heading for fiscal year 2024, for each approved\nproject shall be obligated: (1) by the awarding of a construction documents contract by September 30, 2024; and\n(2) by the awarding of a construction contract by September 30, 2025: Provided further, That the Secretary of\nVeterans Affairs shall promptly submit to the Committees\non Appropriations of both Houses of Congress a written\nreport on any approved major construction project for\nwhich obligations are not incurred within the time limitations established above: Provided further, That notwithstanding the requirements of section 8104(a) of title 38,\nUnited States Code, amounts made available under this\nheading for seismic improvement projects and seismic program management activities shall be available for the completion of both new and existing seismic projects of the\nDepartment.\nCONSTRUCTION, MINOR PROJECTS\nFor constructing, altering, extending, and improving\nany of the facilities, including parking projects, under the\njurisdiction or for the use of the Department of Veterans\nAffairs, including planning and assessments of needs\nwhich may lead to capital investments, architectural and\nengineering services, maintenance or guarantee period\nservices costs associated with equipment guarantees pro-\nvided under the project, services of claims analysts, offsite\nutility and storm drainage system construction costs, and\nsite acquisition, or for any of the purposes set forth in\nsections 316, 2404, 2406 and chapter 81 of title 38,\nUnited States Code, not otherwise provided for, where the\nestimated cost of a project is equal to or less than the\namount set forth in section 8104(a)(3)(A) of title 38,\nUnited States Code, $680,000,000, of which\n$612,000,000 shall remain available until September 30,\n2028, and of which $68,000,000 shall remain available\nuntil expended, along with unobligated balances of previous \u2018\u2018Construction, Minor Projects\u2019\u2019 appropriations\nwhich are hereby made available for any project where the\nestimated cost is equal to or less than the amount set forth\nin such section: Provided, That funds made available\nunder this heading shall be for: (1) repairs to any of the\nnonmedical facilities under the jurisdiction or for the use\nof the Department which are necessary because of loss or\ndamage caused by any natural disaster or catastrophe;\nand (2) temporary measures necessary to prevent or to\nminimize further loss by such causes.\nGRANTS FOR CONSTRUCTION OF STATE EXTENDED CARE\nFACILITIES\nFor grants to assist States to acquire or construct\nState nursing home and domiciliary facilities and to re-\nmodel, modify, or alter existing hospital, nursing home,\nand domiciliary facilities in State homes, for furnishing\ncare to veterans as authorized by sections 8131 through\n8137 of title 38, United States Code, $164,000,000 (increased by $2,000,000) (increased by $5,000,000) (increased by $5,000,000), to remain available until expended.\nGRANTS FOR CONSTRUCTION OF VETERANS CEMETERIES\nFor grants to assist States and tribal organizations\nin establishing, expanding, or improving veterans cemeteries as authorized by section 2408 of title 38, United\nStates Code, $60,000,000 (increased by $2,000,000), to\nremain available until expended.\nADMINISTRATIVE PROVISIONS\n(INCLUDING TRANSFER OF FUNDS)"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0009",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 203"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 203"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 49,
+          "start_line": 20,
+          "end_page": 50,
+          "end_line": 2
+        },
+        "v2": {
+          "start_page": 51,
+          "start_line": 3,
+          "end_page": 51,
+          "end_line": 9
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 203. Appropriations available in this title for\nsalaries and expenses shall be available for services authorized by section 3109 of title 5, United States Code;\nhire of passenger motor vehicles; lease of a facility or land\nor both; and uniforms or allowances therefore, as author-\nized by sections 5901 through 5902 of title 5, United\nStates Code.",
+        "new": "SEC. 203. Appropriations available in this title for\nsalaries and expenses shall be available for services authorized by section 3109 of title 5, United States Code;\nhire of passenger motor vehicles; lease of a facility or land\nor both; and uniforms or allowances therefore, as authorized by sections 5901 through 5902 of title 5, United\nStates Code."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0010",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 210"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 210"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 52,
+          "start_line": 16,
+          "end_page": 53,
+          "end_line": 9
+        },
+        "v2": {
+          "start_page": 53,
+          "start_line": 23,
+          "end_page": 54,
+          "end_line": 16
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 210. Funds available in this title or funds for\nsalaries and other administrative expenses shall also be\navailable to reimburse the Office of Resolution Management, Diversity and Inclusion, the Office of Employment\nDiscrimination Complaint Adjudication, and the Alternative Dispute Resolution function within the Office of\nHuman Resources and Administration for all services provided at rates which will recover actual costs but not to\nexceed $86,481,000 for the Office of Resolution Management, Diversity and Inclusion, $6,960,000 for the Office\nof Employment Discrimination Complaint Adjudication,\nand $7,772,000 for the Alternative Dispute Resolution\nfunction within the Office of Human Resources and Administration: Provided, That payments may be made in\nadvance for services to be furnished based on estimated\ncosts: Provided further, That amounts received shall be\ncredited to the \u2018\u2018General Administration\u2019\u2019 and \u2018\u2018Information Technology Systems\u2019\u2019 accounts for use by the office\nthat provided the service.",
+        "new": "SEC. 210. Funds available in this title or funds for\nsalaries and other administrative expenses shall also be\navailable to reimburse the Office of Resolution Manage-\nment, Diversity and Inclusion, the Office of Employment\nDiscrimination Complaint Adjudication, and the Alternative Dispute Resolution function within the Office of\nHuman Resources and Administration for all services provided at rates which will recover actual costs but not to\nexceed $86,481,000 for the Office of Resolution Management, Diversity and Inclusion, $6,960,000 for the Office\nof Employment Discrimination Complaint Adjudication,\nand $7,772,000 for the Alternative Dispute Resolution\nfunction within the Office of Human Resources and Administration: Provided, That payments may be made in\nadvance for services to be furnished based on estimated\ncosts: Provided further, That amounts received shall be\ncredited to the \u2018\u2018General Administration\u2019\u2019 and \u2018\u2018Information Technology Systems\u2019\u2019 accounts for use by the office\nthat provided the service."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0011",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 211"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 211"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 53,
+          "start_line": 10,
+          "end_page": 54,
+          "end_line": 3
+        },
+        "v2": {
+          "start_page": 54,
+          "start_line": 17,
+          "end_page": 55,
+          "end_line": 9
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 211. No funds of the Department of Veterans\nAffairs shall be available for hospital care, nursing home\ncare, or medical services provided to any person under\nchapter 17 of title 38, United States Code, for a non-service-connected disability described in section 1729(a)(2) of\nsuch title, unless that person has disclosed to the Secretary of Veterans Affairs, in such form as the Secretary\nmay require, current, accurate third-party reimbursement\ninformation for purposes of section 1729 of such title: Provided, That the Secretary may recover, in the same manner as any other debt due the United States, the reasonable charges for such care or services from any person who\ndoes not make such disclosure as required: Provided further, That any amounts so recovered for care or services\nprovided in a prior fiscal year may be obligated by the\nSecretary during the fiscal year in which amounts are received.\n(INCLUDING TRANSFER OF FUNDS)",
+        "new": "SEC. 211. No funds of the Department of Veterans\nAffairs shall be available for hospital care, nursing home\ncare, or medical services provided to any person under\nchapter 17 of title 38, United States Code, for a non-service-connected disability described in section 1729(a)(2) of\nsuch title, unless that person has disclosed to the Secretary of Veterans Affairs, in such form as the Secretary\nmay require, current, accurate third-party reimbursement\ninformation for purposes of section 1729 of such title: Pro-\nvided, That the Secretary may recover, in the same manner as any other debt due the United States, the reasonable charges for such care or services from any person who\ndoes not make such disclosure as required: Provided further, That any amounts so recovered for care or services\nprovided in a prior fiscal year may be obligated by the\nSecretary during the fiscal year in which amounts are received.\n(INCLUDING TRANSFER OF FUNDS)"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0012",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 216"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 216"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 55,
+          "start_line": 17,
+          "end_page": 55,
+          "end_line": 21
+        },
+        "v2": {
+          "start_page": 56,
+          "start_line": 24,
+          "end_page": 57,
+          "end_line": 3
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 216. Such sums as may be deposited into the\nDepartment of Veterans Affairs Capital Asset Fund pursuant to section 8118 of title 38, United States Code, may\nbe transferred to the \u2018\u2018Construction, Major Projects\u2019\u2019 and\n\u2018\u2018Construction, Minor Projects\u2019\u2019 accounts, to remain available until expended for the purposes of these accounts.",
+        "new": "SEC. 216. Such sums as may be deposited into the\nDepartment of Veterans Affairs Capital Asset Fund pur-\nsuant to section 8118 of title 38, United States Code, may\nbe transferred to the \u2018\u2018Construction, Major Projects\u2019\u2019 and\n\u2018\u2018Construction, Minor Projects\u2019\u2019 accounts, to remain available until expended for the purposes of these accounts."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0013",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 220"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 220"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 58,
+          "start_line": 2,
+          "end_page": 58,
+          "end_line": 22
+        },
+        "v2": {
+          "start_page": 59,
+          "start_line": 7,
+          "end_page": 60,
+          "end_line": 3
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 220. Of the amounts appropriated to the Department of Veterans Affairs which become available on\nOctober 1, 2024, for \u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, \u2018\u2018Medical Support and Compliance\u2019\u2019, and\n\u2018\u2018Medical Facilities\u2019\u2019, up to $456,547,000, plus reimbursements, may be transferred to the Joint Department of Defense\u2014Department of Veterans Affairs Medical Facility\nDemonstration Fund, established by section 1704 of the\nNational Defense Authorization Act for Fiscal Year 2010\n(Public Law 111\u201384; 123 Stat. 2571) and may be used\nfor operation of the facilities designated as combined Federal medical facilities as described by section 706 of the\nDuncan Hunter National Defense Authorization Act for\nFiscal Year 2009 (Public Law 110\u2013417; 122 Stat. 4500):\nProvided, That additional funds may be transferred from\naccounts designated in this section to the Joint Department of Defense\u2014Department of Veterans Affairs Medical Facility Demonstration Fund upon written notification by the Secretary of Veterans Affairs to the Committees on Appropriations of both Houses of Congress.\n(INCLUDING TRANSFER OF FUNDS)",
+        "new": "SEC. 220. Of the amounts appropriated to the Department of Veterans Affairs which become available on\nOctober 1, 2024, for \u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, \u2018\u2018Medical Support and Compliance\u2019\u2019, and\n\u2018\u2018Medical Facilities\u2019\u2019, up to $456,547,000, plus reimbursements, may be transferred to the Joint Department of Defense\u2014Department of Veterans Affairs Medical Facility\nDemonstration Fund, established by section 1704 of the\nNational Defense Authorization Act for Fiscal Year 2010\n(Public Law 111\u201384; 123 Stat. 2571) and may be used\nfor operation of the facilities designated as combined Federal medical facilities as described by section 706 of the\nDuncan Hunter National Defense Authorization Act for\nFiscal Year 2009 (Public Law 110\u2013417; 122 Stat. 4500):\nProvided, That additional funds may be transferred from\naccounts designated in this section to the Joint Department of Defense\u2014Department of Veterans Affairs Medical Facility Demonstration Fund upon written notifica-\ntion by the Secretary of Veterans Affairs to the Committees on Appropriations of both Houses of Congress.\n(INCLUDING TRANSFER OF FUNDS)"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0014",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 222"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 222"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 59,
+          "start_line": 21,
+          "end_page": 60,
+          "end_line": 3
+        },
+        "v2": {
+          "start_page": 61,
+          "start_line": 2,
+          "end_page": 61,
+          "end_line": 9
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 222. Of the amounts available in this title for\n\u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, \u2018\u2018Medical\nSupport and Compliance\u2019\u2019, and \u2018\u2018Medical Facilities\u2019\u2019, a\nminimum of $15,000,000 shall be transferred to the\nDOD\u2013VA Health Care Sharing Incentive Fund, as au-\nthorized by section 8111(d) of title 38, United States\nCode, to remain available until expended, for any purpose\nauthorized by section 8111 of title 38, United States Code.",
+        "new": "SEC. 222. Of the amounts available in this title for\n\u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, \u2018\u2018Medical\nSupport and Compliance\u2019\u2019, and \u2018\u2018Medical Facilities\u2019\u2019, a\nminimum of $15,000,000 shall be transferred to the\nDOD\u2013VA Health Care Sharing Incentive Fund, as authorized by section 8111(d) of title 38, United States\nCode, to remain available until expended, for any purpose\nauthorized by section 8111 of title 38, United States Code."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0015",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 224"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 224"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 60,
+          "start_line": 15,
+          "end_page": 60,
+          "end_line": 21
+        },
+        "v2": {
+          "start_page": 61,
+          "start_line": 21,
+          "end_page": 62,
+          "end_line": 2
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 224. None of the funds made available for\n\u2018\u2018Construction, Major Projects\u2019\u2019 may be used for a project\nin excess of the scope specified for that project in the original justification data provided to the Congress as part of\nthe request for appropriations unless the Secretary of Veterans Affairs receives approval from the Committees on\nAppropriations of both Houses of Congress.",
+        "new": "SEC. 224. None of the funds made available for\n\u2018\u2018Construction, Major Projects\u2019\u2019 may be used for a project\nin excess of the scope specified for that project in the original justification data provided to the Congress as part of\nthe request for appropriations unless the Secretary of Vet-\nerans Affairs receives approval from the Committees on\nAppropriations of both Houses of Congress."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0016",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 225"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 225"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 60,
+          "start_line": 22,
+          "end_page": 61,
+          "end_line": 11
+        },
+        "v2": {
+          "start_page": 62,
+          "start_line": 3,
+          "end_page": 62,
+          "end_line": 17
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 225. Not later than 30 days after the end of\neach fiscal quarter, the Secretary of Veterans Affairs shall\nsubmit to the Committees on Appropriations of both\nHouses of Congress a quarterly report containing perform-\nance measures and data from each Veterans Benefits Administration Regional Office: Provided, That, at a minimum, the report shall include the direction contained in\nthe section entitled \u2018\u2018Disability claims backlog\u2019\u2019, under the\nheading \u2018\u2018General Operating Expenses, Veterans Benefits\nAdministration\u2019\u2019 in the joint explanatory statement accompanying Public Law 114\u2013223: Provided further, That the\nreport shall also include information on the number of appeals pending at the Veterans Benefits Administration as\nwell as the Board of Veterans Appeals on a quarterly\nbasis.",
+        "new": "SEC. 225. Not later than 30 days after the end of\neach fiscal quarter, the Secretary of Veterans Affairs shall\nsubmit to the Committees on Appropriations of both\nHouses of Congress a quarterly report containing performance measures and data from each Veterans Benefits Administration Regional Office: Provided, That, at a minimum, the report shall include the direction contained in\nthe section entitled \u2018\u2018Disability claims backlog\u2019\u2019, under the\nheading \u2018\u2018General Operating Expenses, Veterans Benefits\nAdministration\u2019\u2019 in the joint explanatory statement accompanying Public Law 114\u2013223: Provided further, That the\nreport shall also include information on the number of appeals pending at the Veterans Benefits Administration as\nwell as the Board of Veterans Appeals on a quarterly\nbasis."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0017",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 227"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 227"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 61,
+          "start_line": 18,
+          "end_page": 61,
+          "end_line": 23
+        },
+        "v2": {
+          "start_page": 62,
+          "start_line": 24,
+          "end_page": 63,
+          "end_line": 4
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 227. The Secretary of Veterans Affairs shall\nprovide on a quarterly basis to the Committees on Appropriations of both Houses of Congress notification of any\nsingle national outreach and awareness marketing campaign in which obligations exceed $1,000,000.\n(INCLUDING TRANSFER OF FUNDS)",
+        "new": "SEC. 227. The Secretary of Veterans Affairs shall\nprovide on a quarterly basis to the Committees on Appro-\npriations of both Houses of Congress notification of any\nsingle national outreach and awareness marketing campaign in which obligations exceed $1,000,000.\n(INCLUDING TRANSFER OF FUNDS)"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0018",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 236"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 236"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 69,
+          "start_line": 1,
+          "end_page": 69,
+          "end_line": 20
+        },
+        "v2": {
+          "start_page": 70,
+          "start_line": 8,
+          "end_page": 71,
+          "end_line": 3
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 236. (a) Except as provided in subsection (b),\nthe Secretary of Veterans Affairs, in consultation with the\nSecretary of Defense and the Secretary of Labor, shall discontinue using Social Security account numbers to identify\nindividuals in all information systems of the Department\nof Veterans Affairs as follows:\n(1) For all veterans submitting to the Secretary\nof Veterans Affairs new claims for benefits under\nlaws administered by the Secretary, not later than\nSeptember 30, 2024.\n(2) For all individuals not described in paragraph (1), not later than March 23, 2026.\n(b) The Secretary of Veterans Affairs may use a Social Security account number to identify an individual in\nan information system of the Department of Veterans Affairs if and only if the use of such number is required\nto obtain information the Secretary requires from an information system that is not under the jurisdiction of the\nSecretary.\n(c) The matter in subsections (a) and (b) shall supersede section 238 of division F of Public Law 116\u201394.",
+        "new": "SEC. 236. (a) Except as provided in subsection (b),\nthe Secretary of Veterans Affairs, in consultation with the\nSecretary of Defense and the Secretary of Labor, shall discontinue using Social Security account numbers to identify\nindividuals in all information systems of the Department\nof Veterans Affairs as follows:\n(1) For all veterans submitting to the Secretary\nof Veterans Affairs new claims for benefits under\nlaws administered by the Secretary, not later than\nSeptember 30, 2024.\n(2) For all individuals not described in paragraph (1), not later than March 23, 2026.\n(b) The Secretary of Veterans Affairs may use a Social Security account number to identify an individual in\nan information system of the Department of Veterans Affairs if and only if the use of such number is required\nto obtain information the Secretary requires from an in-\nformation system that is not under the jurisdiction of the\nSecretary.\n(c) The matter in subsections (a) and (b) shall supersede section 238 of division F of Public Law 116\u201394."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0019",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 240"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 240"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 70,
+          "start_line": 13,
+          "end_page": 70,
+          "end_line": 21
+        },
+        "v2": {
+          "start_page": 71,
+          "start_line": 21,
+          "end_page": 72,
+          "end_line": 4
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 240. None of the funds appropriated or otherwise made available in this title may be used by the Secretary of Veterans Affairs to enter into an agreement related to resolving a dispute or claim with an individual\nthat would restrict in any way the individual from speaking to members of Congress or their staff on any topic\nnot otherwise prohibited from disclosure by Federal law\nor required by Executive order to be kept secret in the\ninterest of national defense or the conduct of foreign affairs.",
+        "new": "SEC. 240. None of the funds appropriated or otherwise made available in this title may be used by the Secretary of Veterans Affairs to enter into an agreement related to resolving a dispute or claim with an individual\nthat would restrict in any way the individual from speak-\ning to members of Congress or their staff on any topic\nnot otherwise prohibited from disclosure by Federal law\nor required by Executive order to be kept secret in the\ninterest of national defense or the conduct of foreign affairs."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0020",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 242"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 242"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 71,
+          "start_line": 3,
+          "end_page": 72,
+          "end_line": 2
+        },
+        "v2": {
+          "start_page": 72,
+          "start_line": 10,
+          "end_page": 73,
+          "end_line": 9
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 242. (a) None of the funds appropriated or otherwise made available by this Act may be used to deny\nan Inspector General funded under this Act timely access\nto any records, documents, or other materials available to\nthe department or agency over which that Inspector General has responsibilities under the Inspector General Act\nof 1978 (5 U.S.C. App.), or to prevent or impede the access of the Inspector General to such records, documents,\nor other materials, under any provision of law, except a\nprovision of law that expressly refers to such Inspector\nGeneral and expressly limits the right of access.\n(b) A department or agency covered by this section\nshall provide its Inspector General access to all records,\ndocuments, and other materials in a timely manner.\n(c) Each Inspector General shall ensure compliance\nwith statutory limitations on disclosure relevant to the information provided by the establishment over which that\nInspector General has responsibilities under the Inspector\nGeneral Act of 1978 (5 U.S.C. App.).\n(d) Each Inspector General covered by this section\nshall report to the Committee on Appropriations of the\nSenate and the Committee on Appropriations of the House\nof Representatives within 5 calendar days of any failure\nby any department or agency covered by this section to\ncomply with this requirement.",
+        "new": "SEC. 242. (a) None of the funds appropriated or otherwise made available by this Act may be used to deny\nan Inspector General funded under this Act timely access\nto any records, documents, or other materials available to\nthe department or agency over which that Inspector General has responsibilities under the Inspector General Act\nof 1978 (5 U.S.C. App.), or to prevent or impede the access of the Inspector General to such records, documents,\nor other materials, under any provision of law, except a\nprovision of law that expressly refers to such Inspector\nGeneral and expressly limits the right of access.\n(b) A department or agency covered by this section\nshall provide its Inspector General access to all records,\ndocuments, and other materials in a timely manner.\n(c) Each Inspector General shall ensure compliance\nwith statutory limitations on disclosure relevant to the in-\nformation provided by the establishment over which that\nInspector General has responsibilities under the Inspector\nGeneral Act of 1978 (5 U.S.C. App.).\n(d) Each Inspector General covered by this section\nshall report to the Committee on Appropriations of the\nSenate and the Committee on Appropriations of the House\nof Representatives within 5 calendar days of any failure\nby any department or agency covered by this section to\ncomply with this requirement."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0021",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 250"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 250"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 76,
+          "start_line": 14,
+          "end_page": 76,
+          "end_line": 23
+        },
+        "v2": {
+          "start_page": 77,
+          "start_line": 19,
+          "end_page": 78,
+          "end_line": 3
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 250. Of the amounts made available for the Department of Veterans Affairs for fiscal year 2024, in this\nor any other Act, under the \u2018\u2018Veterans Health Administration\u2014Medical Services\u2019\u2019, \u2018\u2018Veterans Health Administration\u2014Medical Community Care\u2019\u2019, \u2018\u2018Veterans Health Administration\u2014Medical Support and Compliance\u2019\u2019, and\n\u2018\u2018Veterans Health Administration\u2014Medical Facilities\u2019\u2019 accounts, $1,279,096,000 shall be made available for gender-specific care and programmatic efforts to deliver care\nfor women veterans.",
+        "new": "SEC. 250. Of the amounts made available for the Department of Veterans Affairs for fiscal year 2024, in this\nor any other Act, under the \u2018\u2018Veterans Health Administration\u2014Medical Services\u2019\u2019, \u2018\u2018Veterans Health Administration\u2014Medical Community Care\u2019\u2019, \u2018\u2018Veterans Health Administration\u2014Medical Support and Compliance\u2019\u2019, and\n\u2018\u2018Veterans Health Administration\u2014Medical Facilities\u2019\u2019 ac-\ncounts, $1,279,096,000 shall be made available for gender-specific care and programmatic efforts to deliver care\nfor women veterans."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0022",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE II",
+          "SEC. 253"
+        ],
+        "v2": [
+          "TITLE II",
+          "SEC. 253"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 77,
+          "start_line": 11,
+          "end_page": 78,
+          "end_line": 3
+        },
+        "v2": {
+          "start_page": 78,
+          "start_line": 16,
+          "end_page": 79,
+          "end_line": 8
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 253. Not later than 30 days after the end of\neach fiscal quarter, the Secretary of Veterans Affairs shall\nsubmit to the Committees on Appropriations of both\nHouses of Congress a quarterly report on the status of\nthe \u2018\u2018Veterans Medical Care and Health Fund\u2019\u2019, established to execute section 8002 of the American Rescue\nPlan Act of 2021 (Public Law 117\u20132): Provided, That,\nat a minimum, the report shall include an update on obligations by program, project or activity and a plan for expending the remaining funds: Provided further, That the\nSecretary of Veterans Affairs must submit notification of\nany plans to reallocate funds from the current apportionment categories of \u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Support\nand Compliance\u2019\u2019, \u2018\u2018Medical Facilities\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, or \u2018\u2018Medical and Prosthetic Research\u2019\u2019, includ-\ning the amount and purpose of each reallocation to the\nCommittees on Appropriations of both Houses of Congress\nand such Committees issue an approval, or absent a response, a period of 30 days has elapsed.",
+        "new": "SEC. 253. Not later than 30 days after the end of\neach fiscal quarter, the Secretary of Veterans Affairs shall\nsubmit to the Committees on Appropriations of both\nHouses of Congress a quarterly report on the status of\nthe \u2018\u2018Veterans Medical Care and Health Fund\u2019\u2019, established to execute section 8002 of the American Rescue\nPlan Act of 2021 (Public Law 117\u20132): Provided, That,\nat a minimum, the report shall include an update on obligations by program, project or activity and a plan for expending the remaining funds: Provided further, That the\nSecretary of Veterans Affairs must submit notification of\nany plans to reallocate funds from the current apportionment categories of \u2018\u2018Medical Services\u2019\u2019, \u2018\u2018Medical Support\nand Compliance\u2019\u2019, \u2018\u2018Medical Facilities\u2019\u2019, \u2018\u2018Medical Community Care\u2019\u2019, or \u2018\u2018Medical and Prosthetic Research\u2019\u2019, including the amount and purpose of each reallocation to the\nCommittees on Appropriations of both Houses of Congress\nand such Committees issue an approval, or absent a response, a period of 30 days has elapsed."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0023",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE IV",
+          "SEC. 414"
+        ],
+        "v2": [
+          "TITLE IV",
+          "SEC. 414"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 90,
+          "start_line": 1,
+          "end_page": 90,
+          "end_line": 7
+        },
+        "v2": {
+          "start_page": 91,
+          "start_line": 1,
+          "end_page": 91,
+          "end_line": 7
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 414. None of the funds appropriated or otherwise made available by this Act may be made available\nto implement, administer, apply, enforce, or carry out Executive Order 13985 of January 20, 2021 (86 Fed. Reg.\n7009), Executive Order 14035 of June 25, 2021 (86 Fed.\nReg. 34593), or Executive Order 14091 of February 16,\n2023 (88 Fed. Reg. 10825).",
+        "new": "SEC. 414. None of the funds appropriated or otherwise made available by this Act may be made available\nto implement, administer, apply, enforce, or carry out Executive Order No. 13985 of January 20, 2021 (86 Fed.\nReg. 7009), Executive Order No. 14035 of June 25, 2021\n(86 Fed. Reg. 34593), or Executive Order No. 14091 of\nFebruary 16, 2023 (88 Fed. Reg. 10825)."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0024",
+      "change_type": "modified",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE IV",
+          "SEC. 417"
+        ],
+        "v2": [
+          "TITLE IV",
+          "SEC. 417"
+        ]
+      },
+      "location": {
+        "v1": {
+          "start_page": 92,
+          "start_line": 12,
+          "end_page": 92,
+          "end_line": 16
+        },
+        "v2": {
+          "start_page": 93,
+          "start_line": 12,
+          "end_page": 93,
+          "end_line": 15
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 417. None of the funds made available by this\nAct may be used for any office, programs, or activity for\nthe purposes of diversity, equity, and inclusion training\nor implementation.\nSPENDING REDUCTION ACCOUNT",
+        "new": "SEC. 417. None of the funds made available by this\nAct may be used for any office, programs, or activity for\nthe purposes of diversity, equity, and inclusion training\nor implementation."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0025",
+      "change_type": "removed",
+      "section_number": "",
+      "path": {
+        "v1": [
+          "TITLE IV",
+          "SEC. 418"
+        ],
+        "v2": null
+      },
+      "location": {
+        "v1": {
+          "start_page": 92,
+          "start_line": 17,
+          "end_page": 94,
+          "end_line": null
+        },
+        "v2": null
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": "SEC. 418. $0.\nThis Act may be cited as the \u2018\u2018Military Construction,\nVeterans Affairs, and Related Agencies Appropriations\nAct, 2024\u2019\u2019.\nVerDate Sep 11 2014 00:17 Jun 28, 2023 Jkt 039200 PO 00000 Frm 00093 Fmt 6652 Sfmt 6201 E:\\BILLS\\H4366.RH H4366\nSLLIB\nhtiw\nDORP32NQ621KSD\nno\nrecnepSS\nState\nof\nthe\nUnion\nand\nordered\nto\nbe\nprinted\nCommitted\nto\nthe\nCommittee\nof\nthe\nWhole\nHouse\non\nthe\nJUNE27,\n2023\n2024,\nand\nfor\nother\npurposes.\nagencies\nfor\nthe\nfiscal\nyear\nending\nSeptember\n30,\nthe\nDepartment\nof\nVeterans\nAffairs,\nand\nrelated\nMaking\nappropriations\nfor\nmilitary\nconstruction,\nA\nBILL\n[Report\nNo.\n118\u2013122]\nH.\nR.\n4366\n1STSESSION\n118THCONGRESS\nUnion\nCalendar\nNo.\n94\nVerDate Sep 11 2014 00:17 Jun 28, 2023 Jkt 039200 PO 00000 Frm 00094 Fmt 6651 Sfmt 6651 E:\\BILLS\\H4366.RH H4366\nSLLIB\nhtiw\nDORP32NQ621KSD\nno\nrecnepSS",
+        "new": null
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0026",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 418"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 93,
+          "start_line": 16,
+          "end_page": 93,
+          "end_line": 17
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 418. None of the funds made available by this\nAct may be used to enforce any COVID\u201319 mask mandates."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0027",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 419"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 93,
+          "start_line": 19,
+          "end_page": 93,
+          "end_line": 22
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 419. None of the funds made available by this\nAct may be used to administer, implement, or enforce Executive Order No. 14057 (dated December 8, 2021).\nSPENDING REDUCTION ACCOUNT"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0028",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 420"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 93,
+          "start_line": 23,
+          "end_page": 93,
+          "end_line": 23
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 420. $0."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0029",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 421"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 93,
+          "start_line": 24,
+          "end_page": 94,
+          "end_line": 19
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 421. None of the funds appropriated or otherwise made available to the Department of Veterans Affairs\nin this Act may be used to enforce Veterans Health Directive 1315 as it relates to\u2014\n(1) the policy stating that \u2018\u2018VHA providers are\nprohibited from completing forms or registering Veterans for participation in a State-approved marijuana program\u2019\u2019;\n(2) the directive for the \u2018\u2018Deputy Under Secretary for Health for Operations and Management\u2019\u2019\nto ensure that \u2018\u2018medical facility Directors are aware\nthat it is VHA policy for providers to assess Veteran\nuse of marijuana but providers are prohibited from\nrecommending, making referrals to or completing\npaperwork for Veteran participation in State marijuana programs\u2019\u2019; and\n(3) the directive for the \u2018\u2018VA Medical Facility\nDirector\u2019\u2019 to ensure that \u2018\u2018VA facility staff are aware\nof the following\u2019\u2019 \u2018\u2018[t]he prohibition on recommending, making referrals to or completing forms\nand registering Veterans for participation in Stateapproved marijuana programs\u2019\u2019."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0030",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 422"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 94,
+          "start_line": 21,
+          "end_page": 95,
+          "end_line": 3
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 422. None of the funds made available by this\nAct may be used by the Secretary of Veterans Affairs to\nreport a determination under section 5502 of title 38,\nUnited States Code, and section 3.353 of title 38 of the\nCode of Federal Regulations, to the Department of Justice\nNational Instant Criminal Background Check System established pursuant to section 103 of the Brady Handgun\nViolence Prevention Act (34 U.S.C. 40901)."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0031",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 423"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 95,
+          "start_line": 4,
+          "end_page": 95,
+          "end_line": 6
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 423. None of the funds made available by this\nAct may be used to carry out VHA Directive 1193.01,\n\u2018\u2018Coronavirus Disease 2019 Vaccination Program for Veterans Health Administration Health Care Personnel\u2019\u2019."
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0032",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 424"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 95,
+          "start_line": 8,
+          "end_page": 95,
+          "end_line": 14
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 424. None of the funds made available by this\nAct may be used to modify or remove any display of the\nDepartment of Veterans Affairs that bears the mission\nstatement \u2018\u2018To fulfill President Lincoln\u2019s promise \u2018to care\nfor him who shall have borne the battle, and for his widow,\nand his orphan\u2019 by serving and honoring the men and\nwomen who are America\u2019s veterans.\u2019\u2019\u2019"
+      },
+      "amounts": [],
+      "move": null
+    },
+    {
+      "id": "c-0033",
+      "change_type": "added",
+      "section_number": "",
+      "path": {
+        "v1": null,
+        "v2": [
+          "TITLE IV",
+          "SEC. 425"
+        ]
+      },
+      "location": {
+        "v1": null,
+        "v2": {
+          "start_page": 95,
+          "start_line": 15,
+          "end_page": 98,
+          "end_line": null
+        }
+      },
+      "anchor_resolution": "resolved",
+      "text": {
+        "old": null,
+        "new": "SEC. 425. None of the funds appropriated by this Act\nmay be used to implement any of the following executive\norders:\n(1) Executive Order No. 13990, relating to\nProtecting Public Health and the Environment and\nRestoring Science To Tackle the Climate Crisis.\n(2) Executive Order No. 14008, relating to\nTackling the Climate Crisis at Home and Abroad.\n(3) Section 6 of Executive Order No. 14013, relating to Rebuilding and Enhancing Programs To\nResettle Refugees and Planning for the Impact of\nClimate Change on Migration.\n(4) Executive Order No. 14030, relating to Climate-Related Financial Risk.\n(5) Executive Order No. 14057, relating to\nCatalyzing Clean Energy Industries and Jobs\nThrough Federal Sustainability.\n(6) Executive Order No. 14082, relating to Implementation of the Energy and Infrastructure Provisions of the Inflation Reduction Act of 2022.\n(7) Executive Order No. 14096, relating to Revitalizing Our Nation\u2019s Commitment to Environmental Justice for All.\nThis Act may be cited as the \u2018\u2018Military Construction,\nVeterans Affairs, and Related Agencies Appropriations\nAct, 2024\u2019\u2019.\nPassed the House of Representatives July 27, 2023.\nAttest:\nClerk.\n\n2024,\nand\nfor\nother\npurposes.\nagencies\nfor\nthe\nfiscal\nyear\nending\nSeptember\n30,\nthe\nDepartment\nof\nVeterans\nAffairs,\nand\nrelated\nMaking\nappropriations\nfor\nmilitary\nconstruction,\nAN\nACT\nH.\nR.\n4366\n1STSESSION\n118THCONGRESS"
+      },
+      "amounts": [],
+      "move": null
+    }
+  ]
+}
