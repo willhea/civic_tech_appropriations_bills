@@ -1,0 +1,4 @@
+# Generated rendered diffs — regenerate via `uv run python render_examples.py`.
+# linguist-generated hides them from GitHub diff views by default and excludes
+# them from language stats.
+examples/*.html linguist-generated=true

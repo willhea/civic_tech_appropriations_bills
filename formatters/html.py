@@ -39,7 +39,7 @@ def _version_label(name: str, number: int | None) -> str:
     return name
 
 
-def _fmt_dollar(amount: int) -> str:
+def fmt_dollar(amount: int) -> str:
     """Format an integer as a dollar string with commas."""
     return f"${amount:,}"
 
@@ -48,7 +48,7 @@ def _fmt_change(old: int, new: int) -> tuple[str, str, str]:
     """Return (change_dollar, change_pct, css_class) for an amount pair."""
     diff = new - old
     sign = "+" if diff >= 0 else ""
-    dollar = f"{sign}{_fmt_dollar(diff)}" if diff >= 0 else f"-{_fmt_dollar(abs(diff))}"
+    dollar = f"{sign}{fmt_dollar(diff)}" if diff >= 0 else f"-{fmt_dollar(abs(diff))}"
     if old != 0:
         pct = f"{sign}{diff / old * 100:.1f}%"
     else:
@@ -112,17 +112,17 @@ def build_financial_table(changes: list[dict]) -> str:
         num_pairs = len(amount_pairs)
 
         for j, (old_val, new_val) in enumerate(amount_pairs):
-            old_str = _fmt_dollar(old_val) if old_val is not None else "\u2014"
-            new_str = _fmt_dollar(new_val) if new_val is not None else "\u2014"
+            old_str = fmt_dollar(old_val) if old_val is not None else "\u2014"
+            new_str = fmt_dollar(new_val) if new_val is not None else "\u2014"
 
             if old_val is not None and new_val is not None:
                 change_dollar, change_pct, css = _fmt_change(old_val, new_val)
             elif new_val is not None:
-                change_dollar = f"+{_fmt_dollar(new_val)}"
+                change_dollar = f"+{fmt_dollar(new_val)}"
                 change_pct = "\u2014"
                 css = "increase"
             elif old_val is not None:
-                change_dollar = f"-{_fmt_dollar(old_val)}"
+                change_dollar = f"-{fmt_dollar(old_val)}"
                 change_pct = "\u2014"
                 css = "decrease"
             else:
@@ -172,15 +172,15 @@ def _financial_callout(financial: dict) -> str:
 
     rows = []
     for old_val, new_val in amount_pairs:
-        old_str = _fmt_dollar(old_val) if old_val is not None else "\u2014"
-        new_str = _fmt_dollar(new_val) if new_val is not None else "\u2014"
+        old_str = fmt_dollar(old_val) if old_val is not None else "\u2014"
+        new_str = fmt_dollar(new_val) if new_val is not None else "\u2014"
 
         if old_val is not None and new_val is not None:
             change_str, _, _ = _fmt_change(old_val, new_val)
         elif new_val is not None:
-            change_str = f"+{_fmt_dollar(new_val)}"
+            change_str = f"+{fmt_dollar(new_val)}"
         elif old_val is not None:
-            change_str = f"-{_fmt_dollar(old_val)}"
+            change_str = f"-{fmt_dollar(old_val)}"
         else:
             continue
         rows.append(f"<div>{old_str} &rarr; {new_str} ({change_str})</div>")

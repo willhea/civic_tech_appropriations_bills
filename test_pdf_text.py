@@ -3,39 +3,21 @@
 from __future__ import annotations
 
 from parsers.pdf_text import (
+    Line,
     Page,
     normalize_glyphs,
     page_range_text,
     rejoin_soft_hyphens,
-    strip_line_numbers,
     strip_page_chrome,
 )
 
 
-class TestStripLineNumbers:
-    def test_strips_leading_line_number_per_line(self):
-        raw = "1 Be it enacted by the Senate\n2 of the United States"
-        assert strip_line_numbers(raw) == "Be it enacted by the Senate\nof the United States"
+def _page(page_number: int, text: str) -> Page:
+    """Test helper: build a Page whose text round-trips through the property.
 
-    def test_handles_two_digit_line_numbers(self):
-        raw = "14 For necessary expenses\n15 of the Office\n25 representation expenses."
-        assert strip_line_numbers(raw) == ("For necessary expenses\nof the Office\nrepresentation expenses.")
-
-    def test_does_not_strip_numbers_mid_line(self):
-        raw = "5 of which $22,151,000 shall remain"
-        assert strip_line_numbers(raw) == "of which $22,151,000 shall remain"
-
-    def test_preserves_lines_without_leading_number(self):
-        raw = "TITLE I\n1 Be it enacted"
-        assert strip_line_numbers(raw) == "TITLE I\nBe it enacted"
-
-    def test_does_not_strip_year_like_tokens_mid_paragraph(self):
-        raw = "2026 budget submission for the Department"
-        assert strip_line_numbers(raw) == "2026 budget submission for the Department"
-
-    def test_handles_empty_lines(self):
-        raw = "1 first line\n\n2 second line"
-        assert strip_line_numbers(raw) == "first line\n\nsecond line"
+    Each newline in `text` becomes its own Line with no source line number.
+    """
+    return Page(page_number, tuple(Line(None, line) for line in text.split("\n")))
 
 
 class TestRejoinSoftHyphens:
@@ -86,22 +68,22 @@ class TestStripPageChrome:
 
 class TestPageRangeText:
     def test_concatenates_pages_in_range(self):
-        pages = [Page(1, "first"), Page(2, "second"), Page(3, "third")]
+        pages = [_page(1, "first"), _page(2, "second"), _page(3, "third")]
         assert page_range_text(pages, 1, 2) == "first\nsecond"
 
     def test_inclusive_end(self):
-        pages = [Page(1, "a"), Page(2, "b"), Page(3, "c")]
+        pages = [_page(1, "a"), _page(2, "b"), _page(3, "c")]
         assert page_range_text(pages, 1, 3) == "a\nb\nc"
 
     def test_rejoins_cross_page_soft_hyphen(self):
         # Per-page cleanup leaves a trailing `-` on the prior page when the
         # break crosses a page boundary; concatenation re-creates `-\n` and
         # the helper must rejoin it.
-        pages = [Page(15, "not to ex-"), Page(16, "ceed $7,650")]
+        pages = [_page(15, "not to ex-"), _page(16, "ceed $7,650")]
         assert page_range_text(pages, 15, 16) == "not to exceed $7,650"
 
     def test_skips_pages_outside_range(self):
-        pages = [Page(1, "a"), Page(2, "b"), Page(3, "c")]
+        pages = [_page(1, "a"), _page(2, "b"), _page(3, "c")]
         assert page_range_text(pages, 2, 2) == "b"
 
 

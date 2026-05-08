@@ -14,7 +14,7 @@ from bill_tree import BillNode, BillTree, normalize_bill, normalize_division_tit
 # --- Financial amount extraction ---
 
 _DOLLAR_RE = re.compile(r"\$[\d,]+")
-_AMENDMENT_RE = re.compile(r"\((?:increased|reduced|decreased) by \$[\d,]+\)")
+_AMENDMENT_RE = re.compile(r"\((?:increased|reduced|decreased) by\s+\$[\d,]+\)")
 
 
 def extract_amounts(text: str) -> tuple[int, ...]:

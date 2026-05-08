@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bill Comparison: HR 8752</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height: 1.6; }
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 300px; position: fixed; top: 0; left: 0; height: 100vh;
+  overflow-y: auto; background: #f7f7f7; border-right: 1px solid #ddd; padding: 12px; }
+.sidebar input { width: 100%; padding: 6px 8px; margin-bottom: 8px;
+  border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+.sidebar ul { list-style: none; }
+.sidebar li { margin-bottom: 2px; }
+.sidebar a { display: block; padding: 4px 6px; text-decoration: none;
+  color: #333; font-size: 13px; border-radius: 3px; }
+.sidebar a:hover { background: #e8e8e8; }
+
+/* Main content */
+.main { margin-left: 300px; padding: 24px 32px; max-width: 900px; flex: 1; }
+
+/* Header */
+.report-header h1 { font-size: 22px; margin-bottom: 4px; }
+.report-header .versions { color: #666; font-size: 15px; margin-bottom: 16px; }
+.summary-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.summary-item { font-size: 14px; }
+.summary-item strong { margin-right: 4px; }
+
+/* Badges */
+.badge { display: inline-block; padding: 1px 6px; border-radius: 3px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-modified { background: #fff3cd; color: #856404; }
+.badge-added { background: #d4edda; color: #155724; }
+.badge-removed { background: #f8d7da; color: #721c24; }
+.badge-moved { background: #cce5ff; color: #004085; }
+
+/* Financial table */
+.financial-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+.financial-table th { background: #f0f0f0; text-align: left; padding: 8px; border-bottom: 2px solid #ccc; }
+.financial-table td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+.financial-table .amount { text-align: right; font-variant-numeric: tabular-nums; }
+.financial-table a { color: #0056b3; text-decoration: none; }
+.financial-table a:hover { text-decoration: underline; }
+tr.increase .change-amount { color: #155724; }
+tr.decrease .change-amount { color: #721c24; }
+
+/* Change cards */
+.change-card { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 16px;
+  padding: 16px; background: #fff; }
+.change-card.added { border-left: 4px solid #28a745; }
+.change-card.removed { border-left: 4px solid #dc3545; }
+.change-card.modified { border-left: 4px solid #ffc107; }
+.change-card.moved { border-left: 4px solid #007bff; }
+.change-header { margin-bottom: 12px; }
+.change-header h3 { font-size: 16px; display: inline; margin-left: 8px; }
+.section-number { display: block; font-size: 13px; color: #666; margin-top: 2px; }
+.change-body { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.added-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.removed-text { background: #ffe6e6; padding: 8px; border-radius: 4px; text-decoration: line-through; color: #666; }
+.old-text { background: #ffe6e6; padding: 8px; border-radius: 4px; margin-bottom: 8px; }
+.new-text { background: #e6ffe6; padding: 8px; border-radius: 4px; }
+.move-info { font-size: 13px; color: #004085; margin-bottom: 8px; }
+.amendment-note { font-size: 12px; color: #856404; background: #fff3cd; padding: 4px 8px;
+  border-radius: 3px; margin-top: 4px; }
+
+/* Inline diff */
+del { background: #fecdd3; text-decoration: line-through; color: #9a3412; }
+ins { background: #bbf7d0; text-decoration: none; color: #166534; }
+
+/* Financial callout */
+.financial-callout { margin-top: 10px; padding: 8px 12px; background: #f0f7ff;
+  border: 1px solid #b6d4fe; border-radius: 4px; font-size: 13px; }
+
+/* Navigation buttons */
+.nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10; }
+.nav-buttons button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 4px;
+  background: #fff; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.nav-buttons button:hover { background: #f0f0f0; }
+
+/* Print */
+@media print {
+  .sidebar, .nav-buttons, #sidebar-filter { display: none; }
+  .main { margin-left: 0; }
+  .change-card { break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+<input type="text" id="sidebar-filter" placeholder="Filter sections...">
+<ul><li class="nav-item" data-type="unchanged"><a href="#change-0"><span class="badge badge-unchanged">unchanged</span> (unknown)</a></li><li class="nav-item" data-type="modified"><a href="#change-1"><span class="badge badge-modified">modified</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Office of the secretary and executive management &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="modified"><a href="#change-2"><span class="badge badge-modified">modified</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="modified"><a href="#change-3"><span class="badge badge-modified">modified</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-4"><span class="badge badge-unchanged">unchanged</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; FEDERAL PROTECTIVE SERVICE</a></li><li class="nav-item" data-type="unchanged"><a href="#change-5"><span class="badge badge-unchanged">unchanged</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Intelligence, analysis, and situational awareness &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-6"><span class="badge badge-unchanged">unchanged</span> DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Office of inspector general &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-7"><span class="badge badge-unchanged">unchanged</span> Sec. 101 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 101</a></li><li class="nav-item" data-type="unchanged"><a href="#change-8"><span class="badge badge-unchanged">unchanged</span> Sec. 102 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 102</a></li><li class="nav-item" data-type="unchanged"><a href="#change-9"><span class="badge badge-unchanged">unchanged</span> Sec. 103 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 103</a></li><li class="nav-item" data-type="unchanged"><a href="#change-10"><span class="badge badge-unchanged">unchanged</span> Sec. 104 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 104</a></li><li class="nav-item" data-type="unchanged"><a href="#change-11"><span class="badge badge-unchanged">unchanged</span> Sec. 105 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 105</a></li><li class="nav-item" data-type="unchanged"><a href="#change-12"><span class="badge badge-unchanged">unchanged</span> Sec. 106 — DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 106</a></li><li class="nav-item" data-type="modified"><a href="#change-13"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. customs and border protection</a></li><li class="nav-item" data-type="modified"><a href="#change-14"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. customs and border protection &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="modified"><a href="#change-15"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. immigration and customs enforcement &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-16"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. immigration and customs enforcement &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="modified"><a href="#change-17"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="modified"><a href="#change-18"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-19"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; RESEARCH AND DEVELOPMENT</a></li><li class="nav-item" data-type="modified"><a href="#change-20"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="modified"><a href="#change-21"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-22"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; RESEARCH AND DEVELOPMENT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-23"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; RETIRED PAY</a></li><li class="nav-item" data-type="modified"><a href="#change-24"><span class="badge badge-modified">modified</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-25"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-26"><span class="badge badge-unchanged">unchanged</span> SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; RESEARCH AND DEVELOPMENT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-27"><span class="badge badge-unchanged">unchanged</span> Sec. 201 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 201</a></li><li class="nav-item" data-type="unchanged"><a href="#change-28"><span class="badge badge-unchanged">unchanged</span> Sec. 202 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 202</a></li><li class="nav-item" data-type="unchanged"><a href="#change-29"><span class="badge badge-unchanged">unchanged</span> Sec. 203 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 203</a></li><li class="nav-item" data-type="unchanged"><a href="#change-30"><span class="badge badge-unchanged">unchanged</span> Sec. 204 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 204</a></li><li class="nav-item" data-type="unchanged"><a href="#change-31"><span class="badge badge-unchanged">unchanged</span> Sec. 205 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 205</a></li><li class="nav-item" data-type="unchanged"><a href="#change-32"><span class="badge badge-unchanged">unchanged</span> Sec. 206 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 206</a></li><li class="nav-item" data-type="unchanged"><a href="#change-33"><span class="badge badge-unchanged">unchanged</span> Sec. 207 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 207</a></li><li class="nav-item" data-type="unchanged"><a href="#change-34"><span class="badge badge-unchanged">unchanged</span> Sec. 208 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 208</a></li><li class="nav-item" data-type="unchanged"><a href="#change-35"><span class="badge badge-unchanged">unchanged</span> Sec. 209 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 209</a></li><li class="nav-item" data-type="unchanged"><a href="#change-36"><span class="badge badge-unchanged">unchanged</span> Sec. 210 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 210</a></li><li class="nav-item" data-type="modified"><a href="#change-37"><span class="badge badge-modified">modified</span> Sec. 211 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 211</a></li><li class="nav-item" data-type="modified"><a href="#change-38"><span class="badge badge-modified">modified</span> Sec. 212 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 212</a></li><li class="nav-item" data-type="unchanged"><a href="#change-39"><span class="badge badge-unchanged">unchanged</span> Sec. 213 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 213</a></li><li class="nav-item" data-type="unchanged"><a href="#change-40"><span class="badge badge-unchanged">unchanged</span> Sec. 214 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 214</a></li><li class="nav-item" data-type="unchanged"><a href="#change-41"><span class="badge badge-unchanged">unchanged</span> Sec. 215 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 215</a></li><li class="nav-item" data-type="unchanged"><a href="#change-42"><span class="badge badge-unchanged">unchanged</span> Sec. 216 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 216</a></li><li class="nav-item" data-type="unchanged"><a href="#change-43"><span class="badge badge-unchanged">unchanged</span> Sec. 217 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 217</a></li><li class="nav-item" data-type="unchanged"><a href="#change-44"><span class="badge badge-unchanged">unchanged</span> Sec. 218 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 218</a></li><li class="nav-item" data-type="unchanged"><a href="#change-45"><span class="badge badge-unchanged">unchanged</span> Sec. 219 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 219</a></li><li class="nav-item" data-type="unchanged"><a href="#change-46"><span class="badge badge-unchanged">unchanged</span> Sec. 220 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 220</a></li><li class="nav-item" data-type="unchanged"><a href="#change-47"><span class="badge badge-unchanged">unchanged</span> Sec. 221 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 221</a></li><li class="nav-item" data-type="unchanged"><a href="#change-48"><span class="badge badge-unchanged">unchanged</span> Sec. 222 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 222</a></li><li class="nav-item" data-type="unchanged"><a href="#change-49"><span class="badge badge-unchanged">unchanged</span> Sec. 223 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 223</a></li><li class="nav-item" data-type="unchanged"><a href="#change-50"><span class="badge badge-unchanged">unchanged</span> Sec. 224 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 224</a></li><li class="nav-item" data-type="unchanged"><a href="#change-51"><span class="badge badge-unchanged">unchanged</span> Sec. 225 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 225</a></li><li class="nav-item" data-type="unchanged"><a href="#change-52"><span class="badge badge-unchanged">unchanged</span> Sec. 226 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 226</a></li><li class="nav-item" data-type="unchanged"><a href="#change-53"><span class="badge badge-unchanged">unchanged</span> Sec. 227 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 227</a></li><li class="nav-item" data-type="unchanged"><a href="#change-54"><span class="badge badge-unchanged">unchanged</span> Sec. 228 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 228</a></li><li class="nav-item" data-type="unchanged"><a href="#change-55"><span class="badge badge-unchanged">unchanged</span> Sec. 229 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 229</a></li><li class="nav-item" data-type="unchanged"><a href="#change-56"><span class="badge badge-unchanged">unchanged</span> Sec. 230 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 230</a></li><li class="nav-item" data-type="unchanged"><a href="#change-57"><span class="badge badge-unchanged">unchanged</span> Sec. 231 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 231</a></li><li class="nav-item" data-type="unchanged"><a href="#change-58"><span class="badge badge-unchanged">unchanged</span> Sec. 232 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 232</a></li><li class="nav-item" data-type="unchanged"><a href="#change-59"><span class="badge badge-unchanged">unchanged</span> Sec. 233 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 233</a></li><li class="nav-item" data-type="unchanged"><a href="#change-60"><span class="badge badge-unchanged">unchanged</span> Sec. 234 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 234</a></li><li class="nav-item" data-type="unchanged"><a href="#change-61"><span class="badge badge-unchanged">unchanged</span> Sec. 235 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 235</a></li><li class="nav-item" data-type="unchanged"><a href="#change-62"><span class="badge badge-unchanged">unchanged</span> Sec. 236 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 236</a></li><li class="nav-item" data-type="unchanged"><a href="#change-63"><span class="badge badge-unchanged">unchanged</span> Sec. 237 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 237</a></li><li class="nav-item" data-type="unchanged"><a href="#change-64"><span class="badge badge-unchanged">unchanged</span> Sec. 238 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 238</a></li><li class="nav-item" data-type="unchanged"><a href="#change-65"><span class="badge badge-unchanged">unchanged</span> Sec. 239 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 239</a></li><li class="nav-item" data-type="unchanged"><a href="#change-66"><span class="badge badge-unchanged">unchanged</span> Sec. 240 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 240</a></li><li class="nav-item" data-type="unchanged"><a href="#change-67"><span class="badge badge-unchanged">unchanged</span> Sec. 241 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 241</a></li><li class="nav-item" data-type="unchanged"><a href="#change-68"><span class="badge badge-unchanged">unchanged</span> Sec. 242 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 242</a></li><li class="nav-item" data-type="unchanged"><a href="#change-69"><span class="badge badge-unchanged">unchanged</span> Sec. 243 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 243</a></li><li class="nav-item" data-type="unchanged"><a href="#change-70"><span class="badge badge-unchanged">unchanged</span> Sec. 244 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 244</a></li><li class="nav-item" data-type="unchanged"><a href="#change-71"><span class="badge badge-unchanged">unchanged</span> Sec. 245 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 245</a></li><li class="nav-item" data-type="unchanged"><a href="#change-72"><span class="badge badge-unchanged">unchanged</span> Sec. 246 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 246</a></li><li class="nav-item" data-type="unchanged"><a href="#change-73"><span class="badge badge-unchanged">unchanged</span> Sec. 247 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 247</a></li><li class="nav-item" data-type="unchanged"><a href="#change-74"><span class="badge badge-unchanged">unchanged</span> Sec. 248 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 248</a></li><li class="nav-item" data-type="unchanged"><a href="#change-75"><span class="badge badge-unchanged">unchanged</span> Sec. 249 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 249</a></li><li class="nav-item" data-type="unchanged"><a href="#change-76"><span class="badge badge-unchanged">unchanged</span> Sec. 250 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 250</a></li><li class="nav-item" data-type="unchanged"><a href="#change-77"><span class="badge badge-unchanged">unchanged</span> Sec. 251 — SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 251</a></li><li class="nav-item" data-type="unchanged"><a href="#change-78"><span class="badge badge-unchanged">unchanged</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Cybersecurity and infrastructure security agency &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-79"><span class="badge badge-unchanged">unchanged</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Cybersecurity and infrastructure security agency &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="modified"><a href="#change-80"><span class="badge badge-modified">modified</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-81"><span class="badge badge-unchanged">unchanged</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="modified"><a href="#change-82"><span class="badge badge-modified">modified</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency</a></li><li class="nav-item" data-type="unchanged"><a href="#change-83"><span class="badge badge-unchanged">unchanged</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; DISASTER RELIEF FUND</a></li><li class="nav-item" data-type="unchanged"><a href="#change-84"><span class="badge badge-unchanged">unchanged</span> PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; NATIONAL FLOOD INSURANCE FUND</a></li><li class="nav-item" data-type="unchanged"><a href="#change-85"><span class="badge badge-unchanged">unchanged</span> Sec. 301 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 301</a></li><li class="nav-item" data-type="unchanged"><a href="#change-86"><span class="badge badge-unchanged">unchanged</span> Sec. 302 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 302</a></li><li class="nav-item" data-type="unchanged"><a href="#change-87"><span class="badge badge-unchanged">unchanged</span> Sec. 303 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 303</a></li><li class="nav-item" data-type="unchanged"><a href="#change-88"><span class="badge badge-unchanged">unchanged</span> Sec. 304 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 304</a></li><li class="nav-item" data-type="unchanged"><a href="#change-89"><span class="badge badge-unchanged">unchanged</span> Sec. 305 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 305</a></li><li class="nav-item" data-type="unchanged"><a href="#change-90"><span class="badge badge-unchanged">unchanged</span> Sec. 306 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 306</a></li><li class="nav-item" data-type="unchanged"><a href="#change-91"><span class="badge badge-unchanged">unchanged</span> Sec. 307 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 307</a></li><li class="nav-item" data-type="unchanged"><a href="#change-92"><span class="badge badge-unchanged">unchanged</span> Sec. 308 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 308</a></li><li class="nav-item" data-type="unchanged"><a href="#change-93"><span class="badge badge-unchanged">unchanged</span> Sec. 309 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 309</a></li><li class="nav-item" data-type="unchanged"><a href="#change-94"><span class="badge badge-unchanged">unchanged</span> Sec. 310 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 310</a></li><li class="nav-item" data-type="unchanged"><a href="#change-95"><span class="badge badge-unchanged">unchanged</span> Sec. 311 — PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 311</a></li><li class="nav-item" data-type="unchanged"><a href="#change-96"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; U.S. citizenship and immigration services &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-97"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Federal law enforcement training centers &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-98"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Federal law enforcement training centers &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-99"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-100"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="modified"><a href="#change-101"><span class="badge badge-modified">modified</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; RESEARCH AND DEVELOPMENT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-102"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; OPERATIONS AND SUPPORT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-103"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</a></li><li class="nav-item" data-type="unchanged"><a href="#change-104"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; RESEARCH AND DEVELOPMENT</a></li><li class="nav-item" data-type="unchanged"><a href="#change-105"><span class="badge badge-unchanged">unchanged</span> RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; FEDERAL ASSISTANCE</a></li><li class="nav-item" data-type="unchanged"><a href="#change-106"><span class="badge badge-unchanged">unchanged</span> Sec. 401 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 401</a></li><li class="nav-item" data-type="unchanged"><a href="#change-107"><span class="badge badge-unchanged">unchanged</span> Sec. 402 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 402</a></li><li class="nav-item" data-type="unchanged"><a href="#change-108"><span class="badge badge-unchanged">unchanged</span> Sec. 403 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 403</a></li><li class="nav-item" data-type="unchanged"><a href="#change-109"><span class="badge badge-unchanged">unchanged</span> Sec. 404 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 404</a></li><li class="nav-item" data-type="unchanged"><a href="#change-110"><span class="badge badge-unchanged">unchanged</span> Sec. 405 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 405</a></li><li class="nav-item" data-type="modified"><a href="#change-111"><span class="badge badge-modified">modified</span> Sec. 406 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 406</a></li><li class="nav-item" data-type="unchanged"><a href="#change-112"><span class="badge badge-unchanged">unchanged</span> Sec. 407 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 407</a></li><li class="nav-item" data-type="unchanged"><a href="#change-113"><span class="badge badge-unchanged">unchanged</span> Sec. 408 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 408</a></li><li class="nav-item" data-type="unchanged"><a href="#change-114"><span class="badge badge-unchanged">unchanged</span> Sec. 409 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 409</a></li><li class="nav-item" data-type="unchanged"><a href="#change-115"><span class="badge badge-unchanged">unchanged</span> Sec. 410 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 410</a></li><li class="nav-item" data-type="unchanged"><a href="#change-116"><span class="badge badge-unchanged">unchanged</span> Sec. 411 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 411</a></li><li class="nav-item" data-type="unchanged"><a href="#change-117"><span class="badge badge-unchanged">unchanged</span> Sec. 412 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 412</a></li><li class="nav-item" data-type="removed"><a href="#change-118"><span class="badge badge-removed">removed</span> Sec. 413 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 413</a></li><li class="nav-item" data-type="unchanged"><a href="#change-119"><span class="badge badge-unchanged">unchanged</span> Sec. 501 — GENERAL PROVISIONS &gt; sec. 501</a></li><li class="nav-item" data-type="unchanged"><a href="#change-120"><span class="badge badge-unchanged">unchanged</span> Sec. 502 — GENERAL PROVISIONS &gt; sec. 502</a></li><li class="nav-item" data-type="unchanged"><a href="#change-121"><span class="badge badge-unchanged">unchanged</span> Sec. 503 — GENERAL PROVISIONS &gt; sec. 503</a></li><li class="nav-item" data-type="unchanged"><a href="#change-122"><span class="badge badge-unchanged">unchanged</span> Sec. 504 — GENERAL PROVISIONS &gt; sec. 504</a></li><li class="nav-item" data-type="unchanged"><a href="#change-123"><span class="badge badge-unchanged">unchanged</span> Sec. 505 — GENERAL PROVISIONS &gt; sec. 505</a></li><li class="nav-item" data-type="unchanged"><a href="#change-124"><span class="badge badge-unchanged">unchanged</span> Sec. 506 — GENERAL PROVISIONS &gt; sec. 506</a></li><li class="nav-item" data-type="unchanged"><a href="#change-125"><span class="badge badge-unchanged">unchanged</span> Sec. 507 — GENERAL PROVISIONS &gt; sec. 507</a></li><li class="nav-item" data-type="unchanged"><a href="#change-126"><span class="badge badge-unchanged">unchanged</span> Sec. 508 — GENERAL PROVISIONS &gt; sec. 508</a></li><li class="nav-item" data-type="unchanged"><a href="#change-127"><span class="badge badge-unchanged">unchanged</span> Sec. 509 — GENERAL PROVISIONS &gt; sec. 509</a></li><li class="nav-item" data-type="unchanged"><a href="#change-128"><span class="badge badge-unchanged">unchanged</span> Sec. 510 — GENERAL PROVISIONS &gt; sec. 510</a></li><li class="nav-item" data-type="unchanged"><a href="#change-129"><span class="badge badge-unchanged">unchanged</span> Sec. 511 — GENERAL PROVISIONS &gt; sec. 511</a></li><li class="nav-item" data-type="unchanged"><a href="#change-130"><span class="badge badge-unchanged">unchanged</span> Sec. 512 — GENERAL PROVISIONS &gt; sec. 512</a></li><li class="nav-item" data-type="unchanged"><a href="#change-131"><span class="badge badge-unchanged">unchanged</span> Sec. 513 — GENERAL PROVISIONS &gt; sec. 513</a></li><li class="nav-item" data-type="unchanged"><a href="#change-132"><span class="badge badge-unchanged">unchanged</span> Sec. 514 — GENERAL PROVISIONS &gt; sec. 514</a></li><li class="nav-item" data-type="unchanged"><a href="#change-133"><span class="badge badge-unchanged">unchanged</span> Sec. 515 — GENERAL PROVISIONS &gt; sec. 515</a></li><li class="nav-item" data-type="unchanged"><a href="#change-134"><span class="badge badge-unchanged">unchanged</span> Sec. 516 — GENERAL PROVISIONS &gt; sec. 516</a></li><li class="nav-item" data-type="unchanged"><a href="#change-135"><span class="badge badge-unchanged">unchanged</span> Sec. 517 — GENERAL PROVISIONS &gt; sec. 517</a></li><li class="nav-item" data-type="unchanged"><a href="#change-136"><span class="badge badge-unchanged">unchanged</span> Sec. 518 — GENERAL PROVISIONS &gt; sec. 518</a></li><li class="nav-item" data-type="unchanged"><a href="#change-137"><span class="badge badge-unchanged">unchanged</span> Sec. 519 — GENERAL PROVISIONS &gt; sec. 519</a></li><li class="nav-item" data-type="unchanged"><a href="#change-138"><span class="badge badge-unchanged">unchanged</span> Sec. 520 — GENERAL PROVISIONS &gt; sec. 520</a></li><li class="nav-item" data-type="unchanged"><a href="#change-139"><span class="badge badge-unchanged">unchanged</span> Sec. 521 — GENERAL PROVISIONS &gt; sec. 521</a></li><li class="nav-item" data-type="unchanged"><a href="#change-140"><span class="badge badge-unchanged">unchanged</span> Sec. 522 — GENERAL PROVISIONS &gt; sec. 522</a></li><li class="nav-item" data-type="unchanged"><a href="#change-141"><span class="badge badge-unchanged">unchanged</span> Sec. 523 — GENERAL PROVISIONS &gt; sec. 523</a></li><li class="nav-item" data-type="unchanged"><a href="#change-142"><span class="badge badge-unchanged">unchanged</span> Sec. 524 — GENERAL PROVISIONS &gt; sec. 524</a></li><li class="nav-item" data-type="unchanged"><a href="#change-143"><span class="badge badge-unchanged">unchanged</span> Sec. 525 — GENERAL PROVISIONS &gt; sec. 525</a></li><li class="nav-item" data-type="unchanged"><a href="#change-144"><span class="badge badge-unchanged">unchanged</span> Sec. 526 — GENERAL PROVISIONS &gt; sec. 526</a></li><li class="nav-item" data-type="unchanged"><a href="#change-145"><span class="badge badge-unchanged">unchanged</span> Sec. 527 — GENERAL PROVISIONS &gt; sec. 527</a></li><li class="nav-item" data-type="unchanged"><a href="#change-146"><span class="badge badge-unchanged">unchanged</span> Sec. 528 — GENERAL PROVISIONS &gt; sec. 528</a></li><li class="nav-item" data-type="unchanged"><a href="#change-147"><span class="badge badge-unchanged">unchanged</span> Sec. 529 — GENERAL PROVISIONS &gt; sec. 529</a></li><li class="nav-item" data-type="unchanged"><a href="#change-148"><span class="badge badge-unchanged">unchanged</span> Sec. 530 — GENERAL PROVISIONS &gt; sec. 530</a></li><li class="nav-item" data-type="unchanged"><a href="#change-149"><span class="badge badge-unchanged">unchanged</span> Sec. 531 — GENERAL PROVISIONS &gt; sec. 531</a></li><li class="nav-item" data-type="unchanged"><a href="#change-150"><span class="badge badge-unchanged">unchanged</span> Sec. 532 — GENERAL PROVISIONS &gt; sec. 532</a></li><li class="nav-item" data-type="unchanged"><a href="#change-151"><span class="badge badge-unchanged">unchanged</span> Sec. 533 — GENERAL PROVISIONS &gt; sec. 533</a></li><li class="nav-item" data-type="unchanged"><a href="#change-152"><span class="badge badge-unchanged">unchanged</span> Sec. 534 — GENERAL PROVISIONS &gt; sec. 534</a></li><li class="nav-item" data-type="unchanged"><a href="#change-153"><span class="badge badge-unchanged">unchanged</span> Sec. 535 — GENERAL PROVISIONS &gt; sec. 535</a></li><li class="nav-item" data-type="unchanged"><a href="#change-154"><span class="badge badge-unchanged">unchanged</span> Sec. 536 — GENERAL PROVISIONS &gt; sec. 536</a></li><li class="nav-item" data-type="unchanged"><a href="#change-155"><span class="badge badge-unchanged">unchanged</span> Sec. 537 — GENERAL PROVISIONS &gt; sec. 537</a></li><li class="nav-item" data-type="unchanged"><a href="#change-156"><span class="badge badge-unchanged">unchanged</span> Sec. 538 — GENERAL PROVISIONS &gt; sec. 538</a></li><li class="nav-item" data-type="unchanged"><a href="#change-157"><span class="badge badge-unchanged">unchanged</span> Sec. 539 — GENERAL PROVISIONS &gt; sec. 539</a></li><li class="nav-item" data-type="unchanged"><a href="#change-158"><span class="badge badge-unchanged">unchanged</span> Sec. 540 — GENERAL PROVISIONS &gt; sec. 540</a></li><li class="nav-item" data-type="unchanged"><a href="#change-159"><span class="badge badge-unchanged">unchanged</span> Sec. 541 — GENERAL PROVISIONS &gt; sec. 541</a></li><li class="nav-item" data-type="unchanged"><a href="#change-160"><span class="badge badge-unchanged">unchanged</span> Sec. 542 — GENERAL PROVISIONS &gt; sec. 542</a></li><li class="nav-item" data-type="unchanged"><a href="#change-161"><span class="badge badge-unchanged">unchanged</span> Sec. 543 — GENERAL PROVISIONS &gt; sec. 543</a></li><li class="nav-item" data-type="unchanged"><a href="#change-162"><span class="badge badge-unchanged">unchanged</span> Sec. 544 — GENERAL PROVISIONS &gt; sec. 544</a></li><li class="nav-item" data-type="unchanged"><a href="#change-163"><span class="badge badge-unchanged">unchanged</span> Sec. 545 — GENERAL PROVISIONS &gt; sec. 545</a></li><li class="nav-item" data-type="unchanged"><a href="#change-164"><span class="badge badge-unchanged">unchanged</span> Sec. 546 — GENERAL PROVISIONS &gt; sec. 546</a></li><li class="nav-item" data-type="unchanged"><a href="#change-165"><span class="badge badge-unchanged">unchanged</span> Sec. 547 — GENERAL PROVISIONS &gt; sec. 547</a></li><li class="nav-item" data-type="unchanged"><a href="#change-166"><span class="badge badge-unchanged">unchanged</span> Sec. 548 — GENERAL PROVISIONS &gt; sec. 548</a></li><li class="nav-item" data-type="unchanged"><a href="#change-167"><span class="badge badge-unchanged">unchanged</span> Sec. 549 — GENERAL PROVISIONS &gt; sec. 549</a></li><li class="nav-item" data-type="unchanged"><a href="#change-168"><span class="badge badge-unchanged">unchanged</span> Sec. 550 — GENERAL PROVISIONS &gt; sec. 550</a></li><li class="nav-item" data-type="unchanged"><a href="#change-169"><span class="badge badge-unchanged">unchanged</span> Sec. 551 — GENERAL PROVISIONS &gt; sec. 551</a></li><li class="nav-item" data-type="removed"><a href="#change-170"><span class="badge badge-removed">removed</span> Sec. 552 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 552</a></li><li class="nav-item" data-type="added"><a href="#change-171"><span class="badge badge-added">added</span> Sec. 552 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 552</a></li><li class="nav-item" data-type="unchanged"><a href="#change-172"><span class="badge badge-unchanged">unchanged</span> GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT</a></li><li class="nav-item" data-type="added"><a href="#change-173"><span class="badge badge-added">added</span> Sec. 553 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 553</a></li><li class="nav-item" data-type="added"><a href="#change-174"><span class="badge badge-added">added</span> Sec. 554 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 554</a></li><li class="nav-item" data-type="added"><a href="#change-175"><span class="badge badge-added">added</span> Sec. 555 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 555</a></li><li class="nav-item" data-type="added"><a href="#change-176"><span class="badge badge-added">added</span> Sec. 556 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 556</a></li><li class="nav-item" data-type="added"><a href="#change-177"><span class="badge badge-added">added</span> Sec. 557 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 557</a></li><li class="nav-item" data-type="added"><a href="#change-178"><span class="badge badge-added">added</span> Sec. 558 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 558</a></li><li class="nav-item" data-type="added"><a href="#change-179"><span class="badge badge-added">added</span> Sec. 559 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 559</a></li><li class="nav-item" data-type="added"><a href="#change-180"><span class="badge badge-added">added</span> Sec. 560 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 560</a></li><li class="nav-item" data-type="added"><a href="#change-181"><span class="badge badge-added">added</span> Sec. 561 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 561</a></li><li class="nav-item" data-type="added"><a href="#change-182"><span class="badge badge-added">added</span> Sec. 562 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 562</a></li><li class="nav-item" data-type="added"><a href="#change-183"><span class="badge badge-added">added</span> Sec. 563 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 563</a></li><li class="nav-item" data-type="added"><a href="#change-184"><span class="badge badge-added">added</span> Sec. 564 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 564</a></li><li class="nav-item" data-type="added"><a href="#change-185"><span class="badge badge-added">added</span> Sec. 565 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 565</a></li><li class="nav-item" data-type="added"><a href="#change-186"><span class="badge badge-added">added</span> Sec. 566 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 566</a></li><li class="nav-item" data-type="added"><a href="#change-187"><span class="badge badge-added">added</span> Sec. 567 — GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 567</a></li><li class="nav-item" data-type="moved"><a href="#change-188"><span class="badge badge-moved">moved</span> Sec. 413 — RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 413</a></li></ul>
+</nav>
+<div class="main">
+<div class="report-header">
+<h1>HR 8752 &mdash; Bill Comparison</h1>
+<div class="versions">v1: reported-in-house &rarr; v2: engrossed-in-house &middot; 118th Congress</div>
+<div class="summary-bar"><span class="summary-item"><span class="badge badge-added">added</span> <strong>16</strong></span><span class="summary-item"><span class="badge badge-removed">removed</span> <strong>2</strong></span><span class="summary-item"><span class="badge badge-modified">modified</span> <strong>17</strong></span><span class="summary-item"><span class="badge badge-moved">moved</span> <strong>1</strong></span></div>
+</div>
+<h2>Financial Summary</h2>
+<table class="financial-table">
+<thead><tr>
+<th>Section</th>
+<th>Old Amount</th>
+<th>New Amount</th>
+<th>Change ($)</th>
+<th>Change (%)</th>
+</tr></thead>
+<tbody>
+<tr class="increase" data-group="0"><td><a href="#change-183">GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 563</a></td><td class="amount">—</td><td class="amount">$1</td><td class="amount change-amount">+$1</td><td class="amount change-amount">—</td></tr>
+</tbody></table>
+
+<h2>Changes</h2>
+<div class="change-card unchanged" id="change-0">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3></h3>
+</div>
+</div>
+<div class="change-card modified" id="change-1">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Office of the secretary and executive management &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Office of the Secretary and for executive management for operations and support, <del>$281,358,000,</del> <ins>$281,358,000 (reduced by $20,000,000) (reduced by $5,000,000) (increased by $10,000,000) (reduced by $10,000,000) (reduced by $1,650,000) (reduced by $5,000,000) (reduced by $10,000,000),</ins> of which $22,151,000 shall remain available until September 30, 2026: Provided, That $5,000,000 shall be withheld from obligation until the Secretary submits, to the Committees on Appropriations of the House of Representatives and the Senate, responses to all questions for the record for each hearing on the fiscal year 2026 budget submission for the Department of Homeland Security held by such Committees prior to July 1: Provided further, That not to exceed $30,000 shall be for official reception and representation expenses.</div>
+</div>
+<div class="change-card modified" id="change-2">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Management Directorate for operations and support, <del>$1,637,290,000:</del> <ins>$1,637,290,000 (reduced by $3,000,000) (reduced by $4,000,000) (reduced by $3,000,000) (reduced by $15,000,000) (reduced by $5,000,000) (reduced by $3,000,000) (reduced by $18,168,000):</ins> Provided, That not to exceed $2,000 shall be for official reception and representation expenses.</div>
+</div>
+<div class="change-card modified" id="change-3">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Management Directorate for procurement, construction, and improvements, <del>$54,337,000,</del> <ins>$54,337,000 (increased by $1,000,000) (reduced by $1,000,000),</ins> to remain available until September 30, 2027.</div>
+</div>
+<div class="change-card unchanged" id="change-4">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Management directorate &gt; FEDERAL PROTECTIVE SERVICE</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-5">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Intelligence, analysis, and situational awareness &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-6">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Office of inspector general &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-7">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 101</h3>
+<span class="section-number">Sec. 101</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-8">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 102</h3>
+<span class="section-number">Sec. 102</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-9">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 103</h3>
+<span class="section-number">Sec. 103</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-10">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 104</h3>
+<span class="section-number">Sec. 104</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-11">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 105</h3>
+<span class="section-number">Sec. 105</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-12">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>DEPARTMENTAL MANAGEMENT, INTELLIGENCE, SITUATIONAL AWARENESS, AND OVERSIGHT &gt; Administrative provisions &gt; sec. 106</h3>
+<span class="section-number">Sec. 106</span>
+</div>
+</div>
+<div class="change-card modified" id="change-13">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. customs and border protection</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of U.S. Customs and Border Protection for operations and support, including the transportation of unaccompanied alien minors; the provision of air and marine support to Federal, State, local, and international agencies in the enforcement or administration of laws enforced by the Department of Homeland Security; at the discretion of the Secretary of Homeland Security, the provision of such support to Federal, State, and local agencies in other law enforcement and emergency humanitarian efforts; the purchase and lease of up to 7,500 (6,500 for replacement only) police-type vehicles; the purchase, maintenance, or operation of marine vessels, aircraft, and unmanned aerial systems; and contracting with individuals for personal services abroad; <del>$16,566,247,000;</del> <ins>$16,566,247,000 (reduced by $1,000,000) (increased by $1,000,000) (increased by $10,000,000) (reduced by $10,000,000) (reduced by $1,000,000) (increased by $1,000,000) (reduced by $1,000,000) (increased by $1,000,000) (increased by $5,000,000);</ins> of which $3,274,000 shall be derived from the Harbor Maintenance Trust Fund for administrative expenses related to the collection of the Harbor Maintenance Fee pursuant to section 9505(c)(3) of the Internal Revenue Code of 1986 (26 U.S.C. 9505(c)(3)) and notwithstanding section 1511(e)(1) of the Homeland Security Act of 2002 (6 U.S.C. 551(e)(1)); of which $550,000,000 shall be available until September 30, 2026; and of which such sums as become available in the Customs User Fee Account, except sums subject to section 13031(f)(3) of the Consolidated Omnibus Budget Reconciliation Act of 1985 (19 U.S.C. 58c(f)(3)), shall be derived from that account: Provided, That not to exceed $34,425 shall be for official reception and representation expenses: Provided further, That not to exceed $150,000 shall be available for payment for rental space in connection with preclearance operations: Provided further, That not to exceed $2,000,000 shall be for awards of compensation to informants, to be accounted for solely under the certificate of the Secretary of Homeland Security: Provided further, That not to exceed $2,500,000 may be transferred to the Bureau of Indian Affairs for the maintenance and repair of roads on Native American reservations used by the U.S. Border Patrol.</div>
+</div>
+<div class="change-card modified" id="change-14">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. customs and border protection &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of U.S. Customs and Border Protection for procurement, construction, and improvements, including procurement of marine vessels, aircraft, and unmanned aerial systems, <del>$1,390,338,000,</del> <ins>$1,390,338,000 (increased by $4,000,000) (increased by $10,000,000) (reduced by $10,000,000) (reduced by $1,000,000) (increased by $1,000,000),</ins> of which $766,684,000 shall remain available until September 30, 2027, and of which $623,654,000 shall remain available until September 30, 2029.</div>
+</div>
+<div class="change-card modified" id="change-15">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. immigration and customs enforcement &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of U.S. Immigration and Customs Enforcement for operations and support, including the purchase and lease of up to 3,790 (2,350 for replacement only) police-type vehicles; overseas vetted units; and maintenance, minor construction, and minor leasehold improvements at owned and leased facilities; <del>$10,497,243,000;</del> <ins>$10,497,243,000 (increased by $4,000,000) (increased by $2,000,000);</ins> of which not less than $6,000,000 <ins>(increased by $4,000,000)</ins> shall remain available until expended for efforts to enforce laws against forced child labor; of which $46,696,000 shall remain available until September 30, 2026; of which not less than $2,000,000 <ins>(increased by $2,000,000)</ins> is for paid apprenticeships for participants in the Human Exploitation Rescue Operative Child-Rescue Corps; of which not less than $15,000,000 shall be available for investigation of intellectual property rights violations, including operation of the National Intellectual Property Rights Coordination Center; and of which not less than $5,900,389,000 shall be for enforcement, detention, and removal operations, including transportation of unaccompanied alien minors, of which not less than $3,081,725,000 shall remain available until September 30, 2026: Provided, That not to exceed $11,475 shall be for official reception and representation expenses: Provided further, That not to exceed $10,000,000 shall be available until expended for conducting special operations under section 3131 of the Customs Enforcement Act of 1986 (19 U.S.C. 2081): Provided further, That not to exceed $2,000,000 shall be for awards of compensation to informants, to be accounted for solely under the certificate of the Secretary of Homeland Security: Provided further, That not to exceed $11,216,000 shall be available to fund or reimburse other Federal agencies for the costs associated with the care, maintenance, and repatriation of smuggled aliens unlawfully present in the United States: Provided further, That not less than $2,000,000 shall be for entering into new agreements for the delegation of law enforcement authority provided by section 287(g) of the Immigration and Nationality Act: Provided further, That funding made available under this heading shall maintain a level of not less than 50,000 detention beds.</div>
+</div>
+<div class="change-card unchanged" id="change-16">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; U.S. immigration and customs enforcement &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-17">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Transportation Security Administration for operations and support, <del>$10,817,225,000,</del> <ins>$10,817,225,000 (increased by $50,000,000) (reduced by $50,000,000),</ins> of which $300,000,000 shall remain available until September 30, 2026: Provided, That not to exceed $7,650 shall be for official reception and representation expenses: Provided further, That security service fees authorized under section 44940 of title 49, United States Code, shall be credited to this appropriation as offsetting collections and shall be available only for aviation security: Provided further, That the sum appropriated under this heading from the general fund shall be reduced on a dollar-for-dollar basis as such offsetting collections are received during fiscal year 2025 so as to result in a final fiscal year appropriation from the general fund estimated at not more than $7,957,225,000.</div>
+</div>
+<div class="change-card modified" id="change-18">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Transportation Security Administration for procurement, construction, and improvements, <del>$198,428,000,</del> <ins>$198,428,000 (reduced by $35,000,000) (increased by $35,000,000) (reduced by $5,000,000) (increased by $5,000,000),</ins> to remain available until September 30, 2027.</div>
+</div>
+<div class="change-card unchanged" id="change-19">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Transportation security administration &gt; RESEARCH AND DEVELOPMENT</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-20">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Coast Guard for operations and support including the Coast Guard Reserve; purchase or lease of not to exceed 25 passenger motor vehicles, which shall be for replacement only; purchase or lease of small boats for contingent and emergent requirements (at a unit cost of not more than $700,000) and repairs and service-life replacements, not to exceed a total of $31,000,000; purchase, lease, or improvements of boats necessary for overseas deployments and activities; payments pursuant to section 156 of Public Law 97–377 (42 U.S.C. 402 note; 96 Stat. 1920); and recreation and welfare; <del>$10,554,261,000,</del> <ins>$10,554,261,000 (reduced by $10,000,000) (increased by $10,000,000) (increased by $1,650,000),</ins> of which $530,000,000 shall be for defense-related activities; of which $24,500,000 shall be derived from the Oil Spill Liability Trust Fund to carry out the purposes of section 1012(a)(5) of the Oil Pollution Act of 1990 (33 U.S.C. 2712(a)(5)); of which $20,000,000 shall remain available until September 30, 2027; of which $24,359,000 shall remain available until September 30, 2029, for environmental compliance and restoration; and of which $100,000,000 shall remain available until September 30, 2026, which shall only be available for vessel depot level maintenance: Provided, That not to exceed $23,000 shall be for official reception and representation expenses.</div>
+</div>
+<div class="change-card modified" id="change-21">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Coast Guard for procurement, construction, and improvements, including aids to navigation, shore facilities (including facilities at Department of Defense installations used by the Coast Guard), and vessels and aircraft, including equipment related thereto, <del>$2,128,500,000,</del> <ins>$2,128,500,000 (increased by $20,000,000) (reduced by $10,000,000) (increased by $10,000,000) (reduced by $5,000,000) (increased by $5,000,000),</ins> to remain available until September 30, 2029; of which $20,000,000 shall be derived from the Oil Spill Liability Trust Fund to carry out the purposes of section 1012(a)(5) of the Oil Pollution Act of 1990 (33 U.S.C. 2712(a)(5)).</div>
+</div>
+<div class="change-card unchanged" id="change-22">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; RESEARCH AND DEVELOPMENT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-23">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Coast guard &gt; RETIRED PAY</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-24">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the United States Secret Service for operations and support, including purchase of not to exceed 652 vehicles for police-type use; hire of passenger motor vehicles; purchase of motorcycles made in the United States; hire of aircraft; rental of buildings in the District of Columbia; fencing, lighting, guard booths, and other facilities on private or other property not in Government ownership or control, as may be necessary to perform protective functions; conduct of and participation in firearms matches; presentation of awards; conduct of behavioral research in support of protective intelligence and operations; payment in advance for commercial accommodations as may be necessary to perform protective functions; and payment, without regard to section 5702 of title 5, United States Code, of subsistence expenses of employees who are on protective missions, whether at or away from their duty stations; <del>$3,017,524,000;</del> <ins>$3,017,524,000 (increased by $2,000,000);</ins> of which $80,041,000 <ins>(increased by $2,000,000)</ins> shall remain available until September 30, 2026, and of which $6,000,000 <ins>(increased by $2,000,000)</ins> shall be for a grant for activities related to investigations of missing and exploited children; and of which up to $24,000,000 may be for calendar year 2024 premium pay in excess of the annual equivalent of the limitation on the rate of pay contained in section 5547(a) of title 5, United States Code, pursuant to section 2 of the Overtime Pay for Protective Services Act of 2016 (5 U.S.C. 5547 note), as last amended by Public Law 118–38: Provided, That not to exceed $19,125 shall be for official reception and representation expenses: Provided further, That not to exceed $100,000 shall be to provide technical assistance and equipment to foreign law enforcement organizations in criminal investigations within the jurisdiction of the United States Secret Service.</div>
+</div>
+<div class="change-card unchanged" id="change-25">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-26">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; United states secret service &gt; RESEARCH AND DEVELOPMENT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-27">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 201</h3>
+<span class="section-number">Sec. 201</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-28">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 202</h3>
+<span class="section-number">Sec. 202</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-29">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 203</h3>
+<span class="section-number">Sec. 203</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-30">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 204</h3>
+<span class="section-number">Sec. 204</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-31">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 205</h3>
+<span class="section-number">Sec. 205</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-32">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 206</h3>
+<span class="section-number">Sec. 206</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-33">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 207</h3>
+<span class="section-number">Sec. 207</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-34">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 208</h3>
+<span class="section-number">Sec. 208</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-35">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 209</h3>
+<span class="section-number">Sec. 209</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-36">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 210</h3>
+<span class="section-number">Sec. 210</span>
+</div>
+</div>
+<div class="change-card modified" id="change-37">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 211</h3>
+<span class="section-number">Sec. 211</span>
+</div>
+<div class="change-body diff-inline">(a)Of the total amount made available under U.S. Customs and Border Protection—Procurement, Construction, and Improvements, $1,390,338,000 <ins>(reduced by $5,000,000) (increased by $5,000,000)</ins> shall be available only as follows:(1)$600,000,000 for the acquisition and deployment of physical barriers;(2)$300,000,000 for the acquisition and deployment of border security technologies;(3)$305,000,000 for trade and travel assets and infrastructure;(4)$23,654,000 for facility construction and improvements;(5)$131,419,000 for integrated operations assets and infrastructure; and(6)$30,265,000 for mission support and infrastructure.(b)None of the funds allocated for pedestrian physical barriers may be made available for any purpose other than the construction of steel bollard pedestrian barrier built at least 18 to 30 feet in effective height and augmented with anti-climb and anti-dig features.(c)None of the funds allocated for pedestrian physical barriers may be made available for any purpose other than construction of pedestrian barriers consistent with the description in subsection(b) at locations identified in the Border Security Improvement Plan submitted to Congress on August 1, 2020.(d)The Commissioner of U.S. Customs and Border Protection may reprioritize the construction of physical barriers outlined in the Border Security Improvement Plan and, with prior approval of the Committees on Appropriations of the House of Representatives and the Senate, add additional miles of pedestrian physical barriers where no such barriers exist, prioritized by operational requirements developed in coordination with U.S. Border Patrol leadership.(e)The Secretary of Homeland Security shall begin to obligate amounts for physical barrier construction no later than 120 days after the date of enactment of this Act.(f)For purposes of this section, the term “effective height” refers to the height above the level of the adjacent terrain features.</div>
+</div>
+<div class="change-card modified" id="change-38">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 212</h3>
+<span class="section-number">Sec. 212</span>
+</div>
+<div class="change-body diff-inline">None of the funds appropriated or otherwise made available by this Act may be obligated, expended, or transferred to another Federal agency, board, or commission to be used to dismantle, demolish, remove, or damage existing United States-Mexico physical <del>barriers</del> <ins>barriers, including any barrier constructed by a State government,</ins> at any location where such barriers have been constructed as of the date of enactment of this Act unless such barrier is simultaneously being repaired or replaced.</div>
+</div>
+<div class="change-card unchanged" id="change-39">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 213</h3>
+<span class="section-number">Sec. 213</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-40">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 214</h3>
+<span class="section-number">Sec. 214</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-41">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 215</h3>
+<span class="section-number">Sec. 215</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-42">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 216</h3>
+<span class="section-number">Sec. 216</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-43">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 217</h3>
+<span class="section-number">Sec. 217</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-44">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 218</h3>
+<span class="section-number">Sec. 218</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-45">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 219</h3>
+<span class="section-number">Sec. 219</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-46">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 220</h3>
+<span class="section-number">Sec. 220</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-47">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 221</h3>
+<span class="section-number">Sec. 221</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-48">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 222</h3>
+<span class="section-number">Sec. 222</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-49">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 223</h3>
+<span class="section-number">Sec. 223</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-50">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 224</h3>
+<span class="section-number">Sec. 224</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-51">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 225</h3>
+<span class="section-number">Sec. 225</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-52">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 226</h3>
+<span class="section-number">Sec. 226</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-53">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 227</h3>
+<span class="section-number">Sec. 227</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-54">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 228</h3>
+<span class="section-number">Sec. 228</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-55">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 229</h3>
+<span class="section-number">Sec. 229</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-56">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 230</h3>
+<span class="section-number">Sec. 230</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-57">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 231</h3>
+<span class="section-number">Sec. 231</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-58">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 232</h3>
+<span class="section-number">Sec. 232</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-59">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 233</h3>
+<span class="section-number">Sec. 233</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-60">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 234</h3>
+<span class="section-number">Sec. 234</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-61">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 235</h3>
+<span class="section-number">Sec. 235</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-62">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 236</h3>
+<span class="section-number">Sec. 236</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-63">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 237</h3>
+<span class="section-number">Sec. 237</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-64">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 238</h3>
+<span class="section-number">Sec. 238</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-65">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 239</h3>
+<span class="section-number">Sec. 239</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-66">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 240</h3>
+<span class="section-number">Sec. 240</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-67">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 241</h3>
+<span class="section-number">Sec. 241</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-68">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 242</h3>
+<span class="section-number">Sec. 242</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-69">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 243</h3>
+<span class="section-number">Sec. 243</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-70">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 244</h3>
+<span class="section-number">Sec. 244</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-71">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 245</h3>
+<span class="section-number">Sec. 245</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-72">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 246</h3>
+<span class="section-number">Sec. 246</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-73">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 247</h3>
+<span class="section-number">Sec. 247</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-74">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 248</h3>
+<span class="section-number">Sec. 248</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-75">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 249</h3>
+<span class="section-number">Sec. 249</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-76">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 250</h3>
+<span class="section-number">Sec. 250</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-77">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>SECURITY, ENFORCEMENT, AND INVESTIGATIONS &gt; Administrative provisions &gt; sec. 251</h3>
+<span class="section-number">Sec. 251</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-78">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Cybersecurity and infrastructure security agency &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-79">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Cybersecurity and infrastructure security agency &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-80">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Federal Emergency Management Agency for operations and support, <del>$1,551,093,000:</del> <ins>$1,551,093,000 (reduced by $1,000,000) (increased by $1,000,000) (reduced by $8,000,000) (increased by $8,000,000) (increased by $5,000,000) (reduced by $1,000,000) (increased by $1,000,000) (increased by $18,168,000):</ins> Provided, That not to exceed $2,250 shall be for official reception and representation expenses.</div>
+</div>
+<div class="change-card unchanged" id="change-81">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-82">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency</h3>
+</div>
+<div class="change-body diff-inline">For activities of the Federal Emergency Management Agency for Federal assistance through grants, contracts, cooperative agreements, and other activities, <del>$3,758,992,810,</del> <ins>$3,758,992,810 (increased by $15,000,000) (increased by $30,000,000),</ins> which shall be allocated as follows: (1)$520,000,000 for the State Homeland Security Grant Program under section 2004 of the Homeland Security Act of 2002 (6 U.S.C. 605), of which $90,000,000 shall be for Operation Stonegarden and $15,000,000 shall be for Tribal Homeland Security Grants under section 2005 of the Homeland Security Act of 2002 (6 U.S.C. 606): Provided, That notwithstanding subsection(c)(4) of such section 2004, for fiscal year 2025, the Commonwealth of Puerto Rico shall make available to local and tribal governments amounts provided to the Commonwealth of Puerto Rico under this paragraph in accordance with subsection(c)(1) of such section 2004. (2)$615,000,000 for the Urban Area Security Initiative under section 2003 of the Homeland Security Act of 2002 (6 U.S.C. 604). (3)$305,000,000 <ins>(reduced by $305,000,000) (increased by $305,000,000) (increased by $80,000,000) (reduced by $80,000,000) (increased by $30,000,000)</ins> for the Nonprofit Security Grant Program under section 2009 of the Homeland Security Act of 2002 (6 U.S.C. 609a), of which $152,500,000 <ins>(increased by $15,000,000)</ins> is for eligible recipients located in high-risk urban areas that receive funding under section 2003 of such Act and $152,500,000 <ins>(increased by $15,000,000)</ins> is for eligible recipients that are located outside such areas: Provided, That eligible recipients are those described in section 2009(b) of such Act (6 U.S.C. 609a(b)) or are an otherwise eligible recipient at risk of a terrorist or other extremist attack. (4)$105,000,000 for Public Transportation Security Assistance, Railroad Security Assistance, and Over-the-Road Bus Security Assistance under sections 1406, 1513, and 1532 of the Implementing Recommendations of the 9/11 Commission Act of 2007 (6 U.S.C. 1135, 1163, and 1182), of which $10,000,000 shall be for Amtrak security and $2,000,000 shall be for Over-the-Road Bus Security: Provided, That such public transportation security assistance shall be provided directly to public transportation agencies. (5)$100,000,000 for Port Security Grants in accordance with section 70107 of title 46, United States Code. <del>(6)$720,000,000,</del> <ins>(6)$720,000,000 (increased by $15,000,000),</ins> to remain available until September 30, 2026, of which $360,000,000 <ins>(increased by $7,500,000)</ins> shall be for Assistance to Firefighter Grants and $360,000,000 <ins>(increased by $7,500,000)</ins> shall be for Staffing for Adequate Fire and Emergency Response Grants under sections 33 and 34 respectively of the Federal Fire Prevention and Control Act of 1974 (15 U.S.C. 2229 and 2229a). (7)$355,000,000 for emergency management performance grants under the National Flood Insurance Act of 1968 (42 U.S.C. 4001 et seq.), the Robert T. Stafford Disaster Relief and Emergency Assistance Act (42 U.S.C. 5121), the Earthquake Hazards Reduction Act of 1977 (42 U.S.C. 7701), section 762 of title 6, United States Code, and Reorganization Plan No. 3 of 1978 (5 U.S.C. App.). (8)$312,750,000 for necessary expenses for Flood Hazard Mapping and Risk Analysis, in addition to and to supplement any other sums appropriated under the National Flood Insurance Fund, and such additional sums as may be provided by States or other political subdivisions for cost-shared mapping activities under section 1360(f)(2) of the National Flood Insurance Act of 1968 (42 U.S.C. 4101(f)(2)), to remain available until expended. (9)$12,000,000 for Regional Catastrophic Preparedness Grants. (10)$130,000,000 for the emergency food and shelter program under title III of the McKinney-Vento Homeless Assistance Act (42 U.S.C. 11331), to remain available until September 30, 2026: Provided, That not to exceed 3.5 percent shall be for total administrative costs. (11)$40,000,000 for the Next Generation Warning System. (12)$221,343,810 for Community Project Funding grants, which shall be for the purposes, and the amounts, specified in the table entitled Homeland Security—Community Project Funding in the report accompanying this Act, of which—(A)$81,771,896, in addition to amounts otherwise made available for such purpose, is for emergency operations center grants under section 614 of the Robert T. Stafford Disaster Relief and Emergency Assistance Act (42 U.S.C. 5196c); and(B)$139,571,914, in addition to amounts otherwise made available for such purpose, is for pre-disaster mitigation grants under section 203 of the Robert T. Stafford Disaster Relief and Emergency Assistance Act (42 U.S.C. 5133(e), notwithstanding subsections(f),(g), and(l) of that section (42 U.S.C. 5133(f),(g),(l)). (13)$322,899,000 to sustain current operations for training, exercises, technical assistance, and other programs.</div>
+</div>
+<div class="change-card unchanged" id="change-83">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; DISASTER RELIEF FUND</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-84">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Federal emergency management agency &gt; NATIONAL FLOOD INSURANCE FUND</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-85">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 301</h3>
+<span class="section-number">Sec. 301</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-86">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 302</h3>
+<span class="section-number">Sec. 302</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-87">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 303</h3>
+<span class="section-number">Sec. 303</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-88">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 304</h3>
+<span class="section-number">Sec. 304</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-89">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 305</h3>
+<span class="section-number">Sec. 305</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-90">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 306</h3>
+<span class="section-number">Sec. 306</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-91">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 307</h3>
+<span class="section-number">Sec. 307</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-92">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 308</h3>
+<span class="section-number">Sec. 308</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-93">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 309</h3>
+<span class="section-number">Sec. 309</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-94">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 310</h3>
+<span class="section-number">Sec. 310</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-95">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>PROTECTION, PREPAREDNESS, RESPONSE, AND RECOVERY &gt; Administrative provisions &gt; sec. 311</h3>
+<span class="section-number">Sec. 311</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-96">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; U.S. citizenship and immigration services &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-97">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Federal law enforcement training centers &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-98">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Federal law enforcement training centers &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-99">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-100">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card modified" id="change-101">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Science and technology directorate &gt; RESEARCH AND DEVELOPMENT</h3>
+</div>
+<div class="change-body diff-inline">For necessary expenses of the Science and Technology Directorate for research and development, <del>$339,353,000,</del> <ins>$339,353,000 (increased by $2,000,000) (reduced by $2,000,000) (increased by $3,000,000) (reduced by $30,000,000),</ins> to remain available until September 30, 2027.</div>
+</div>
+<div class="change-card unchanged" id="change-102">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; OPERATIONS AND SUPPORT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-103">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; PROCUREMENT, CONSTRUCTION, AND IMPROVEMENTS</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-104">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; RESEARCH AND DEVELOPMENT</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-105">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Countering weapons of mass destruction office &gt; FEDERAL ASSISTANCE</h3>
+</div>
+</div>
+<div class="change-card unchanged" id="change-106">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 401</h3>
+<span class="section-number">Sec. 401</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-107">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 402</h3>
+<span class="section-number">Sec. 402</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-108">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 403</h3>
+<span class="section-number">Sec. 403</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-109">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 404</h3>
+<span class="section-number">Sec. 404</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-110">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 405</h3>
+<span class="section-number">Sec. 405</span>
+</div>
+</div>
+<div class="change-card modified" id="change-111">
+<div class="change-header">
+<span class="badge badge-modified">modified</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 406</h3>
+<span class="section-number">Sec. 406</span>
+</div>
+<div class="change-body diff-inline">Notwithstanding the numerical limitation set forth in section 214(g)(1)(B) of the Immigration and Nationality Act (8 U.S.C. 1184(g)(1)(B)), the Secretary of Homeland Security, after consultation with the Secretary of Labor, and upon determining that the needs of American businesses cannot be satisfied during fiscal year 2025 with United States workers who are willing, qualified, and able to perform temporary nonagricultural labor, <del>shall</del> <ins>may</ins> increase the total number of <del>visas available to qualifying</del> aliens <ins>who may receive a visa</ins> under section 101(a)(15)(H)(ii)(b) of such Act (8 U.S.C. 1101(a)(15)(H)(ii)(b)) in such fiscal year above such limitation by <ins>not more than</ins> the highest number of <del>H–2B</del> <ins>H– 2B</ins> nonimmigrants who participated in the H–2B returning worker program in any fiscal year in which returning workers were exempt from such numerical limitation.</div>
+</div>
+<div class="change-card unchanged" id="change-112">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 407</h3>
+<span class="section-number">Sec. 407</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-113">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 408</h3>
+<span class="section-number">Sec. 408</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-114">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 409</h3>
+<span class="section-number">Sec. 409</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-115">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 410</h3>
+<span class="section-number">Sec. 410</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-116">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 411</h3>
+<span class="section-number">Sec. 411</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-117">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 412</h3>
+<span class="section-number">Sec. 412</span>
+</div>
+</div>
+<div class="change-card removed" id="change-118">
+<div class="change-header">
+<span class="badge badge-removed">removed</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 413</h3>
+<span class="section-number">Sec. 413</span>
+</div>
+<div class="change-body removed-text">In fiscal year 2025, nonimmigrants shall be admitted to the United States under section 101(a)(15)(H)(ii)(a) of the Immigration and Nationality Act (8 U.S.C. 1101(a)(15)(H)(ii)(a)) to perform agricultural labor or services, without regard to whether such labor is, or services are, of a temporary or seasonal nature.</div>
+</div>
+<div class="change-card unchanged" id="change-119">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 501</h3>
+<span class="section-number">Sec. 501</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-120">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 502</h3>
+<span class="section-number">Sec. 502</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-121">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 503</h3>
+<span class="section-number">Sec. 503</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-122">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 504</h3>
+<span class="section-number">Sec. 504</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-123">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 505</h3>
+<span class="section-number">Sec. 505</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-124">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 506</h3>
+<span class="section-number">Sec. 506</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-125">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 507</h3>
+<span class="section-number">Sec. 507</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-126">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 508</h3>
+<span class="section-number">Sec. 508</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-127">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 509</h3>
+<span class="section-number">Sec. 509</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-128">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 510</h3>
+<span class="section-number">Sec. 510</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-129">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 511</h3>
+<span class="section-number">Sec. 511</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-130">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 512</h3>
+<span class="section-number">Sec. 512</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-131">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 513</h3>
+<span class="section-number">Sec. 513</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-132">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 514</h3>
+<span class="section-number">Sec. 514</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-133">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 515</h3>
+<span class="section-number">Sec. 515</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-134">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 516</h3>
+<span class="section-number">Sec. 516</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-135">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 517</h3>
+<span class="section-number">Sec. 517</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-136">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 518</h3>
+<span class="section-number">Sec. 518</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-137">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 519</h3>
+<span class="section-number">Sec. 519</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-138">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 520</h3>
+<span class="section-number">Sec. 520</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-139">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 521</h3>
+<span class="section-number">Sec. 521</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-140">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 522</h3>
+<span class="section-number">Sec. 522</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-141">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 523</h3>
+<span class="section-number">Sec. 523</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-142">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 524</h3>
+<span class="section-number">Sec. 524</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-143">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 525</h3>
+<span class="section-number">Sec. 525</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-144">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 526</h3>
+<span class="section-number">Sec. 526</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-145">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 527</h3>
+<span class="section-number">Sec. 527</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-146">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 528</h3>
+<span class="section-number">Sec. 528</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-147">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 529</h3>
+<span class="section-number">Sec. 529</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-148">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 530</h3>
+<span class="section-number">Sec. 530</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-149">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 531</h3>
+<span class="section-number">Sec. 531</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-150">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 532</h3>
+<span class="section-number">Sec. 532</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-151">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 533</h3>
+<span class="section-number">Sec. 533</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-152">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 534</h3>
+<span class="section-number">Sec. 534</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-153">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 535</h3>
+<span class="section-number">Sec. 535</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-154">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 536</h3>
+<span class="section-number">Sec. 536</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-155">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 537</h3>
+<span class="section-number">Sec. 537</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-156">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 538</h3>
+<span class="section-number">Sec. 538</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-157">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 539</h3>
+<span class="section-number">Sec. 539</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-158">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 540</h3>
+<span class="section-number">Sec. 540</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-159">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 541</h3>
+<span class="section-number">Sec. 541</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-160">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 542</h3>
+<span class="section-number">Sec. 542</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-161">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 543</h3>
+<span class="section-number">Sec. 543</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-162">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 544</h3>
+<span class="section-number">Sec. 544</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-163">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 545</h3>
+<span class="section-number">Sec. 545</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-164">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 546</h3>
+<span class="section-number">Sec. 546</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-165">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 547</h3>
+<span class="section-number">Sec. 547</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-166">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 548</h3>
+<span class="section-number">Sec. 548</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-167">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 549</h3>
+<span class="section-number">Sec. 549</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-168">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 550</h3>
+<span class="section-number">Sec. 550</span>
+</div>
+</div>
+<div class="change-card unchanged" id="change-169">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; sec. 551</h3>
+<span class="section-number">Sec. 551</span>
+</div>
+</div>
+<div class="change-card removed" id="change-170">
+<div class="change-header">
+<span class="badge badge-removed">removed</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 552</h3>
+<span class="section-number">Sec. 552</span>
+</div>
+<div class="change-body removed-text">$0.</div>
+</div>
+<div class="change-card added" id="change-171">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 552</h3>
+<span class="section-number">Sec. 552</span>
+</div>
+<div class="change-body added-text">$0 (increased by $10,000,000).</div>
+</div>
+<div class="change-card unchanged" id="change-172">
+<div class="change-header">
+<span class="badge badge-unchanged">unchanged</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT</h3>
+</div>
+</div>
+<div class="change-card added" id="change-173">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 553</h3>
+<span class="section-number">Sec. 553</span>
+</div>
+<div class="change-body added-text">(a)None of the funds made available by this Act may be used—(1)to reduce the hours of operation at—(A)the Port of Carbury, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(B)the Port of Fortuna, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(C)the Port of Madia, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(D)the Port of Neche, North Dakota, port of entry from the operational hours of 8:00 AM to 10:00 PM CT daily;(E)the Port of Noonan, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(F)the Port of Northgate, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(G)the Port of Saint John, North Dakota, port of entry from the operational hours of 8:00 AM to 9:00 PM CT daily;(H)the Port of Sherwood, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(I)the Port of Walhalla, North Dakota, port of entry from the operational hours of 8:00 AM to 10:00 PM CT daily;(J)the Port of Westhope, North Dakota, port of entry from the operational hours of 8:00 AM to 9:00 PM CT daily;(K)the Port of Antler, North Dakota, port of entry from the operational hours of 9:00 AM to 10:00 PM CT daily;(L)the Port of Sarles, North Dakota, port of entry from the operational hours of 11:00 AM to 7:00 PM CT daily;(M)the Port of Lancaster, Minnesota, port of entry from the operational hours of 8:00 AM to 10:00 PM CT daily;(N)the Port of Roseau, Minnesota, port of entry from the operational hours of 8:00 AM to 12:00 AM CT daily;(O)the Porthill, Idaho, land Port of entry, from the operational hours of 7:00 AM to 11:00 PM PT daily; or(P)the Port of Buffalo, New York, port of entry from the operational hours of 7:00 AM to 12:00AM ET daily;(2)to implement, administer, enforce, carry out, or execute any rules, guidance, decisions, announcements, or promulgations that reduce or change the hours of operation at the ports of entry specified in paragraph(1); or(3)to publish, promulgate, or otherwise issue rules, guidance, decisions, announcements, or promulgations that reduce or change the hours of operation at the ports of entry specified in paragraph(1).(b)The limitation described in paragraph(1) may not be construed to apply in the case of the administration of a tax or tariff.</div>
+</div>
+<div class="change-card added" id="change-174">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 554</h3>
+<span class="section-number">Sec. 554</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be made available to implement, administer, or otherwise carry out the activities and policies described in the rule entitled, Public Charge Ground of Inadmissibility, published by the Secretary of Homeland Security on September 9, 2022.</div>
+</div>
+<div class="change-card added" id="change-175">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 555</h3>
+<span class="section-number">Sec. 555</span>
+</div>
+<div class="change-body added-text">None of the funds appropriated or otherwise made available by this Act may be used to implement, administer, or enforce any major rule under subparagraph(A) of section 804(2) of title 5, United States Code.</div>
+</div>
+<div class="change-card added" id="change-176">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 556</h3>
+<span class="section-number">Sec. 556</span>
+</div>
+<div class="change-body added-text">None of the funds made available in this Act may be used by the Department of Homeland Security to partner with the Department of State to establish Safe Mobility Offices.</div>
+</div>
+<div class="change-card added" id="change-177">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 557</h3>
+<span class="section-number">Sec. 557</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to purchase electric vehicles.</div>
+</div>
+<div class="change-card added" id="change-178">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 558</h3>
+<span class="section-number">Sec. 558</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used for the Inclusion Action Committee of the Transportation Security Administration.</div>
+</div>
+<div class="change-card added" id="change-179">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 559</h3>
+<span class="section-number">Sec. 559</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to enforce any COVID-19 mask mandates.</div>
+</div>
+<div class="change-card added" id="change-180">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 560</h3>
+<span class="section-number">Sec. 560</span>
+</div>
+<div class="change-body added-text">None of the funds made available under this Act may be used to develop or implement any Department of Homeland Security Environmental Justice Strategy.</div>
+</div>
+<div class="change-card added" id="change-181">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 561</h3>
+<span class="section-number">Sec. 561</span>
+</div>
+<div class="change-body added-text">None of the funds appropriated or otherwise made available by this Act may be made available to administer, implement, or enforce a “Remain-in-Texas” policy.</div>
+</div>
+<div class="change-card added" id="change-182">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 562</h3>
+<span class="section-number">Sec. 562</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act be used implement any of the following Executive Orders:</div>
+</div>
+<div class="change-card added" id="change-183">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 563</h3>
+<span class="section-number">Sec. 563</span>
+</div>
+<div class="change-body added-text">The salary of Nejwa Ali, U.S. Citizenship and Immigration Services Adjudication Officer, shall be reduced to $1.</div>
+<div class="financial-callout"><div>— &rarr; $1 (+$1)</div></div>
+</div>
+<div class="change-card added" id="change-184">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 564</h3>
+<span class="section-number">Sec. 564</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to pay the salary and expenses of the position of the Secretary of the Department of Homeland Security, occupied by Alejandro Mayorkas.</div>
+</div>
+<div class="change-card added" id="change-185">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 565</h3>
+<span class="section-number">Sec. 565</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to carry out Executive Order 14019 (86 Fed. Reg. 13623; relating to promoting access to voting), except for sections 7, 8, and 10 of such Order.</div>
+</div>
+<div class="change-card added" id="change-186">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 566</h3>
+<span class="section-number">Sec. 566</span>
+</div>
+<div class="change-body added-text">None of the funds made available by this Act may be used to administer, implement, or enforce the Memorandum on the Deferred Enforced Departure for Certain Palestinians, issued by the President on February 14, 2024.</div>
+</div>
+<div class="change-card added" id="change-187">
+<div class="change-header">
+<span class="badge badge-added">added</span>
+<h3>GENERAL PROVISIONS &gt; SPENDING REDUCTION ACCOUNT &gt; sec. 567</h3>
+<span class="section-number">Sec. 567</span>
+</div>
+<div class="change-body added-text">None of the funds appropriated or otherwise made available by this Act may be used to make payments to the Department of Veterans Affairs for medical claims of individuals detained by Immigration and Customs Enforcement.</div>
+</div>
+<div class="change-card moved" id="change-188">
+<div class="change-header">
+<span class="badge badge-moved">moved</span>
+<h3>RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 413</h3>
+<span class="section-number">Sec. 413</span>
+</div>
+<div class="move-info">Moved: RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 414 &rarr; RESEARCH, DEVELOPMENT, TRAINING, AND SERVICES &gt; Administrative provisions &gt; sec. 413</div>
+<div class="change-body">None of the funds made available in this Act may be made available to implement, administer, or enforce the “Asylum Program Fee” from the Final Rule entitled ‘‘U.S. Citizenship and Immigration Services Fee Schedule and Changes to Certain Other Immigration Benefit Request Requirements’’ (88 Fed. Reg. 6194).</div>
+</div>
+</div>
+</div>
+<div class="nav-buttons">
+<button id="btn-prev">&larr; Prev</button>
+<button id="btn-next">Next &rarr;</button>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Sidebar filter
+  var filter = document.getElementById('sidebar-filter');
+  if (filter) {
+    filter.addEventListener('input', function() {
+      var q = this.value.toLowerCase();
+      document.querySelectorAll('.sidebar li').forEach(function(li) {
+        li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  // Prev/next navigation
+  var cards = document.querySelectorAll('.change-card');
+  var current = -1;
+  function goTo(idx) {
+    if (idx >= 0 && idx < cards.length) {
+      current = idx;
+      cards[idx].scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }
+  var prev = document.getElementById('btn-prev');
+  var next = document.getElementById('btn-next');
+  if (prev) prev.addEventListener('click', function() { goTo(current - 1); });
+  if (next) next.addEventListener('click', function() { goTo(current + 1); });
+
+  // Financial table sort (groups rowspan rows together)
+  document.querySelectorAll('.financial-table th').forEach(function(th, colIdx) {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', function() {
+      var table = th.closest('table');
+      var tbody = table.querySelector('tbody');
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      // Group rows by data-group attribute
+      var groups = [];
+      var groupMap = {};
+      rows.forEach(function(row) {
+        var g = row.dataset.group;
+        if (!(g in groupMap)) {
+          groupMap[g] = groups.length;
+          groups.push([]);
+        }
+        groups[groupMap[g]].push(row);
+      });
+      var asc = th.dataset.sort !== 'asc';
+      th.dataset.sort = asc ? 'asc' : 'desc';
+      // Sort groups by the first row's cell value
+      groups.sort(function(a, b) {
+        var aVal = a[0].cells[colIdx] ? a[0].cells[colIdx].textContent.replace(/[^\d.-]/g, '') : '';
+        var bVal = b[0].cells[colIdx] ? b[0].cells[colIdx].textContent.replace(/[^\d.-]/g, '') : '';
+        var aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        return asc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      });
+      groups.forEach(function(group) {
+        group.forEach(function(row) { tbody.appendChild(row); });
+      });
+    });
+  });
+});
+
+</script>
+</body>
+</html>
