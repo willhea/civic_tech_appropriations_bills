@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from bill_tree import BillNode, BillTree, normalize_bill
 from formatters.text_serializer import serialize_tree
 
@@ -124,9 +126,14 @@ def test_section_node_emits_uppercased_run_in_heading():
     assert "SEC. 101.  None of the funds" in out
 
 
+@pytest.mark.slow
 def test_real_bill_serializes_without_error_and_contains_known_text():
     """Smoke test: the HR4366 reported XML has 165 nodes; the serializer
-    must produce non-trivial output containing recognizable strings."""
+    must produce non-trivial output containing recognizable strings.
+
+    Marked `slow` because it depends on the real bill corpus, which CI
+    doesn't check out (matches the pattern documented in pyproject.toml).
+    """
     tree = normalize_bill(Path("bills/118-hr-4366/1_reported-in-house.xml"))
     out = serialize_tree(tree)
     assert len(out) > 1000
