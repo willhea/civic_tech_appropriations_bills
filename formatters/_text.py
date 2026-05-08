@@ -1,9 +1,4 @@
-"""Shared text helpers used by every diff renderer.
-
-These were originally defined in formatters.html and re-imported by
-formatters.pdf_html. Centralising them here lets a unified renderer pull from
-one place without either pipeline-specific module owning the canonical copy.
-"""
+"""Shared text helpers used by every diff renderer."""
 
 import difflib
 from html import escape

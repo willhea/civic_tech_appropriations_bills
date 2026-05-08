@@ -1,9 +1,4 @@
-"""Tests for formatters._text, the shared text-rendering helpers.
-
-Step 1 of the renderer consolidation: word_diff and fmt_dollar should live
-in a neutral module that both pipelines import from, with backward-compatible
-re-exports kept in formatters.html and formatters.pdf_html.
-"""
+"""Tests for formatters._text, the shared text-rendering helpers."""
 
 from formatters._text import fmt_dollar, word_diff
 
@@ -25,19 +20,3 @@ def test_word_diff_returns_inline_html():
 
 def test_word_diff_returns_none_when_too_dissimilar():
     assert word_diff("alpha beta gamma", "one two three") is None
-
-
-def test_html_module_reexports_helpers():
-    from formatters import _text
-    from formatters import html as html_mod
-
-    assert html_mod.word_diff is _text.word_diff
-    assert html_mod.fmt_dollar is _text.fmt_dollar
-
-
-def test_pdf_html_module_reexports_helpers():
-    from formatters import _text
-    from formatters import pdf_html as pdf_mod
-
-    assert pdf_mod.word_diff is _text.word_diff
-    assert pdf_mod.fmt_dollar is _text.fmt_dollar

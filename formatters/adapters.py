@@ -33,25 +33,13 @@ def _real_changes(
 def _pair_amounts(financial: dict | None) -> tuple[tuple[int | None, int | None], ...]:
     """Resolve the (old, new) amount pairs for a single XML change.
 
-    Prefers `paired_amounts` (already aligned upstream); falls back to
-    positional pairing of `old_amounts` and `new_amounts`. Returns the
-    pairs unfiltered — the caller decides what counts as "real."
+    Reads `paired_amounts` (always emitted by bill_diff_to_dict when
+    `financial` is present). Returns the pairs unfiltered — the caller
+    decides what counts as "real."
     """
     if not financial:
         return ()
-    paired = financial.get("paired_amounts")
-    if paired:
-        return tuple((p[0], p[1]) for p in paired)
-    old_amounts = financial.get("old_amounts", []) or []
-    new_amounts = financial.get("new_amounts", []) or []
-    n = max(len(old_amounts), len(new_amounts))
-    return tuple(
-        (
-            old_amounts[i] if i < len(old_amounts) else None,
-            new_amounts[i] if i < len(new_amounts) else None,
-        )
-        for i in range(n)
-    )
+    return tuple((p[0], p[1]) for p in financial.get("paired_amounts", ()))
 
 
 def _join_path(parts: list[str] | None) -> str:

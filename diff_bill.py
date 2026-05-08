@@ -684,9 +684,10 @@ def cmd_compare(args: argparse.Namespace) -> None:
             diff_dict[key] = int(prefix)
 
     if fmt == "html":
-        from formatters.html import format_html
+        from formatters.adapters import xml_dict_to_view
+        from formatters.diff_html import format_diff_html
 
-        output = format_html(diff_dict)
+        output = format_diff_html(xml_dict_to_view(diff_dict))
     else:
         output = json.dumps(diff_dict, indent=2)
 

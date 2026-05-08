@@ -127,8 +127,6 @@ def _build_callout(change: ChangeView) -> str:
         return ""
     parts = ['<div class="financial-callout">']
     for old, new in change.amount_pairs:
-        # Adapters guarantee both sides are present and differ; assert defensively.
-        assert old is not None and new is not None
         diff = new - old
         if diff > 0:
             delta_str = f"+{fmt_dollar(diff)}"
@@ -256,7 +254,6 @@ def _build_financial_summary(view: DiffView) -> str:
         pairs = change.amount_pairs
         section_label = change.heading_html or change.nav_label_html
         for pair_idx, (old, new) in enumerate(pairs):
-            assert old is not None and new is not None
             diff = new - old
             if diff > 0:
                 change_dollar = f"+{fmt_dollar(diff)}"

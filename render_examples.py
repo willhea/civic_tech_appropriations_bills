@@ -22,8 +22,8 @@ from pathlib import Path
 from bill_tree import normalize_bill
 from diff_bill import bill_diff_to_dict, diff_bills
 from diff_pdf import diff_pdfs
-from formatters.html import format_html
-from formatters.pdf_html import format_pdf_html
+from formatters.adapters import pdf_diff_to_view, xml_dict_to_view
+from formatters.diff_html import format_diff_html
 from parsers.pdf_text import extract_clean_pages
 
 PROJECT_ROOT = Path(__file__).parent
@@ -79,7 +79,7 @@ def render_xml_diff(spec: ExampleSpec) -> Path:
         diff_dict["old_version_number"] = v1_num
     if v2_num is not None:
         diff_dict["new_version_number"] = v2_num
-    html = format_html(diff_dict)
+    html = format_diff_html(xml_dict_to_view(diff_dict))
     out = EXAMPLES / f"{spec.bill_type}{spec.bill_number}_xml_diff.html"
     out.write_text(html)
     return out
@@ -90,13 +90,15 @@ def render_pdf_diff(spec: ExampleSpec) -> Path:
     v1 = extract_clean_pages(bill_dir / f"{spec.v1_filename_stem}.pdf")
     v2 = extract_clean_pages(bill_dir / f"{spec.v2_filename_stem}.pdf")
     diff = diff_pdfs(v1, v2)
-    html = format_pdf_html(
-        diff,
-        bill_type=spec.bill_type,
-        bill_number=spec.bill_number,
-        congress=spec.congress,
-        v1_label=_label_from_stem(spec.v1_filename_stem),
-        v2_label=_label_from_stem(spec.v2_filename_stem),
+    html = format_diff_html(
+        pdf_diff_to_view(
+            diff,
+            bill_type=spec.bill_type,
+            bill_number=spec.bill_number,
+            congress=spec.congress,
+            v1_label=_label_from_stem(spec.v1_filename_stem),
+            v2_label=_label_from_stem(spec.v2_filename_stem),
+        )
     )
     out = EXAMPLES / f"{spec.bill_type}{spec.bill_number}_pdf_diff.html"
     out.write_text(html)

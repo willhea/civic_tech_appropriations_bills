@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 
 import pytest
 
@@ -7,7 +8,7 @@ from bill_tree import BillTree, normalize_division_title
 from conftest import HR4366_V1_PATH, HR4366_V6_PATH
 from conftest import make_bill_node as _node
 from conftest import make_bill_tree as _tree
-from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, match_nodes
+from diff_bill import BillDiff, NodeDiff, bill_diff_to_dict, diff_bills, diff_text, filter_diff, main, match_nodes
 
 
 class TestMatchNodes:
@@ -503,35 +504,26 @@ class TestFilterDiff:
     reason="Real XML not present",
 )
 class TestCli:
-    def test_compare_to_stdout(self):
-        result = subprocess.run(
-            [
-                "uv",
-                "run",
-                "python",
-                "diff_bill.py",
-                "compare",
-                str(HR4366_V1_PATH),
-                str(HR4366_V6_PATH),
-                "--format",
-                "json",
-            ],
-            capture_output=True,
-            text=True,
+    """In-process CLI tests via main(). Subprocess coverage is in test_subprocess_entrypoint."""
+
+    def test_compare_to_stdout(self, monkeypatch, capsys, fast_normalize_diff):
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["diff_bill.py", "compare", str(HR4366_V1_PATH), str(HR4366_V6_PATH), "--format", "json"],
         )
-        assert result.returncode == 0
-        data = json.loads(result.stdout)
+        main()
+        data = json.loads(capsys.readouterr().out)
         assert "summary" in data
         assert "changes" in data
         assert data["summary"]["added"] > 0
 
-    def test_compare_to_file(self, tmp_path):
+    def test_compare_to_file(self, tmp_path, monkeypatch, fast_normalize_diff):
         out = tmp_path / "diff.json"
-        result = subprocess.run(
+        monkeypatch.setattr(
+            sys,
+            "argv",
             [
-                "uv",
-                "run",
-                "python",
                 "diff_bill.py",
                 "compare",
                 str(HR4366_V1_PATH),
@@ -541,20 +533,17 @@ class TestCli:
                 "-o",
                 str(out),
             ],
-            capture_output=True,
-            text=True,
         )
-        assert result.returncode == 0
+        main()
         data = json.loads(out.read_text())
         assert data["old_version"] == "reported-in-house"
         assert data["new_version"] == "enrolled-bill"
 
-    def test_filter_flag(self):
-        result = subprocess.run(
+    def test_filter_flag(self, monkeypatch, capsys, fast_normalize_diff):
+        monkeypatch.setattr(
+            sys,
+            "argv",
             [
-                "uv",
-                "run",
-                "python",
                 "diff_bill.py",
                 "compare",
                 str(HR4366_V1_PATH),
@@ -564,15 +553,23 @@ class TestCli:
                 "--filter",
                 "military construction, army",
             ],
-            capture_output=True,
-            text=True,
         )
-        assert result.returncode == 0
-        data = json.loads(result.stdout)
-        # All changes should contain "military construction, army" in match_path
+        main()
+        data = json.loads(capsys.readouterr().out)
         for change in data["changes"]:
             path_str = " ".join(change["match_path"])
             assert "military construction, army" in path_str
+
+    def test_subprocess_entrypoint(self):
+        """Smoke test that the CLI script actually runs as a subprocess."""
+        result = subprocess.run(
+            [sys.executable, "diff_bill.py", "compare", str(HR4366_V1_PATH), str(HR4366_V6_PATH), "--format", "json"],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, result.stderr
+        data = json.loads(result.stdout)
+        assert "summary" in data
 
 
 @pytest.mark.slow
