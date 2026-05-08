@@ -217,9 +217,73 @@ def _cards_section_html(view: DiffView) -> str:
     return "\n".join(_build_card(c, i) for i, c in enumerate(view.changes))
 
 
-def _financial_summary_html(view: DiffView) -> str:
-    """Financial summary table. Lands in step 8."""
-    return ""
+def _build_financial_summary(view: DiffView) -> str:
+    """Render the top-of-page Financial Summary table.
+
+    Includes only changes whose pre-filtered amount_pairs is non-empty. Each
+    pair becomes a row; pairs from the same change share a section cell via
+    rowspan when there are multiple. Each row carries a data-group index so
+    the JS column sort keeps multi-pair groups together.
+
+    Returns "" when no change has any real amount changes.
+    """
+    rows: list[tuple[int, ChangeView]] = [(i, c) for i, c in enumerate(view.changes) if c.amount_pairs]
+    if not rows:
+        return ""
+
+    lines = [
+        "<h2>Financial Summary</h2>",
+        '<table class="financial-table">',
+        "<thead><tr>",
+        "<th>Section</th>",
+        "<th>Old Amount</th>",
+        "<th>New Amount</th>",
+        "<th>Change ($)</th>",
+        "<th>Change (%)</th>",
+        "</tr></thead>",
+        "<tbody>",
+    ]
+
+    for group_idx, (change_index, change) in enumerate(rows):
+        pairs = change.amount_pairs
+        section_label = change.heading_html or change.nav_label_html
+        for pair_idx, (old, new) in enumerate(pairs):
+            assert old is not None and new is not None
+            diff = new - old
+            if diff > 0:
+                change_dollar = f"+{fmt_dollar(diff)}"
+                row_class = "increase"
+            elif diff < 0:
+                change_dollar = f"-{fmt_dollar(abs(diff))}"
+                row_class = "decrease"
+            else:
+                change_dollar = fmt_dollar(0)
+                row_class = "unchanged"
+            if old != 0:
+                pct_value = diff / old * 100
+                pct_sign = "+" if pct_value >= 0 else ""
+                change_pct = f"{pct_sign}{pct_value:.1f}%"
+            else:
+                change_pct = "—"
+
+            if pair_idx == 0:
+                rowspan_attr = f' rowspan="{len(pairs)}"' if len(pairs) > 1 else ""
+                section_cell = f'<td{rowspan_attr}><a href="#change-{change_index}">{section_label}</a></td>'
+            else:
+                section_cell = ""
+
+            lines.append(
+                f'<tr class="{row_class}" data-group="{group_idx}">'
+                f"{section_cell}"
+                f'<td class="amount">{fmt_dollar(old)}</td>'
+                f'<td class="amount">{fmt_dollar(new)}</td>'
+                f'<td class="amount change-amount">{change_dollar}</td>'
+                f'<td class="amount change-amount">{change_pct}</td>'
+                f"</tr>"
+            )
+
+    lines.append("</tbody></table>")
+    return "\n".join(lines)
 
 
 def format_diff_html(view: DiffView) -> str:
@@ -244,7 +308,7 @@ def format_diff_html(view: DiffView) -> str:
 <div class="versions">{_versions_html(view)}</div>
 <div class="summary-bar">{_summary_bar_html(view.summary)}</div>
 </div>
-{_financial_summary_html(view)}
+{_build_financial_summary(view)}
 <h2>Changes</h2>
 {_cards_section_html(view)}
 </div>
