@@ -11,36 +11,17 @@ the goal is recall, not byte-exact reproduction.
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import pytest
 
-from parsers.pdf_text import Page, extract_clean_pages, normalize_glyphs, page_range_text
+from parsers.pdf_text import normalize_glyphs, page_range_text
 from pdf_test_cases import PdfTestCase, load_cases
-
-BILLS_DIR = Path(__file__).parent / "bills"
-HR8752_V1 = BILLS_DIR / "118-hr-8752" / "1_reported-in-house.pdf"
-HR8752_V2 = BILLS_DIR / "118-hr-8752" / "2_engrossed-in-house.pdf"
 
 _WS = re.compile(r"\s+")
 
 
 def _normalize(text: str) -> str:
     return _WS.sub(" ", normalize_glyphs(text)).strip()
-
-
-@pytest.fixture(scope="module")
-def hr8752_v1_pages() -> list[Page]:
-    if not HR8752_V1.exists():
-        pytest.skip("HR 8752 v1 PDF not present")
-    return extract_clean_pages(HR8752_V1)
-
-
-@pytest.fixture(scope="module")
-def hr8752_v2_pages() -> list[Page]:
-    if not HR8752_V2.exists():
-        pytest.skip("HR 8752 v2 PDF not present")
-    return extract_clean_pages(HR8752_V2)
 
 
 def _legs():

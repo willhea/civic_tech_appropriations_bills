@@ -106,6 +106,37 @@ def hr5895_v4_v5_diff(hr5895_v4, hr5895_v5):
     return diff_bills(hr5895_v4, hr5895_v5)
 
 
+# --- Session-scoped HR8752 PDF pages (shared across pdf recall tests) ---
+
+HR8752_V1_PDF = BILLS_DIR / "118-hr-8752" / "1_reported-in-house.pdf"
+HR8752_V2_PDF = BILLS_DIR / "118-hr-8752" / "2_engrossed-in-house.pdf"
+
+
+@pytest.fixture(scope="session")
+def hr8752_v1_pages():
+    if not HR8752_V1_PDF.exists():
+        pytest.skip("HR 8752 v1 PDF not present")
+    from parsers.pdf_text import extract_clean_pages
+
+    return extract_clean_pages(HR8752_V1_PDF)
+
+
+@pytest.fixture(scope="session")
+def hr8752_v2_pages():
+    if not HR8752_V2_PDF.exists():
+        pytest.skip("HR 8752 v2 PDF not present")
+    from parsers.pdf_text import extract_clean_pages
+
+    return extract_clean_pages(HR8752_V2_PDF)
+
+
+@pytest.fixture(scope="session")
+def hr8752_pdf_diff(hr8752_v1_pages, hr8752_v2_pages):
+    from diff_pdf import diff_pdfs
+
+    return diff_pdfs(hr8752_v1_pages, hr8752_v2_pages)
+
+
 @pytest.fixture
 def fast_normalize_diff(monkeypatch, hr4366_v1, hr4366_v2, hr4366_v6, hr4366_v1_v2_diff, hr4366_v1_v6_diff):
     """Monkeypatch diff_bill.normalize_bill and diff_bills to reuse session-cached results

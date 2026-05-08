@@ -13,17 +13,10 @@ with one-line rationale before declaring done.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
-from diff_pdf import PdfDiff, PdfHunk, diff_pdfs
-from parsers.pdf_text import extract_clean_pages
+from diff_pdf import PdfDiff, PdfHunk
 from pdf_test_cases import PdfTestCase, load_cases
-
-BILLS_DIR = Path(__file__).parent / "bills"
-HR8752_V1 = BILLS_DIR / "118-hr-8752" / "1_reported-in-house.pdf"
-HR8752_V2 = BILLS_DIR / "118-hr-8752" / "2_engrossed-in-house.pdf"
 
 # Sentinel for "open-ended" line on an unnumbered (-1) line at end of a hunk
 # range. Larger than any realistic per-page line count; small enough that
@@ -34,18 +27,9 @@ try:
     _CASES = load_cases()
 except (FileNotFoundError, ValueError):
     # Missing or malformed fixture — emit no parametrized tests rather than
-    # failing pytest collection. The module-level fixture below also skips
+    # failing pytest collection. The session fixture in conftest also skips
     # when the source PDFs are missing.
     _CASES = []
-
-
-@pytest.fixture(scope="module")
-def hr8752_pdf_diff() -> PdfDiff:
-    if not HR8752_V1.exists() or not HR8752_V2.exists():
-        pytest.skip("HR 8752 PDFs not present")
-    v1 = extract_clean_pages(HR8752_V1)
-    v2 = extract_clean_pages(HR8752_V2)
-    return diff_pdfs(v1, v2)
 
 
 def _location_within_range(
