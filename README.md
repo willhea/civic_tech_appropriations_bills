@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **This project has moved to [AgoraDMV/DeltaTrack](https://github.com/AgoraDMV/DeltaTrack).**
+> Active development and issue tracking now happen there, as part of the
+> [Congressional Tech](https://github.com/AgoraDMV) project at CivicTech DC.
+> This repository is an archived copy and is no longer maintained.
+
 # Bill Diff
 
 Downloads U.S. bill text from Congress.gov and compares versions structurally. Shows what changed between versions: added, removed, modified, and moved sections, with optional financial change filtering.
